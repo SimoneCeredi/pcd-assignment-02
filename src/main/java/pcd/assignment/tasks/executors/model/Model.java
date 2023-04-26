@@ -8,5 +8,6 @@ import java.io.File;
 import java.util.concurrent.Future;
 
 public interface Model {
+
     Future<Pair<IntervalLineCounter, LongestFilesQueue>> getReport(File directory);
 }

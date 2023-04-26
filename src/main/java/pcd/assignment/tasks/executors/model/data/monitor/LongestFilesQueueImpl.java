@@ -6,7 +6,7 @@ import java.util.*;
 
 public class LongestFilesQueueImpl implements LongestFilesQueue {
     private final int filesToKeep;
-    private final Queue<FileInfo> queue = new PriorityQueue<>(Comparator.comparingInt(FileInfo::getLineCount));
+    private final Queue<FileInfo> queue = new PriorityQueue<>(Comparator.comparingLong(FileInfo::getLineCount));
 
     public LongestFilesQueueImpl(int filesToKeep) {
         this.filesToKeep = filesToKeep;
