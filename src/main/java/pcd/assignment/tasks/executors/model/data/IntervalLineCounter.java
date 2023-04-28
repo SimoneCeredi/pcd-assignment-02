@@ -8,5 +8,11 @@ import java.util.Map;
 public interface IntervalLineCounter {
     void store(FileInfo fileInfo);
 
+    void storeAll(IntervalLineCounter lineCounter);
+
+    int getIntervals();
+
+    int getMaxLines();
+
     Map<Pair<Integer, Integer>, UnmodifiableCounter> get();
 }

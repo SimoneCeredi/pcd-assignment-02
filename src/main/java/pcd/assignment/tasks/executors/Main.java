@@ -7,11 +7,11 @@ import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounterImpl;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueueImpl;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
 import java.util.Comparator;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -19,13 +19,13 @@ public class Main {
         System.out.println("1) Async approach with Tasks - Executors Framework");
         Model model = new ModelImpl(new IntervalLineCounterImpl(10, 1000), new LongestFilesQueueImpl(10));
         Pair<IntervalLineCounter, LongestFilesQueue> res;
-        try {
-            res = model.getReport(new File("./files")).get();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+
+        long startTime = System.currentTimeMillis();
+
+        res = model.getReport(new File("./files"));
+
+        long elapsedTime = System.currentTimeMillis() - startTime;
+
         System.out.println("\n\n\n\nLongest Files");
         System.out.println(res.getY().get().stream()
                 .sorted(Comparator.comparingLong(FileInfo::getLineCount))
@@ -41,6 +41,8 @@ public class Main {
                                 (e.getKey().getY() == Integer.MAX_VALUE ? "+" : ("," + e.getKey().getY())) +
                                 "]"
                 ));
+        System.out.println("Total files -> " + (Integer) res.getX().get().values().stream().mapToInt(UnmodifiableCounter::getValue).sum());
+        System.out.println("Elapsed time " + elapsedTime + "ms");
 
     }
 }

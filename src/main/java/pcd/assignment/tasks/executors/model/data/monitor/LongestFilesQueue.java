@@ -7,5 +7,9 @@ import java.util.Collection;
 public interface LongestFilesQueue {
     void put(FileInfo fileInfo);
 
+    void putAll(LongestFilesQueue filesQueue);
+
+    int getFilesToKeep();
+
     Collection<FileInfo> get();
 }
