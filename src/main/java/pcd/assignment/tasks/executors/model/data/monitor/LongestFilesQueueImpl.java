@@ -16,7 +16,11 @@ public class LongestFilesQueueImpl implements LongestFilesQueue {
     }
 
     @Override
-    public void put(FileInfo fileInfo) {
+    public synchronized void put(FileInfo fileInfo) {
+        unSyncPut(fileInfo);
+    }
+
+    private void unSyncPut(FileInfo fileInfo) {
         if (this.queue.size() < this.filesToKeep ||
                 fileInfo.getLineCount() > Objects.requireNonNull(this.queue.peek()).getLineCount()) {
             this.queue.offer(fileInfo);
@@ -28,7 +32,7 @@ public class LongestFilesQueueImpl implements LongestFilesQueue {
 
     @Override
     public void putAll(LongestFilesQueue filesQueue) {
-        filesQueue.get().forEach(this::put);
+        filesQueue.get().forEach(this::unSyncPut);
     }
 
     @Override
