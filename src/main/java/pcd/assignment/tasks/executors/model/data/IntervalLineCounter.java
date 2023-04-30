@@ -15,4 +15,6 @@ public interface IntervalLineCounter {
     int getMaxLines();
 
     Map<Pair<Integer, Integer>, UnmodifiableCounter> get();
+
+    IntervalLineCounter getCopy();
 }

@@ -43,16 +43,15 @@ public class ExploreDirectoryTask extends RecursiveTask<Pair<IntervalLineCounter
         exploreAndFork(directoryForks, filesForks);
         joinDirectoriesTask(directoryForks);
         joinReadLinesTasks(filesForks);
-        var res = new Pair<>(this.lineCounter, this.longestFiles);
         if (this.results != null) {
             try {
-                this.results.put(res);
+                this.results.put(new Pair<>(this.lineCounter.getCopy(), this.longestFiles.getCopy()));
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
-        return res;
+        return new Pair<>(this.lineCounter, this.longestFiles);
     }
 
     private void joinReadLinesTasks(List<RecursiveTask<FileInfo>> filesForks) {
@@ -66,7 +65,7 @@ public class ExploreDirectoryTask extends RecursiveTask<Pair<IntervalLineCounter
     private void joinDirectoriesTask(List<RecursiveTask<Pair<IntervalLineCounter, LongestFilesQueue>>> directoryForks) {
         for (var task : directoryForks) {
             var values = task.join();
-            if (this.results != null) {
+            if (this.results == null) {
                 this.lineCounter.storeAll(values.getX());
                 this.longestFiles.putAll(values.getY());
             }
@@ -96,17 +95,18 @@ public class ExploreDirectoryTask extends RecursiveTask<Pair<IntervalLineCounter
 
     private ExploreDirectoryTask getExploreDirectoryTask(File file) {
 
-        return
-                this.results == null ?
-                        new ExploreDirectoryTask(file,
-                                new IntervalLineCounterImpl(this.lineCounter.getIntervals(), this.lineCounter.getMaxLines()),
-                                new LongestFilesQueueImpl(this.longestFiles.getFilesToKeep())
-                        )
-                        :
-                        new ExploreDirectoryTask(file,
-                                new IntervalLineCounterImpl(this.lineCounter.getIntervals(), this.lineCounter.getMaxLines()),
-                                new LongestFilesQueueImpl(this.longestFiles.getFilesToKeep()),
-                                this.results
-                        );
+        if (this.results == null) {
+
+            return new ExploreDirectoryTask(file,
+                    new IntervalLineCounterImpl(this.lineCounter.getIntervals(), this.lineCounter.getMaxLines()),
+                    new LongestFilesQueueImpl(this.longestFiles.getFilesToKeep())
+            );
+        } else {
+            return new ExploreDirectoryTask(file,
+                    this.lineCounter,
+                    this.longestFiles,
+                    this.results
+            );
+        }
     }
 }

@@ -29,6 +29,7 @@ public class ModelImpl implements Model {
     public BlockingQueue<Pair<IntervalLineCounter, LongestFilesQueue>> analyzeSources(File directory) {
         BlockingQueue<Pair<IntervalLineCounter, LongestFilesQueue>> results = new LinkedBlockingQueue<>();
         forkJoinPool.invoke(new ExploreDirectoryTask(directory, this.intervalLineCounter, this.longestFiles, results));
+        System.out.println("YOOOOO");
         return results;
     }
 }

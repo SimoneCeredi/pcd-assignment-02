@@ -10,11 +10,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class IntervalLineCounterImpl implements IntervalLineCounter {
-    private final HashMap<Pair<Integer, Integer>, Counter> map;
+    private final Map<Pair<Integer, Integer>, Counter> map;
 
     private final int intervals;
 
     private final int maxLines;
+
+    public IntervalLineCounterImpl(int intervals, int maxLines, Map<Pair<Integer, Integer>, Counter> map) {
+        Map<Pair<Integer, Integer>, Counter> mapCopy = new HashMap<>();
+        map.forEach((key, value) -> mapCopy.put(key, new CounterImpl(value.getValue())));
+        this.map = mapCopy;
+        this.intervals = intervals;
+        this.maxLines = maxLines;
+
+    }
 
     public IntervalLineCounterImpl(int intervals, int maxLines) {
         this.map = new HashMap<>();
@@ -66,5 +75,10 @@ public class IntervalLineCounterImpl implements IntervalLineCounter {
     @Override
     public Map<Pair<Integer, Integer>, UnmodifiableCounter> get() {
         return Collections.unmodifiableMap(this.map);
+    }
+
+    @Override
+    public IntervalLineCounter getCopy() {
+        return new IntervalLineCounterImpl(this.intervals, this.maxLines, this.map);
     }
 }

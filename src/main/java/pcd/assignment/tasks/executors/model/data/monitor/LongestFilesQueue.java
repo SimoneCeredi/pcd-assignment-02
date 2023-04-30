@@ -12,4 +12,6 @@ public interface LongestFilesQueue {
     int getFilesToKeep();
 
     Collection<FileInfo> get();
+
+    LongestFilesQueue getCopy();
 }

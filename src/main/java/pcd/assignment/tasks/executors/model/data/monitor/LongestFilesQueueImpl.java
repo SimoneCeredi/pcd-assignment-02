@@ -9,10 +9,16 @@ import java.util.Queue;
 
 public class LongestFilesQueueImpl implements LongestFilesQueue {
     private final int filesToKeep;
-    private final Queue<FileInfo> queue = new PriorityQueue<>(Comparator.comparingLong(FileInfo::getLineCount));
+    private final Queue<FileInfo> queue;
+
+    public LongestFilesQueueImpl(int filesToKeep, Queue<FileInfo> queue) {
+        this.filesToKeep = filesToKeep;
+        this.queue = queue;
+    }
 
     public LongestFilesQueueImpl(int filesToKeep) {
         this.filesToKeep = filesToKeep;
+        this.queue = new PriorityQueue<>(Comparator.comparingLong(FileInfo::getLineCount));
     }
 
     @Override
@@ -43,5 +49,10 @@ public class LongestFilesQueueImpl implements LongestFilesQueue {
     @Override
     public Queue<FileInfo> get() {
         return this.queue;
+    }
+
+    @Override
+    public LongestFilesQueue getCopy() {
+        return new LongestFilesQueueImpl(this.filesToKeep, new PriorityQueue<>(this.queue));
     }
 }
