@@ -6,7 +6,9 @@ import pcd.assignment.tasks.executors.model.tasks.ExploreDirectoryTask;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ModelImpl implements Model {
     private final IntervalLineCounter intervalLineCounter;
@@ -21,5 +23,12 @@ public class ModelImpl implements Model {
     @Override
     public Pair<IntervalLineCounter, LongestFilesQueue> getReport(File directory) {
         return forkJoinPool.invoke(new ExploreDirectoryTask(directory, this.intervalLineCounter, this.longestFiles));
+    }
+
+    @Override
+    public BlockingQueue<Pair<IntervalLineCounter, LongestFilesQueue>> analyzeSources(File directory) {
+        BlockingQueue<Pair<IntervalLineCounter, LongestFilesQueue>> results = new LinkedBlockingQueue<>();
+        forkJoinPool.invoke(new ExploreDirectoryTask(directory, this.intervalLineCounter, this.longestFiles, results));
+        return results;
     }
 }
