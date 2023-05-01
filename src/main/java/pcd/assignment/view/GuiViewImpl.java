@@ -190,7 +190,8 @@ public class GuiViewImpl extends JFrame implements View {
                                     (e.getKey().getY() == Integer.MAX_VALUE ? "+" : ("," + e.getKey().getY())) +
                                     "]"
                     )
-                    .toArray(String[]::new));
+                    .toArray(String[]::new)
+            );
             this.longestFiles.setListData(
                     result.getY().stream()
                             .sorted(Comparator.comparingLong(FileInfo::getLineCount))

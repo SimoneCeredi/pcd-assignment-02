@@ -1,6 +1,8 @@
 package pcd.assignment.tasks.executors.model;
 
 import pcd.assignment.tasks.executors.model.data.FileInfo;
+import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
+import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
 import pcd.assignment.utilities.Pair;
 
@@ -9,6 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinTask;
 
 public interface Model {
 
@@ -26,6 +29,6 @@ public interface Model {
 
     CompletableFuture<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> getReport(File directory);
 
-    BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> analyzeSources(File directory);
-    
+    Pair<BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>>, ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>>> analyzeSources(File directory);
+
 }
