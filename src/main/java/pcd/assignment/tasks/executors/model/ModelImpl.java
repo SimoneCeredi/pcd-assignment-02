@@ -1,35 +1,96 @@
 package pcd.assignment.tasks.executors.model;
 
-import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.FileInfo;
+import pcd.assignment.tasks.executors.model.data.IntervalLineCounterImpl;
+import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueueImpl;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
 import pcd.assignment.tasks.executors.model.tasks.ExploreDirectoryTask;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ModelImpl implements Model {
-    private final IntervalLineCounter intervalLineCounter;
-    private final LongestFilesQueue longestFiles;
-    private final ForkJoinPool forkJoinPool = new ForkJoinPool();
+    private int ni;
+    private int maxl;
+    private int n;
 
-    public ModelImpl(IntervalLineCounter intervalLineCounter, LongestFilesQueue longestFiles) {
-        this.intervalLineCounter = intervalLineCounter;
-        this.longestFiles = longestFiles;
+    public ModelImpl(int ni, int maxl, int n) {
+        this.ni = ni;
+        this.maxl = maxl;
+        this.n = n;
     }
 
     @Override
-    public Pair<IntervalLineCounter, LongestFilesQueue> getReport(File directory) {
-        return forkJoinPool.invoke(new ExploreDirectoryTask(directory, this.intervalLineCounter, this.longestFiles));
+    public int getNi() {
+        return ni;
     }
 
     @Override
-    public BlockingQueue<Pair<IntervalLineCounter, LongestFilesQueue>> analyzeSources(File directory) {
-        BlockingQueue<Pair<IntervalLineCounter, LongestFilesQueue>> results = new LinkedBlockingQueue<>();
-        forkJoinPool.invoke(new ExploreDirectoryTask(directory, this.intervalLineCounter, this.longestFiles, results));
-        System.out.println("YOOOOO");
+    public void setNi(int ni) {
+        this.ni = ni;
+    }
+
+    @Override
+    public int getMaxl() {
+        return maxl;
+    }
+
+    @Override
+    public void setMaxl(int maxl) {
+        this.maxl = maxl;
+    }
+
+    @Override
+    public int getN() {
+        return n;
+    }
+
+    @Override
+    public void setN(int n) {
+        this.n = n;
+    }
+
+    @Override
+    public CompletableFuture<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> getReport(File directory) {
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        CompletableFuture<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> ret = new CompletableFuture<>();
+        ret.completeAsync(() -> {
+            var res = forkJoinPool.invoke(
+                    new ExploreDirectoryTask(
+                            directory,
+                            new IntervalLineCounterImpl(this.ni, this.maxl),
+                            new LongestFilesQueueImpl(this.n)
+                    )
+            );
+            return new Pair<>(res.getX().get(), res.getY().get());
+        });
+        return ret;
+    }
+
+    @Override
+    public BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> analyzeSources(File directory) {
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results = new LinkedBlockingQueue<>();
+        forkJoinPool.invoke(
+                new ExploreDirectoryTask(
+                        directory,
+                        new IntervalLineCounterImpl(this.ni, this.maxl),
+                        new LongestFilesQueueImpl(this.n),
+                        results)
+        );
         return results;
+    }
+
+    @Override
+    public void changeParams(int ni, int maxl, int n) {
+        this.ni = ni;
+        this.maxl = maxl;
+        this.n = n;
     }
 }

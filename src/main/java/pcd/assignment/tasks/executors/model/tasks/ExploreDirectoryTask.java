@@ -5,11 +5,14 @@ import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounterImpl;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueueImpl;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RecursiveTask;
 
@@ -17,13 +20,13 @@ public class ExploreDirectoryTask extends RecursiveTask<Pair<IntervalLineCounter
     private final File directory;
     private final IntervalLineCounter lineCounter;
     private final LongestFilesQueue longestFiles;
-    private final BlockingQueue<Pair<IntervalLineCounter, LongestFilesQueue>> results;
+    private final BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results;
 
     public ExploreDirectoryTask(
             File directory,
             IntervalLineCounter lineCounter,
             LongestFilesQueue longestFiles,
-            BlockingQueue<Pair<IntervalLineCounter, LongestFilesQueue>> results
+            BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results
     ) {
         this.directory = directory;
         this.lineCounter = lineCounter;
@@ -45,7 +48,7 @@ public class ExploreDirectoryTask extends RecursiveTask<Pair<IntervalLineCounter
         joinReadLinesTasks(filesForks);
         if (this.results != null) {
             try {
-                this.results.put(new Pair<>(this.lineCounter.getCopy(), this.longestFiles.getCopy()));
+                this.results.put(new Pair<>(this.lineCounter.getCopy().get(), this.longestFiles.getCopy().get()));
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
