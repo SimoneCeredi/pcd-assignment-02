@@ -39,6 +39,38 @@ public class GuiViewImpl extends JFrame implements View {
         this.ni = this.controller.getNi();
         this.maxl = this.controller.getMaxl();
         this.n = this.controller.getN();
+        generateGui();
+        this.initialized = true;
+
+    }
+
+    @Override
+    public void show(Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>> result) throws OperationNotSupportedException {
+        if (!initialized) {
+            throw new OperationNotSupportedException("Gui not yet initialized");
+        }
+        SwingUtilities.invokeLater(() -> {
+            this.linesCounters.setListData(result.getX().entrySet().stream()
+                    .sorted(Comparator.comparingInt(e -> e.getKey().getX()))
+                    .map(e ->
+                            e.getValue().getValue() +
+                                    " files in range [" +
+                                    e.getKey().getX() +
+                                    (e.getKey().getY() == Integer.MAX_VALUE ? "+" : ("," + e.getKey().getY())) +
+                                    "]"
+                    )
+                    .toArray(String[]::new)
+            );
+            this.longestFiles.setListData(
+                    result.getY().stream()
+                            .sorted(Comparator.comparingLong(FileInfo::getLineCount))
+                            .map(f -> f.getFile().getName() + " -> " + f.getLineCount())
+                            .toArray(String[]::new)
+            );
+        });
+    }
+
+    private void generateGui() {
         // Set the title of the JFrame
         setTitle("My Java Swing View");
 
@@ -170,34 +202,6 @@ public class GuiViewImpl extends JFrame implements View {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
-        });
-        this.initialized = true;
-
-    }
-
-    @Override
-    public void show(Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>> result) throws OperationNotSupportedException {
-        if (!initialized) {
-            throw new OperationNotSupportedException("Gui not yet initialized");
-        }
-        SwingUtilities.invokeLater(() -> {
-            this.linesCounters.setListData(result.getX().entrySet().stream()
-                    .sorted(Comparator.comparingInt(e -> e.getKey().getX()))
-                    .map(e ->
-                            e.getValue().getValue() +
-                                    " files in range [" +
-                                    e.getKey().getX() +
-                                    (e.getKey().getY() == Integer.MAX_VALUE ? "+" : ("," + e.getKey().getY())) +
-                                    "]"
-                    )
-                    .toArray(String[]::new)
-            );
-            this.longestFiles.setListData(
-                    result.getY().stream()
-                            .sorted(Comparator.comparingLong(FileInfo::getLineCount))
-                            .map(f -> f.getFile().getName() + " -> " + f.getLineCount())
-                            .toArray(String[]::new)
-            );
         });
     }
 }
