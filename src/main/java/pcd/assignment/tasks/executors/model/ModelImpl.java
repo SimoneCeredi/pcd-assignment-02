@@ -6,7 +6,7 @@ import pcd.assignment.tasks.executors.model.data.IntervalLineCounterImpl;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueueImpl;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
-import pcd.assignment.tasks.executors.model.tasks.ExploreDirectoryTask;
+import pcd.assignment.tasks.executors.model.tasks.ExploreDirectoryTaskFactory;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class ModelImpl implements Model {
+    private final ExploreDirectoryTaskFactory factory = new ExploreDirectoryTaskFactory();
     private int ni;
     private int maxl;
     private int n;
@@ -61,7 +62,7 @@ public class ModelImpl implements Model {
         CompletableFuture<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> ret = new CompletableFuture<>();
         ret.completeAsync(() -> {
             var res = forkJoinPool.invoke(
-                    new ExploreDirectoryTask(
+                    factory.getReportTask(
                             directory,
                             new IntervalLineCounterImpl(this.ni, this.maxl),
                             new LongestFilesQueueImpl(this.n)
@@ -77,7 +78,7 @@ public class ModelImpl implements Model {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
         BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results = new LinkedBlockingQueue<>();
         ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>> future = forkJoinPool.submit(
-                new ExploreDirectoryTask(
+                factory.analyzeSourcesTask(
                         directory,
                         new IntervalLineCounterImpl(this.ni, this.maxl),
                         new LongestFilesQueueImpl(this.n),

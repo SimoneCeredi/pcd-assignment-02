@@ -154,13 +154,11 @@ public class GuiViewImpl extends JFrame implements View {
 
         // Create the left and right lists
         longestFiles = new JList<>();
-        longestFiles.setVisibleRowCount(this.n);
         JScrollPane longestFilesScrollPane = new JScrollPane(longestFiles);
         longestFilesScrollPane.setBorder(BorderFactory.createTitledBorder("Longest Files"));
         listPanel.add(longestFilesScrollPane);
 
         linesCounters = new JList<>();
-        linesCounters.setVisibleRowCount(this.ni + 1);
         JScrollPane linesCountersScrollPane = new JScrollPane(linesCounters);
         linesCountersScrollPane.setBorder(BorderFactory.createTitledBorder("Intervals"));
         listPanel.add(linesCountersScrollPane);
