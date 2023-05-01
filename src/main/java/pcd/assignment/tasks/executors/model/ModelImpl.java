@@ -6,7 +6,7 @@ import pcd.assignment.tasks.executors.model.data.IntervalLineCounterImpl;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueueImpl;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
-import pcd.assignment.tasks.executors.model.tasks.ExploreDirectoryTaskFactory;
+import pcd.assignment.tasks.executors.model.tasks.factory.ExploreDirectoryTaskFactory;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;

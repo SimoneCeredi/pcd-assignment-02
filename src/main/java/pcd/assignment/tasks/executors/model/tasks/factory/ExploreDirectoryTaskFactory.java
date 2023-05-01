@@ -1,9 +1,12 @@
-package pcd.assignment.tasks.executors.model.tasks;
+package pcd.assignment.tasks.executors.model.tasks.factory;
 
 import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
+import pcd.assignment.tasks.executors.model.tasks.ExploreDirectoryTask;
+import pcd.assignment.tasks.executors.model.tasks.strategy.AnalyzeSourcesMemorizeStrategyImpl;
+import pcd.assignment.tasks.executors.model.tasks.strategy.GetReportMemorizeStrategyImpl;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;

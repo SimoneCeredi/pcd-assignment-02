@@ -3,6 +3,7 @@ package pcd.assignment.tasks.executors.model.tasks;
 import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
+import pcd.assignment.tasks.executors.model.tasks.strategy.MemorizeStrategy;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
