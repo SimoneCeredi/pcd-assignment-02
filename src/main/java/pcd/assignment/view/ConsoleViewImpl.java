@@ -5,14 +5,16 @@ import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
 import pcd.assignment.utilities.Pair;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ConsoleViewImpl implements View {
+    
     @Override
-    public void initialize(Controller controller) {
+    public void initialize(Controller controller, File directory) {
 
     }
 

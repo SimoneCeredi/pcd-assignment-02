@@ -27,8 +27,5 @@ public interface Model {
     CompletableFuture<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> getReport(File directory);
 
     BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> analyzeSources(File directory);
-
-    void changeParams(int ni, int maxl, int n);
-
-
+    
 }

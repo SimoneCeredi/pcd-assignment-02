@@ -87,10 +87,4 @@ public class ModelImpl implements Model {
         return results;
     }
 
-    @Override
-    public void changeParams(int ni, int maxl, int n) {
-        this.ni = ni;
-        this.maxl = maxl;
-        this.n = n;
-    }
 }
