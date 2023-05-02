@@ -31,4 +31,6 @@ public interface Model {
 
     Pair<BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>>, ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>>> analyzeSources(File directory);
 
+    void stop();
+
 }

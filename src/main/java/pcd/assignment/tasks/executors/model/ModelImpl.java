@@ -16,9 +16,11 @@ import java.util.concurrent.*;
 
 public class ModelImpl implements Model {
     private final ExploreDirectoryTaskFactory factory = new ExploreDirectoryTaskFactory();
+    private ForkJoinPool analyzeSourcesPool;
     private int ni;
     private int maxl;
     private int n;
+
 
     public ModelImpl(int ni, int maxl, int n) {
         this.ni = ni;
@@ -75,9 +77,9 @@ public class ModelImpl implements Model {
 
     @Override
     public Pair<BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>>, ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>>> analyzeSources(File directory) {
-        ForkJoinPool forkJoinPool = new ForkJoinPool();
         BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results = new LinkedBlockingQueue<>();
-        ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>> future = forkJoinPool.submit(
+        this.analyzeSourcesPool = new ForkJoinPool();
+        ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>> future = this.analyzeSourcesPool.submit(
                 factory.analyzeSourcesTask(
                         directory,
                         new IntervalLineCounterImpl(this.ni, this.maxl),
@@ -85,6 +87,13 @@ public class ModelImpl implements Model {
                         results)
         );
         return new Pair<>(results, future);
+    }
+
+    @Override
+    public void stop() {
+        if (this.analyzeSourcesPool != null && !this.analyzeSourcesPool.isTerminated()) {
+            this.analyzeSourcesPool.shutdownNow();
+        }
     }
 
 }

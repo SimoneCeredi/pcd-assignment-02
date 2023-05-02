@@ -86,7 +86,7 @@ public class ControllerImpl implements Controller {
 
     @Override
     public void stop() {
-
+        this.model.stop();
     }
 
     private SwingWorker<Void, Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> getSwingWorker(
