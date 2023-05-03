@@ -1,14 +1,12 @@
 package pcd.assignment.tasks.executors.model;
 
-import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinTask;
@@ -27,9 +25,9 @@ public interface Model {
 
     void setN(int n);
 
-    CompletableFuture<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> getReport(File directory);
+    CompletableFuture<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> getReport(File directory);
 
-    Pair<BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>>, ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>>> analyzeSources(File directory);
+    Pair<BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>>, ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>>> analyzeSources(File directory);
 
     void stop();
 

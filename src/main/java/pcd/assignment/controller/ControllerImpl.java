@@ -1,19 +1,17 @@
 package pcd.assignment.controller;
 
 import pcd.assignment.tasks.executors.model.Model;
-import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
 import pcd.assignment.utilities.Pair;
 import pcd.assignment.view.View;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinTask;
@@ -40,7 +38,7 @@ public class ControllerImpl implements Controller {
     }
 
     @Override
-    public void startGui(File directory) throws OperationNotSupportedException {
+    public void startGui(File directory) {
         var ret = this.model.analyzeSources(directory);
         var results = ret.getX();
         var future = ret.getY();
@@ -89,8 +87,8 @@ public class ControllerImpl implements Controller {
         this.model.stop();
     }
 
-    private SwingWorker<Void, Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> getSwingWorker(
-            BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results,
+    private SwingWorker<Void, Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> getSwingWorker(
+            BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results,
             ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>> future
     ) {
         return new SwingWorker<>() {
@@ -98,20 +96,21 @@ public class ControllerImpl implements Controller {
             @Override
             protected Void doInBackground() throws Exception {
                 while (!results.isEmpty() || !future.isDone()) {
-                    Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>> result = results.take();
+                    Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue> result = results.take();
                     publish(result);
                 }
                 return null;
             }
 
             @Override
-            protected void process(List<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> chunks) {
-                for (Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>> result : chunks) {
+            protected void process(List<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> chunks) {
+                for (var result : chunks) {
                     try {
                         guiView.show(result);
                     } catch (OperationNotSupportedException e) {
                         throw new RuntimeException(e);
                     }
+
                 }
             }
 

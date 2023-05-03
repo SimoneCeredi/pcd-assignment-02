@@ -1,17 +1,15 @@
 package pcd.assignment.tasks.executors.model;
 
-import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounterImpl;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueueImpl;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
 import pcd.assignment.tasks.executors.model.tasks.factory.ExploreDirectoryTaskFactory;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.*;
 
 public class ModelImpl implements Model {
@@ -59,25 +57,25 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public CompletableFuture<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> getReport(File directory) {
+    public CompletableFuture<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> getReport(File directory) {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        CompletableFuture<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> ret = new CompletableFuture<>();
+        CompletableFuture<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> ret = new CompletableFuture<>();
         ret.completeAsync(() -> {
-            var res = forkJoinPool.invoke(
+            Pair<IntervalLineCounter, LongestFilesQueue> i = forkJoinPool.invoke(
                     factory.getReportTask(
                             directory,
                             new IntervalLineCounterImpl(this.ni, this.maxl),
                             new LongestFilesQueueImpl(this.n)
                     )
             );
-            return new Pair<>(res.getX().get(), res.getY().get());
+            return new Pair<>(i.getX(), i.getY());
         });
         return ret;
     }
 
     @Override
-    public Pair<BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>>, ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>>> analyzeSources(File directory) {
-        BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results = new LinkedBlockingQueue<>();
+    public Pair<BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>>, ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>>> analyzeSources(File directory) {
+        BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results = new LinkedBlockingQueue<>();
         this.analyzeSourcesPool = new ForkJoinPool();
         ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>> future = this.analyzeSourcesPool.submit(
                 factory.analyzeSourcesTask(

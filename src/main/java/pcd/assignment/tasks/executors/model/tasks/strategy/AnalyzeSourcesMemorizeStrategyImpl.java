@@ -1,26 +1,24 @@
 package pcd.assignment.tasks.executors.model.tasks.strategy;
 
-import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
 import pcd.assignment.utilities.Pair;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 public class AnalyzeSourcesMemorizeStrategyImpl implements MemorizeStrategy {
-    private final BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results;
+    private final BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results;
 
-    public AnalyzeSourcesMemorizeStrategyImpl(BlockingQueue<Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>>> results) {
+    public AnalyzeSourcesMemorizeStrategyImpl(BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results) {
         this.results = results;
     }
 
     @Override
     public void saveResult(IntervalLineCounter lineCounter, LongestFilesQueue longestFiles) {
         try {
-            this.results.put(new Pair<>(lineCounter.getCopy().get(), longestFiles.getCopy().get()));
+            this.results.put(new Pair<>(lineCounter.getCopy(), longestFiles.getCopy()));
         } catch (InterruptedException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

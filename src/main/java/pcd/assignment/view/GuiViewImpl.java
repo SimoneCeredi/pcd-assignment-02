@@ -2,7 +2,8 @@ package pcd.assignment.view;
 
 import pcd.assignment.controller.Controller;
 import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
 import pcd.assignment.utilities.Pair;
 
 import javax.naming.OperationNotSupportedException;
@@ -11,9 +12,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.Map;
 
 public class GuiViewImpl extends JFrame implements View {
 
@@ -45,12 +44,12 @@ public class GuiViewImpl extends JFrame implements View {
     }
 
     @Override
-    public void show(Pair<Map<Pair<Integer, Integer>, UnmodifiableCounter>, Collection<FileInfo>> result) throws OperationNotSupportedException {
+    public void show(Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue> result) throws OperationNotSupportedException {
         if (!initialized) {
             throw new OperationNotSupportedException("Gui not yet initialized");
         }
         SwingUtilities.invokeLater(() -> {
-            this.linesCounters.setListData(result.getX().entrySet().stream()
+            this.linesCounters.setListData(result.getX().get().entrySet().stream()
                     .sorted(Comparator.comparingInt(e -> e.getKey().getX()))
                     .map(e ->
                             e.getValue().getValue() +
@@ -62,7 +61,7 @@ public class GuiViewImpl extends JFrame implements View {
                     .toArray(String[]::new)
             );
             this.longestFiles.setListData(
-                    result.getY().stream()
+                    result.getY().get().stream()
                             .sorted(Comparator.comparingLong(FileInfo::getLineCount))
                             .map(f -> f.getFile().getName() + " -> " + f.getLineCount())
                             .toArray(String[]::new)
