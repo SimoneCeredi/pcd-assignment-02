@@ -1,6 +1,6 @@
 package pcd.assignment.controller;
 
-import pcd.assignment.tasks.executors.model.Model;
+import pcd.assignment.model.Model;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;

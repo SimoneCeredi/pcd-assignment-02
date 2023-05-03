@@ -1,4 +1,4 @@
-package pcd.assignment.tasks.executors.model;
+package pcd.assignment.model;
 
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
