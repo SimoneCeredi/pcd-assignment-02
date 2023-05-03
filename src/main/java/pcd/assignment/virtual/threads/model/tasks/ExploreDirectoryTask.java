@@ -41,6 +41,7 @@ public class ExploreDirectoryTask implements Runnable {
         exploreDirectory(directoryFutures, filesFutures);
         collectDirectoryData(directoryFutures);
         collectFilesData(filesFutures);
+        this.strategy.saveResult(this.lineCounter, this.longestFiles);
         future.complete(new Pair<>(this.lineCounter, this.longestFiles));
     }
 
