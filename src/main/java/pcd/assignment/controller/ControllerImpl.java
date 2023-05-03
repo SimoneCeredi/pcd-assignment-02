@@ -1,9 +1,7 @@
 package pcd.assignment.controller;
 
 import pcd.assignment.model.Model;
-import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
 import pcd.assignment.utilities.Pair;
 import pcd.assignment.view.View;
@@ -13,8 +11,8 @@ import javax.swing.*;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinTask;
 
 public class ControllerImpl implements Controller {
 
@@ -89,7 +87,7 @@ public class ControllerImpl implements Controller {
 
     private SwingWorker<Void, Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> getSwingWorker(
             BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results,
-            ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>> future
+            CompletableFuture<Void> future
     ) {
         return new SwingWorker<>() {
 

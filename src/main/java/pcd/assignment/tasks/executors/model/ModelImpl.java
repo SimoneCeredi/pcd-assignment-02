@@ -11,7 +11,10 @@ import pcd.assignment.tasks.executors.model.tasks.factory.ExploreDirectoryTaskFa
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ModelImpl extends AbstractModel {
     private final ExploreDirectoryTaskFactory factory = new ExploreDirectoryTaskFactory();
@@ -41,16 +44,20 @@ public class ModelImpl extends AbstractModel {
     }
 
     @Override
-    public Pair<BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>>, ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>>> analyzeSources(File directory) {
+    public Pair<BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>>, CompletableFuture<Void>> analyzeSources(File directory) {
         BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results = new LinkedBlockingQueue<>();
         this.analyzeSourcesPool = new ForkJoinPool();
-        ForkJoinTask<Pair<IntervalLineCounter, LongestFilesQueue>> future = this.analyzeSourcesPool.submit(
-                factory.analyzeSourcesTask(
-                        directory,
-                        new IntervalLineCounterImpl(this.getNi(), this.getMaxl()),
-                        new LongestFilesQueueImpl(this.getN()),
-                        results)
-        );
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        future.completeAsync(() -> {
+            this.analyzeSourcesPool.invoke(
+                    factory.analyzeSourcesTask(
+                            directory,
+                            new IntervalLineCounterImpl(this.getNi(), this.getMaxl()),
+                            new LongestFilesQueueImpl(this.getN()),
+                            results)
+            );
+            return null;
+        });
         return new Pair<>(results, future);
     }
 

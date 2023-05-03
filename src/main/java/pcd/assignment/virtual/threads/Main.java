@@ -26,6 +26,7 @@ public class Main {
         View gui = new GuiViewImpl();
         Controller controller = new ControllerImpl(new ModelImpl(ni, maxl, n), new ConsoleViewImpl(), gui);
         controller.startConsole(directory);
+        gui.initialize(controller, directory);
     }
 
 }
