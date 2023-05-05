@@ -4,7 +4,7 @@ import pcd.assignment.tasks.executors.model.data.FileInfo;
 
 import java.util.Collection;
 
-public interface UnmodifiableLongestFilesQueue {
+public interface UnmodifiableLongestFiles {
     Collection<FileInfo> get();
-    
+
 }

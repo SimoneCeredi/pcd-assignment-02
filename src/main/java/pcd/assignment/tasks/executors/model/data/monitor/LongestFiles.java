@@ -2,13 +2,13 @@ package pcd.assignment.tasks.executors.model.data.monitor;
 
 import pcd.assignment.tasks.executors.model.data.FileInfo;
 
-public interface LongestFilesQueue extends UnmodifiableLongestFilesQueue {
+public interface LongestFiles extends UnmodifiableLongestFiles {
     void put(FileInfo fileInfo);
 
-    void putAll(LongestFilesQueue filesQueue);
+    void putAll(LongestFiles filesQueue);
 
     int getFilesToKeep();
 
 
-    LongestFilesQueue getCopy();
+    LongestFiles getCopy();
 }

@@ -5,7 +5,7 @@ import pcd.assignment.utilities.Pair;
 
 import java.util.Map;
 
-public interface UnmodifiableIntervalLineCounter {
+public interface UnmodifiableIntervals {
     Map<Pair<Integer, Integer>, UnmodifiableCounter> get();
-    
+
 }

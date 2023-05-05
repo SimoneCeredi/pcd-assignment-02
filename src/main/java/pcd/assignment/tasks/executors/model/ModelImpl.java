@@ -1,9 +1,9 @@
 package pcd.assignment.tasks.executors.model;
 
-import pcd.assignment.tasks.executors.model.data.IntervalLineCounterImpl;
-import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueueImpl;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.IntervalsImpl;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
+import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesImpl;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.tasks.executors.model.tasks.factory.ExploreDirectoryTaskFactory;
 import pcd.assignment.utilities.Pair;
 
@@ -23,16 +23,16 @@ public class ModelImpl extends AbstractModel {
     }
 
     @Override
-    public Pair<BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>>, CompletableFuture<Void>> analyzeSources(File directory) {
-        BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results = new LinkedBlockingQueue<>();
+    public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
+        BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results = new LinkedBlockingQueue<>();
         this.analyzeSourcesPool = new ForkJoinPool();
         CompletableFuture<Void> future = new CompletableFuture<>();
         future.completeAsync(() -> {
             this.analyzeSourcesPool.invoke(
                     factory.analyzeSourcesTask(
                             directory,
-                            new IntervalLineCounterImpl(this.getNi(), this.getMaxl()),
-                            new LongestFilesQueueImpl(this.getN()),
+                            new IntervalsImpl(this.getNi(), this.getMaxl()),
+                            new LongestFilesImpl(this.getN()),
                             results)
             );
             return null;

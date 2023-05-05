@@ -1,8 +1,8 @@
 package pcd.assignment.virtual.threads.model.tasks;
 
 import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.Intervals;
+import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
 import pcd.assignment.tasks.executors.model.tasks.strategy.MemorizeStrategy;
 import pcd.assignment.utilities.Pair;
 
@@ -15,16 +15,16 @@ import java.util.concurrent.Future;
 
 public class ExploreDirectoryTask implements Runnable {
     private final File directory;
-    private final IntervalLineCounter lineCounter;
-    private final LongestFilesQueue longestFiles;
-    private final CompletableFuture<Pair<IntervalLineCounter, LongestFilesQueue>> future;
+    private final Intervals lineCounter;
+    private final LongestFiles longestFiles;
+    private final CompletableFuture<Pair<Intervals, LongestFiles>> future;
     private final MemorizeStrategy strategy;
 
     public ExploreDirectoryTask(
             File directory,
-            IntervalLineCounter lineCounter,
-            LongestFilesQueue longestFiles,
-            CompletableFuture<Pair<IntervalLineCounter, LongestFilesQueue>> future,
+            Intervals lineCounter,
+            LongestFiles longestFiles,
+            CompletableFuture<Pair<Intervals, LongestFiles>> future,
             MemorizeStrategy strategy
     ) {
         this.directory = directory;
@@ -36,7 +36,7 @@ public class ExploreDirectoryTask implements Runnable {
 
     @Override
     public void run() {
-        List<Future<Pair<IntervalLineCounter, LongestFilesQueue>>> directoryFutures = new LinkedList<>();
+        List<Future<Pair<Intervals, LongestFiles>>> directoryFutures = new LinkedList<>();
         List<Future<FileInfo>> filesFutures = new LinkedList<>();
         exploreDirectory(directoryFutures, filesFutures);
         collectDirectoryData(directoryFutures);
@@ -57,7 +57,7 @@ public class ExploreDirectoryTask implements Runnable {
         }
     }
 
-    private void collectDirectoryData(List<Future<Pair<IntervalLineCounter, LongestFilesQueue>>> directoryFutures) {
+    private void collectDirectoryData(List<Future<Pair<Intervals, LongestFiles>>> directoryFutures) {
         for (var future : directoryFutures) {
             try {
                 future.get();
@@ -67,13 +67,13 @@ public class ExploreDirectoryTask implements Runnable {
         }
     }
 
-    private void exploreDirectory(List<Future<Pair<IntervalLineCounter, LongestFilesQueue>>> directoryFutures, List<Future<FileInfo>> filesFutures) {
+    private void exploreDirectory(List<Future<Pair<Intervals, LongestFiles>>> directoryFutures, List<Future<FileInfo>> filesFutures) {
         if (this.directory.isDirectory()) {
             File[] files = this.directory.listFiles();
             if (files != null) {
                 for (File file : files) {
                     if (file.isDirectory()) {
-                        CompletableFuture<Pair<IntervalLineCounter, LongestFilesQueue>> future = new CompletableFuture<>();
+                        CompletableFuture<Pair<Intervals, LongestFiles>> future = new CompletableFuture<>();
                         ExploreDirectoryTask task = this.getExploreDirectoryTask(file, future);
                         Thread.ofVirtual().start(task);
                         directoryFutures.add(future);
@@ -90,7 +90,7 @@ public class ExploreDirectoryTask implements Runnable {
         }
     }
 
-    private ExploreDirectoryTask getExploreDirectoryTask(File file, CompletableFuture<Pair<IntervalLineCounter, LongestFilesQueue>> future) {
+    private ExploreDirectoryTask getExploreDirectoryTask(File file, CompletableFuture<Pair<Intervals, LongestFiles>> future) {
         return new ExploreDirectoryTask(
                 file,
                 this.strategy.getChildLineCounter(this.lineCounter),

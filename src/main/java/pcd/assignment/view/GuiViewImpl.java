@@ -2,8 +2,8 @@ package pcd.assignment.view;
 
 import pcd.assignment.tasks.executors.controller.Controller;
 import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.utilities.Pair;
 
 import javax.naming.OperationNotSupportedException;
@@ -44,7 +44,7 @@ public class GuiViewImpl extends JFrame implements View {
     }
 
     @Override
-    public void show(Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue> result) throws OperationNotSupportedException {
+    public void show(Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result) throws OperationNotSupportedException {
         if (!initialized) {
             throw new OperationNotSupportedException("Gui not yet initialized");
         }

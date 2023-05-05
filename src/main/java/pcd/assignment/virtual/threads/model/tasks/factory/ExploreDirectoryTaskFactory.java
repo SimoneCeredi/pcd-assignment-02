@@ -1,9 +1,9 @@
 package pcd.assignment.virtual.threads.model.tasks.factory;
 
-import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.Intervals;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
+import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.tasks.executors.model.tasks.strategy.AnalyzeSourcesMemorizeStrategyImpl;
 import pcd.assignment.utilities.Pair;
 import pcd.assignment.virtual.threads.model.tasks.ExploreDirectoryTask;
@@ -16,10 +16,10 @@ public class ExploreDirectoryTaskFactory {
 
     public ExploreDirectoryTask analyzeSourcesTask(
             File directory,
-            IntervalLineCounter lineCounter,
-            LongestFilesQueue longestFiles,
-            CompletableFuture<Pair<IntervalLineCounter, LongestFilesQueue>> future,
-            BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results
+            Intervals lineCounter,
+            LongestFiles longestFiles,
+            CompletableFuture<Pair<Intervals, LongestFiles>> future,
+            BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results
     ) {
         return new ExploreDirectoryTask(directory, lineCounter, longestFiles, future, new AnalyzeSourcesMemorizeStrategyImpl(results));
     }

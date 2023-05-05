@@ -1,22 +1,22 @@
 package pcd.assignment.tasks.executors.model.tasks.strategy;
 
-import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.Intervals;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
+import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.utilities.Pair;
 
 import java.util.concurrent.BlockingQueue;
 
 public class AnalyzeSourcesMemorizeStrategyImpl implements MemorizeStrategy {
-    private final BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results;
+    private final BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
 
-    public AnalyzeSourcesMemorizeStrategyImpl(BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results) {
+    public AnalyzeSourcesMemorizeStrategyImpl(BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results) {
         this.results = results;
     }
 
     @Override
-    public void saveResult(IntervalLineCounter lineCounter, LongestFilesQueue longestFiles) {
+    public void saveResult(Intervals lineCounter, LongestFiles longestFiles) {
         try {
             this.results.put(new Pair<>(lineCounter.getCopy(), longestFiles.getCopy()));
         } catch (InterruptedException e) {
@@ -27,12 +27,12 @@ public class AnalyzeSourcesMemorizeStrategyImpl implements MemorizeStrategy {
 
 
     @Override
-    public IntervalLineCounter getChildLineCounter(IntervalLineCounter lineCounter) {
+    public Intervals getChildLineCounter(Intervals lineCounter) {
         return lineCounter;
     }
 
     @Override
-    public LongestFilesQueue getChildLongestFiles(LongestFilesQueue filesQueue) {
+    public LongestFiles getChildLongestFiles(LongestFiles filesQueue) {
         return filesQueue;
     }
 }

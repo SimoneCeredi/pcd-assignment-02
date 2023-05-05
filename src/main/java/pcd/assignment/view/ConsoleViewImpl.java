@@ -2,9 +2,9 @@ package pcd.assignment.view;
 
 import pcd.assignment.tasks.executors.controller.Controller;
 import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
@@ -19,7 +19,7 @@ public class ConsoleViewImpl implements View {
     }
 
     @Override
-    public void show(Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue> result) {
+    public void show(Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result) {
         System.out.println("Longest Files");
         System.out.println(result.getY().get().stream()
                 .sorted(Comparator.comparingLong(FileInfo::getLineCount))

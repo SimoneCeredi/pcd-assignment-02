@@ -1,8 +1,8 @@
 package pcd.assignment.tasks.executors.controller;
 
 import pcd.assignment.tasks.executors.model.Model;
-import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.utilities.Pair;
 import pcd.assignment.view.View;
 
@@ -85,8 +85,8 @@ public class ControllerImpl implements Controller {
         this.model.stop();
     }
 
-    private SwingWorker<Void, Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> getSwingWorker(
-            BlockingQueue<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> results,
+    private SwingWorker<Void, Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getSwingWorker(
+            BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results,
             CompletableFuture<Void> future
     ) {
         return new SwingWorker<>() {
@@ -94,14 +94,14 @@ public class ControllerImpl implements Controller {
             @Override
             protected Void doInBackground() throws Exception {
                 while (!results.isEmpty() || !future.isDone()) {
-                    Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue> result = results.take();
+                    Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result = results.take();
                     publish(result);
                 }
                 return null;
             }
 
             @Override
-            protected void process(List<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> chunks) {
+            protected void process(List<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> chunks) {
                 for (var result : chunks) {
                     try {
                         guiView.show(result);

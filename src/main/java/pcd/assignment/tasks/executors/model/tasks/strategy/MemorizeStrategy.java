@@ -1,12 +1,12 @@
 package pcd.assignment.tasks.executors.model.tasks.strategy;
 
-import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.Intervals;
+import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
 
 public interface MemorizeStrategy {
-    void saveResult(IntervalLineCounter lineCounter, LongestFilesQueue longestFiles);
-    
-    IntervalLineCounter getChildLineCounter(IntervalLineCounter lineCounter);
+    void saveResult(Intervals lineCounter, LongestFiles longestFiles);
 
-    LongestFilesQueue getChildLongestFiles(LongestFilesQueue filesQueue);
+    Intervals getChildLineCounter(Intervals lineCounter);
+
+    LongestFiles getChildLongestFiles(LongestFiles filesQueue);
 }

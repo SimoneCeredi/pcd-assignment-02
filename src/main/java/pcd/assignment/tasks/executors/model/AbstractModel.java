@@ -1,7 +1,7 @@
 package pcd.assignment.tasks.executors.model;
 
-import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
-import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
+import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
+import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
@@ -21,11 +21,11 @@ public abstract class AbstractModel implements Model {
     }
 
     @Override
-    public CompletableFuture<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> getReport(File directory) {
+    public CompletableFuture<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getReport(File directory) {
         var res = this.analyzeSources(directory);
-        CompletableFuture<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> ret = new CompletableFuture<>();
+        CompletableFuture<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> ret = new CompletableFuture<>();
         res.getY().whenComplete((unused, throwable) -> ret.completeAsync(() -> {
-            List<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> coll = new ArrayList<>();
+            List<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> coll = new ArrayList<>();
             res.getX().drainTo(coll);
             var last = coll.get(coll.size() - 1);
             return new Pair<>(last.getX(), last.getY());

@@ -7,16 +7,16 @@ import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public class LongestFilesQueueImpl implements LongestFilesQueue {
+public class LongestFilesImpl implements LongestFiles {
     private final int filesToKeep;
     private final Queue<FileInfo> queue;
 
-    public LongestFilesQueueImpl(int filesToKeep, Queue<FileInfo> queue) {
+    public LongestFilesImpl(int filesToKeep, Queue<FileInfo> queue) {
         this.filesToKeep = filesToKeep;
         this.queue = queue;
     }
 
-    public LongestFilesQueueImpl(int filesToKeep) {
+    public LongestFilesImpl(int filesToKeep) {
         this.filesToKeep = filesToKeep;
         this.queue = new PriorityQueue<>(Comparator.comparingLong(FileInfo::getLineCount));
     }
@@ -37,7 +37,7 @@ public class LongestFilesQueueImpl implements LongestFilesQueue {
     }
 
     @Override
-    public void putAll(LongestFilesQueue filesQueue) {
+    public void putAll(LongestFiles filesQueue) {
         filesQueue.get().forEach(this::unSyncPut);
     }
 
@@ -52,7 +52,7 @@ public class LongestFilesQueueImpl implements LongestFilesQueue {
     }
 
     @Override
-    public LongestFilesQueue getCopy() {
-        return new LongestFilesQueueImpl(this.filesToKeep, new PriorityQueue<>(this.queue));
+    public LongestFiles getCopy() {
+        return new LongestFilesImpl(this.filesToKeep, new PriorityQueue<>(this.queue));
     }
 }

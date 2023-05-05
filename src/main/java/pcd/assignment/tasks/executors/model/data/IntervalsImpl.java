@@ -9,14 +9,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class IntervalLineCounterImpl implements IntervalLineCounter {
+public class IntervalsImpl implements Intervals {
     private final Map<Pair<Integer, Integer>, Counter> map;
 
     private final int intervals;
 
     private final int maxLines;
 
-    public IntervalLineCounterImpl(int intervals, int maxLines, Map<Pair<Integer, Integer>, Counter> map) {
+    public IntervalsImpl(int intervals, int maxLines, Map<Pair<Integer, Integer>, Counter> map) {
         Map<Pair<Integer, Integer>, Counter> mapCopy = new HashMap<>();
         map.forEach((key, value) -> mapCopy.put(key, new CounterImpl(value.getValue())));
         this.map = mapCopy;
@@ -25,7 +25,7 @@ public class IntervalLineCounterImpl implements IntervalLineCounter {
 
     }
 
-    public IntervalLineCounterImpl(int intervals, int maxLines) {
+    public IntervalsImpl(int intervals, int maxLines) {
         this.map = new HashMap<>();
         this.intervals = intervals;
         this.maxLines = maxLines;
@@ -56,7 +56,7 @@ public class IntervalLineCounterImpl implements IntervalLineCounter {
     }
 
     @Override
-    public void storeAll(IntervalLineCounter lineCounter) {
+    public void storeAll(Intervals lineCounter) {
         lineCounter.get().forEach((key, value) ->
                 this.map.put(key, new CounterImpl(value.getValue() + this.map.get(key).getValue()))
         );
@@ -78,7 +78,7 @@ public class IntervalLineCounterImpl implements IntervalLineCounter {
     }
 
     @Override
-    public IntervalLineCounter getCopy() {
-        return new IntervalLineCounterImpl(this.intervals, this.maxLines, this.map);
+    public Intervals getCopy() {
+        return new IntervalsImpl(this.intervals, this.maxLines, this.map);
     }
 }
