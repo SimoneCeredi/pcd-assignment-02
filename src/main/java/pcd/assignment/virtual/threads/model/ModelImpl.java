@@ -18,7 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ModelImpl extends AbstractModel {
     private final ExploreDirectoryTaskFactory factory = new ExploreDirectoryTaskFactory();
-    private Thread analyzeSourcesThread;
+    private final BlockingQueue<Thread> threadList = new LinkedBlockingQueue<>();
 
     public ModelImpl(int ni, int maxl, int n) {
         super(ni, maxl, n);
@@ -29,15 +29,16 @@ public class ModelImpl extends AbstractModel {
         BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results = new LinkedBlockingQueue<>();
         CompletableFuture<Pair<Intervals, LongestFiles>> future = new CompletableFuture<>();
         CompletableFuture<Void> ret = new CompletableFuture<>();
-        this.analyzeSourcesThread = Thread.ofVirtual().start(
+        this.threadList.add(Thread.ofVirtual().start(
                 this.factory.analyzeSourcesTask(
                         directory,
                         new IntervalsImpl(this.getNi(), this.getMaxl()),
                         new LongestFilesImpl(this.getN()),
                         future,
+                        this.threadList,
                         results
                 )
-        );
+        ));
         ret.completeAsync(() -> {
             try {
                 future.get();
@@ -51,6 +52,13 @@ public class ModelImpl extends AbstractModel {
 
     @Override
     public void stop() {
-        this.analyzeSourcesThread.interrupt();
+        while (!this.threadList.isEmpty()) {
+            try {
+                Thread t = this.threadList.take();
+                t.interrupt();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

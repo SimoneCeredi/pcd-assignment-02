@@ -19,8 +19,9 @@ public class ExploreDirectoryTaskFactory {
             Intervals lineCounter,
             LongestFiles longestFiles,
             CompletableFuture<Pair<Intervals, LongestFiles>> future,
+            BlockingQueue<Thread> threadList,
             BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results
     ) {
-        return new ExploreDirectoryTask(directory, lineCounter, longestFiles, future, new AnalyzeSourcesMemorizeStrategyImpl(results));
+        return new ExploreDirectoryTask(directory, lineCounter, longestFiles, future, threadList, new AnalyzeSourcesMemorizeStrategyImpl(results));
     }
 }

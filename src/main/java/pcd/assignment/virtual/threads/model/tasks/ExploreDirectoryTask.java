@@ -9,6 +9,7 @@ import pcd.assignment.utilities.Pair;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -18,6 +19,7 @@ public class ExploreDirectoryTask implements Runnable {
     private final Intervals lineCounter;
     private final LongestFiles longestFiles;
     private final CompletableFuture<Pair<Intervals, LongestFiles>> future;
+    private final BlockingQueue<Thread> threadList;
     private final MemorizeStrategy strategy;
 
     public ExploreDirectoryTask(
@@ -25,12 +27,14 @@ public class ExploreDirectoryTask implements Runnable {
             Intervals lineCounter,
             LongestFiles longestFiles,
             CompletableFuture<Pair<Intervals, LongestFiles>> future,
+            BlockingQueue<Thread> threadList,
             MemorizeStrategy strategy
     ) {
         this.directory = directory;
         this.lineCounter = lineCounter;
         this.longestFiles = longestFiles;
         this.future = future;
+        this.threadList = threadList;
         this.strategy = strategy;
     }
 
@@ -75,7 +79,7 @@ public class ExploreDirectoryTask implements Runnable {
                     if (file.isDirectory()) {
                         CompletableFuture<Pair<Intervals, LongestFiles>> future = new CompletableFuture<>();
                         ExploreDirectoryTask task = this.getExploreDirectoryTask(file, future);
-                        Thread.ofVirtual().start(task);
+                        this.threadList.add(Thread.ofVirtual().start(task));
                         directoryFutures.add(future);
                     } else {
                         if (file.getName().endsWith(".java")) {
@@ -96,6 +100,7 @@ public class ExploreDirectoryTask implements Runnable {
                 this.strategy.getChildLineCounter(this.lineCounter),
                 this.strategy.getChildLongestFiles(this.longestFiles),
                 future,
+                this.threadList,
                 this.strategy
         );
     }
