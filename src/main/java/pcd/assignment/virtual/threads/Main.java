@@ -1,7 +1,7 @@
 package pcd.assignment.virtual.threads;
 
-import pcd.assignment.controller.Controller;
-import pcd.assignment.controller.ControllerImpl;
+import pcd.assignment.tasks.executors.controller.Controller;
+import pcd.assignment.tasks.executors.controller.ControllerImpl;
 import pcd.assignment.view.ConsoleViewImpl;
 import pcd.assignment.view.GuiViewImpl;
 import pcd.assignment.view.View;

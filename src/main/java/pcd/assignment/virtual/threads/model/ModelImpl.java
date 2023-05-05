@@ -1,6 +1,6 @@
 package pcd.assignment.virtual.threads.model;
 
-import pcd.assignment.model.AbstractModel;
+import pcd.assignment.tasks.executors.model.AbstractModel;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.IntervalLineCounterImpl;
 import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
@@ -22,28 +22,6 @@ public class ModelImpl extends AbstractModel {
 
     public ModelImpl(int ni, int maxl, int n) {
         super(ni, maxl, n);
-    }
-
-    @Override
-    public CompletableFuture<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> getReport(File directory) {
-        CompletableFuture<Pair<IntervalLineCounter, LongestFilesQueue>> future = new CompletableFuture<>();
-        Thread.ofVirtual().start(
-                factory.getReportTask(
-                        directory,
-                        new IntervalLineCounterImpl(this.getNi(), this.getMaxl()),
-                        new LongestFilesQueueImpl(this.getN()),
-                        future
-                )
-        );
-        CompletableFuture<Pair<UnmodifiableIntervalLineCounter, UnmodifiableLongestFilesQueue>> ret = new CompletableFuture<>();
-        return ret.completeAsync(() -> {
-            try {
-                var res = future.get();
-                return new Pair<>(res.getX(), res.getY());
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     @Override

@@ -51,8 +51,7 @@ public class ExploreDirectoryTask extends RecursiveTask<Pair<IntervalLineCounter
 
     private void joinDirectoriesTask(List<RecursiveTask<Pair<IntervalLineCounter, LongestFilesQueue>>> directoryForks) {
         for (var task : directoryForks) {
-            var values = task.join();
-            this.strategy.storeSubResult(this.lineCounter, this.longestFiles, values);
+            task.join();
         }
     }
 

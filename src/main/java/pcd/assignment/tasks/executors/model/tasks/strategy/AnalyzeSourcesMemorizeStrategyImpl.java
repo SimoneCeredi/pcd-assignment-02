@@ -25,10 +25,6 @@ public class AnalyzeSourcesMemorizeStrategyImpl implements MemorizeStrategy {
         }
     }
 
-    @Override
-    public void storeSubResult(IntervalLineCounter lineCounter, LongestFilesQueue longestFiles, Pair<IntervalLineCounter, LongestFilesQueue> values) {
-
-    }
 
     @Override
     public IntervalLineCounter getChildLineCounter(IntervalLineCounter lineCounter) {

@@ -1,6 +1,6 @@
 package pcd.assignment.view;
 
-import pcd.assignment.controller.Controller;
+import pcd.assignment.tasks.executors.controller.Controller;
 import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervalLineCounter;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableCounter;

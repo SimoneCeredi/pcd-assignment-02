@@ -6,17 +6,12 @@ import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesQueue;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFilesQueue;
 import pcd.assignment.tasks.executors.model.tasks.ExploreDirectoryTask;
 import pcd.assignment.tasks.executors.model.tasks.strategy.AnalyzeSourcesMemorizeStrategyImpl;
-import pcd.assignment.tasks.executors.model.tasks.strategy.GetReportMemorizeStrategyImpl;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
 
 public class ExploreDirectoryTaskFactory {
-    public ExploreDirectoryTask getReportTask(File directory, IntervalLineCounter lineCounter, LongestFilesQueue longestFiles) {
-        return new ExploreDirectoryTask(directory, lineCounter, longestFiles, new GetReportMemorizeStrategyImpl());
-    }
-
     public ExploreDirectoryTask analyzeSourcesTask(
             File directory,
             IntervalLineCounter lineCounter,

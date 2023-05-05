@@ -60,8 +60,7 @@ public class ExploreDirectoryTask implements Runnable {
     private void collectDirectoryData(List<Future<Pair<IntervalLineCounter, LongestFilesQueue>>> directoryFutures) {
         for (var future : directoryFutures) {
             try {
-                var values = future.get();
-                this.strategy.storeSubResult(this.lineCounter, this.longestFiles, values);
+                future.get();
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
