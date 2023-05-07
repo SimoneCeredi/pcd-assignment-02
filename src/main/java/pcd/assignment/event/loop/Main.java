@@ -7,10 +7,11 @@ import pcd.assignment.view.ConsoleViewImpl;
 import pcd.assignment.view.GuiViewImpl;
 import pcd.assignment.view.View;
 
+import javax.naming.OperationNotSupportedException;
 import java.io.File;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws OperationNotSupportedException {
         System.out.println("3) Async approach event based");
         File directory = new File("./files");
         int ni = 5;
@@ -24,6 +25,7 @@ public class Main {
         }
         View gui = new GuiViewImpl();
         Controller controller = new ControllerImpl(new ModelImpl(ni, maxl, n), new ConsoleViewImpl(), gui);
+        controller.startConsole(directory);
         gui.initialize(controller, directory);
     }
 
