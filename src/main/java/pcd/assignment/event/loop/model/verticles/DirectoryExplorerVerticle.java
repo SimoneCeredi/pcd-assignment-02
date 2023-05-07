@@ -8,7 +8,6 @@ import pcd.assignment.event.loop.model.ModelData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 
 
@@ -16,13 +15,11 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     private final String directory;
     private final Promise<Void> promise;
-    private final BlockingQueue<String> deployedVerticles;
     private final ModelData model;
 
-    public DirectoryExplorerVerticle(String directory, Promise<Void> promise, BlockingQueue<String> deployedVerticles, ModelData model) {
+    public DirectoryExplorerVerticle(String directory, Promise<Void> promise, ModelData model) {
         this.directory = directory;
         this.promise = promise;
-        this.deployedVerticles = deployedVerticles;
         this.model = model;
     }
 
@@ -54,7 +51,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
                 if (res.succeeded()) {
                     FileProps fileProps = res.result();
                     if (fileProps.isDirectory()) {
-                        vertx.deployVerticle(new DirectoryExplorerVerticle(file, filePromise, deployedVerticles, model));
+                        vertx.deployVerticle(new DirectoryExplorerVerticle(file, filePromise, model));
                     } else {
                         if (file.endsWith(".java")) {
                             vertx.deployVerticle(new LineCounterVerticle(file, filePromise, model));

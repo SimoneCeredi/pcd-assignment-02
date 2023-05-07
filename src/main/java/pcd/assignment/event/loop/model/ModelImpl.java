@@ -3,7 +3,6 @@ package pcd.assignment.event.loop.model;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import pcd.assignment.event.loop.model.verticles.DirectoryExplorerVerticle;
-import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 import pcd.assignment.tasks.executors.model.AbstractModel;
 import pcd.assignment.tasks.executors.model.data.Intervals;
 import pcd.assignment.tasks.executors.model.data.IntervalsImpl;
@@ -20,7 +19,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ModelImpl extends AbstractModel implements ModelData {
     private final Vertx vertx = Vertx.vertx();
-    private final BlockingQueue<String> deployedVerticles = new LinkedBlockingQueue<>();
     private BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
     private Intervals intervals;
     private LongestFiles longestFiles;
@@ -38,10 +36,7 @@ public class ModelImpl extends AbstractModel implements ModelData {
 
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
         Promise<Void> promise = Promise.promise();
-        vertx.deployVerticle(
-                new DirectoryExplorerVerticle(directory.getAbsolutePath(), promise, deployedVerticles, this),
-                ar -> VerticleDeployUtils.evaluateDeployment(ar, this.deployedVerticles)
-        );
+        vertx.deployVerticle(new DirectoryExplorerVerticle(directory.getAbsolutePath(), promise, this));
         promise.future().onComplete(as -> {
             if (as.succeeded()) {
                 completableFuture.complete(null);
@@ -54,9 +49,7 @@ public class ModelImpl extends AbstractModel implements ModelData {
 
     @Override
     public void stop() {
-        for (String id : this.deployedVerticles) {
-            vertx.undeploy(id);
-        }
+        vertx.close();
     }
 
     @Override
