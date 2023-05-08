@@ -29,7 +29,9 @@ public class ControllerImpl implements Controller {
     @Override
     public void startConsole(File directory) throws OperationNotSupportedException {
         try {
+            long startTime = System.currentTimeMillis();
             this.consoleView.show(this.model.getReport(directory).get());
+            System.out.println("Execution completed in -> " + (System.currentTimeMillis() - startTime) + "ms");
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
