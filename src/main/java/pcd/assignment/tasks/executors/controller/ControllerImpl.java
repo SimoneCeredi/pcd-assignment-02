@@ -96,8 +96,12 @@ public class ControllerImpl implements Controller {
             @Override
             protected Void doInBackground() throws Exception {
                 while (!results.isEmpty() || !future.isDone()) {
-                    Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result = results.take();
-                    publish(result);
+                    Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result;
+                    while ((result = results.poll()) != null) {
+                        if (results.isEmpty()) {
+                            publish(result);
+                        }
+                    }
                 }
                 return null;
             }
