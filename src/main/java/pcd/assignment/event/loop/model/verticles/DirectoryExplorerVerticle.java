@@ -31,8 +31,9 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
                 List<String> result = res.result();
                 if (result.size() == 0) {
                     this.promise.complete();
+                } else {
+                    exploreDirectory(res.result());
                 }
-                exploreDirectory(res.result());
             } else {
                 System.err.println("Failed to read directory: " + res.cause().getMessage());
                 this.promise.fail(res.cause().getMessage());
