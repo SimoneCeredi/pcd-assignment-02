@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ModelImpl extends AbstractModel implements ModelData {
-    private final Vertx vertx = Vertx.vertx();
+    private Vertx vertx;
     private BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
     private Intervals intervals;
     private LongestFiles longestFiles;
@@ -30,6 +30,7 @@ public class ModelImpl extends AbstractModel implements ModelData {
 
     @Override
     public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
+        this.vertx = Vertx.vertx();
         this.intervals = new IntervalsImpl(this.getNi(), this.getMaxl());
         this.longestFiles = new LongestFilesImpl(this.getN());
         this.results = new LinkedBlockingQueue<>();
