@@ -25,18 +25,22 @@ public class LineCounterVerticle extends AbstractVerticle {
         vertx.fileSystem().readFile(this.file, res -> {
             if (res.succeeded()) {
                 FileInfo fileInfo = new FileInfo(new File(this.file), res.result().toString().split("\\r?\\n").length);
-                this.model.getIntervals().store(fileInfo);
-                this.model.getLongestFiles().put(fileInfo);
-                try {
-                    this.model.getResults().put(new Pair<>(this.model.getIntervals().getCopy(), this.model.getLongestFiles().getCopy()));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                saveFileInfo(fileInfo);
                 this.promise.complete();
             } else {
                 System.err.println("Failed to read the file " + res.cause().getMessage());
                 this.promise.fail(res.cause().getMessage());
             }
         });
+    }
+
+    private void saveFileInfo(FileInfo fileInfo) {
+        this.model.getIntervals().store(fileInfo);
+        this.model.getLongestFiles().put(fileInfo);
+        try {
+            this.model.getResults().put(new Pair<>(this.model.getIntervals().getCopy(), this.model.getLongestFiles().getCopy()));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

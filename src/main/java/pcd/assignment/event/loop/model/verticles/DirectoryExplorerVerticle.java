@@ -1,6 +1,7 @@
 package pcd.assignment.event.loop.model.verticles;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;
 import io.vertx.core.file.FileProps;
@@ -25,7 +26,6 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
-
         vertx.fileSystem().readDir(this.directory, res -> {
             if (res.succeeded()) {
                 List<String> result = res.result();
@@ -50,16 +50,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
             filePromises.add(filePromise);
             vertx.fileSystem().props(file, res -> {
                 if (res.succeeded()) {
-                    FileProps fileProps = res.result();
-                    if (fileProps.isDirectory()) {
-                        vertx.deployVerticle(new DirectoryExplorerVerticle(file, filePromise, model));
-                    } else {
-                        if (file.endsWith(".java")) {
-                            vertx.deployVerticle(new LineCounterVerticle(file, filePromise, model));
-                        } else {
-                            filePromise.complete();
-                        }
-                    }
+                    manageProps(file, filePromise, res);
                 } else {
                     System.err.println("Failed to get file properties: " + res.cause().getMessage());
                     filePromise.fail(res.cause().getMessage());
@@ -70,5 +61,20 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
                 .onComplete(as -> this.promise.complete());
     }
 
+    private void manageProps(String file, Promise<Void> filePromise, AsyncResult<FileProps> res) {
+        FileProps fileProps = res.result();
+        if (fileProps.isDirectory()) {
+            vertx.deployVerticle(new DirectoryExplorerVerticle(file, filePromise, model));
+        } else {
+            exploreFile(file, filePromise);
+        }
+    }
 
+    private void exploreFile(String file, Promise<Void> filePromise) {
+        if (file.endsWith(".java")) {
+            vertx.deployVerticle(new LineCounterVerticle(file, filePromise, model));
+        } else {
+            filePromise.complete();
+        }
+    }
 }
