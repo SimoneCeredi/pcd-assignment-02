@@ -14,4 +14,6 @@ public interface ModelData {
     Intervals getIntervals();
 
     LongestFiles getLongestFiles();
+
+    boolean shouldStop();
 }

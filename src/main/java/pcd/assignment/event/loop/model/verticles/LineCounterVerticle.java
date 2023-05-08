@@ -25,7 +25,9 @@ public class LineCounterVerticle extends AbstractVerticle {
         vertx.fileSystem().readFile(this.file, res -> {
             if (res.succeeded()) {
                 FileInfo fileInfo = new FileInfo(new File(this.file), res.result().toString().split("\\r?\\n").length);
-                saveFileInfo(fileInfo);
+                if (!this.model.shouldStop()) {
+                    saveFileInfo(fileInfo);
+                }
                 this.promise.complete();
             } else {
                 System.err.println("Failed to read the file " + res.cause().getMessage());
