@@ -3,9 +3,8 @@ package pcd.assignment.reactive.model;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import io.reactivex.rxjava3.subjects.Subject;
+import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
 import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.utilities.FilesUtils;
 import pcd.assignment.utilities.Pair;
 
 import java.io.File;
@@ -27,14 +26,15 @@ public class RecursiveExplorer implements ObservableOnSubscribe<FileInfo> {
 
         List<File> subdirectories = new ArrayList<>(List.of(this.directory));
 
-        Pair<List<File>, List<FileInfo>> content = DirectoryExplorer.exploreDirectory(this.directory);
+        Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(this.directory);
         emitFileInfos(content.getY());
 
         while (subdirectories.size() > 0) {
-            content = DirectoryExplorer.exploreDirectory(subdirectories.remove(0));
+            content = DirectoryExplorerUtils.exploreDirectory(subdirectories.remove(0));
             emitFileInfos(content.getY());
             subdirectories.addAll(content.getX());
         }
+        emitter.onComplete();
     }
 
     private void emitFileInfos(List<FileInfo> fileInfos) {

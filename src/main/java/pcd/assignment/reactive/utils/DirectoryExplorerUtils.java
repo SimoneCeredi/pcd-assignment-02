@@ -1,9 +1,6 @@
-package pcd.assignment.reactive.model;
+package pcd.assignment.reactive.utils;
 
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.ObservableEmitter;
-import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import io.reactivex.rxjava3.subjects.Subject;
+import pcd.assignment.reactive.model.SimpleRx;
 import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.utilities.FilesUtils;
 import pcd.assignment.utilities.Pair;
@@ -12,7 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DirectoryExplorer {
+public class DirectoryExplorerUtils {
 
     public static Pair<List<File>, List<FileInfo>> exploreDirectory(File directory) {
         List<File> subdirectories = new ArrayList<>();
@@ -24,8 +21,8 @@ public class DirectoryExplorer {
                     if (file.isDirectory()) {
                         subdirectories.add(file);
                     } else {
-                        if (file.getName().endsWith(".java")) {
-                            BasicRx.log(file.toString());
+                        if (file.getName().endsWith(".java") && file.canRead()) {
+                            SimpleRx.log(file.toString());
                             long fileLength = FilesUtils.countLines(file);
                             fileInfos.add(new FileInfo(file, fileLength));
                         }

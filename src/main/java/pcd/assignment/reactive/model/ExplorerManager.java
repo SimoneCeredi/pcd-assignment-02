@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.subjects.Subject;
+import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
 import pcd.assignment.tasks.executors.model.data.FileInfo;
 import pcd.assignment.utilities.Pair;
 
@@ -14,7 +15,7 @@ public class ExplorerManager implements ObservableOnSubscribe<File> {
 
     private String rootPath;
     private Subject<FileInfo> sourcesAnalyzer;
-    private static final int MAX_STREAMS = 2 * 4 + 1;
+    private static final int MAX_STREAMS = 20;
 
     public ExplorerManager(String rootPath, Subject<FileInfo> sourcesAnalyzer) {
         this.rootPath = rootPath;
@@ -25,7 +26,7 @@ public class ExplorerManager implements ObservableOnSubscribe<File> {
     public void subscribe(@NonNull ObservableEmitter emitter) {
 
         File rootDirectory = new File(this.rootPath);
-        Pair<List<File>, List<FileInfo>> content = DirectoryExplorer.exploreDirectory(rootDirectory);
+        Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(rootDirectory);
         onNextAnalyze(content.getY());
         List<File> subdirectories = content.getX();
 
@@ -36,7 +37,7 @@ public class ExplorerManager implements ObservableOnSubscribe<File> {
                 emitter.onNext(firstSubdirectory);
                 currentNStreams++;
             } else {
-                content = DirectoryExplorer.exploreDirectory(firstSubdirectory);
+                content = DirectoryExplorerUtils.exploreDirectory(firstSubdirectory);
                 onNextAnalyze(content.getY());
                 subdirectories.addAll(content.getX());
             }
