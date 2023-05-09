@@ -12,41 +12,29 @@ public class BasicRx {
 
     public static void main(String[] args) throws InterruptedException {
 
-        Observable<String> masterExplorer = Observable.create(emitter -> {
-            String file = "./build.gradle.kts";
-            log("Sending 100 times " + file);
-            for (int i = 0; i < 100; i++) {
-                emitter.onNext(file + i);
-            }
-            emitter.onComplete();
-        });
+        String rootPath = "./";
 
-        masterExplorer
+        Subject<FileInfo> sourcesAnalyzer = PublishSubject.create();
+        sourcesAnalyzer
+                .observeOn(Schedulers.single())
+                .subscribe(r -> {
+                    new FileInfo(new File("build.gradle.kts"), 10);
+                });
+
+        Observable<File> explorerManager = Observable.create(new ExplorerManager(rootPath, sourcesAnalyzer));
+
+        explorerManager
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(s -> {
 
-                    Observable<String> recursiveExplorer = Observable.create(emitter -> {
-                        for (int k = 0; k < 10; k++) {
-                            log("Where am I?");
-                            emitter.onNext(s + "_" + k);
-                        }
-                        emitter.onComplete();
-                    });
-
-                    Subject<String> sourcesAnalyzer = PublishSubject.create();
-                    sourcesAnalyzer.observeOn(Schedulers.single())
-                            .subscribeOn(Schedulers.computation())
-                            .subscribe(r -> {
-                                log("Inside sources analyzer");
-                                new FileInfo(new File("build.gradle.kts"), 10);
-                            });
+                    Observable<FileInfo> recursiveExplorer =
+                            Observable.create(new RecursiveExplorer(s));
 
                     recursiveExplorer
                             .observeOn(Schedulers.computation())
                             .subscribeOn(Schedulers.io())
                             .subscribe(r -> {
-                                log("Sending file to analyzer");
                                 sourcesAnalyzer.onNext(r);
                             });
                 });
@@ -54,7 +42,7 @@ public class BasicRx {
         Thread.sleep(2000);
     }
 
-    static private void log(String msg) {
+    public static void log(String msg) {
         System.out.println("[ " + Thread.currentThread().getName() + "  ] " + msg);
     }
 
