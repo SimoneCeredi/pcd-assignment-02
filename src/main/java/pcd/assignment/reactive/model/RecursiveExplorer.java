@@ -23,7 +23,7 @@ public class RecursiveExplorer implements ObservableOnSubscribe<FileInfo> {
     @Override
     public void subscribe(@NonNull ObservableEmitter<FileInfo> emitter) throws Throwable {
         this.emitter = emitter;
-
+        SimpleRx.log("Hello, I'm recursive and I start producing");
         List<File> subdirectories = new ArrayList<>(List.of(this.directory));
 
         Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(this.directory);

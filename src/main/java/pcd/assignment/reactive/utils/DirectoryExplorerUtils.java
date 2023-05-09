@@ -23,8 +23,11 @@ public class DirectoryExplorerUtils {
                     } else {
                         if (file.getName().endsWith(".java") && file.canRead()) {
                             SimpleRx.log(file.toString());
-                            long fileLength = FilesUtils.countLines(file);
-                            fileInfos.add(new FileInfo(file, fileLength));
+                            try {
+                                long fileLength = FilesUtils.countLines(file);
+                                fileInfos.add(new FileInfo(file, fileLength));
+                            } catch (Exception ignored) {}
+
                         }
                     }
                 }
