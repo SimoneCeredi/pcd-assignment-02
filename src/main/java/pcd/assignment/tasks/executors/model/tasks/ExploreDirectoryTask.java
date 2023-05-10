@@ -55,7 +55,8 @@ public class ExploreDirectoryTask extends RecursiveTask<Pair<Intervals, LongestF
         }
     }
 
-    private void exploreAndFork(List<RecursiveTask<Pair<Intervals, LongestFiles>>> directoryForks, List<RecursiveTask<FileInfo>> filesForks) {
+    private void exploreAndFork(List<RecursiveTask<Pair<Intervals, LongestFiles>>> directoryForks,
+                                List<RecursiveTask<FileInfo>> filesForks) {
         if (this.directory.isDirectory()) {
             File[] files = this.directory.listFiles();
             if (files != null) {

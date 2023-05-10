@@ -4,8 +4,9 @@ import pcd.assignment.tasks.executors.model.AbstractModel;
 import pcd.assignment.tasks.executors.model.data.Intervals;
 import pcd.assignment.tasks.executors.model.data.IntervalsImpl;
 import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
+import pcd.assignment.tasks.executors.model.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesImpl;
+import pcd.assignment.tasks.executors.model.data.monitor.BasicLongestFiles;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.utilities.Pair;
 import pcd.assignment.virtual.threads.model.tasks.factory.ExploreDirectoryTaskFactory;
@@ -33,7 +34,7 @@ public class ModelImpl extends AbstractModel {
                 this.factory.analyzeSourcesTask(
                         directory,
                         new IntervalsImpl(this.getNi(), this.getMaxl()),
-                        new LongestFilesImpl(this.getN()),
+                        new ConcurrentLongestFiles(this.getN()),
                         future,
                         this.threadList,
                         results

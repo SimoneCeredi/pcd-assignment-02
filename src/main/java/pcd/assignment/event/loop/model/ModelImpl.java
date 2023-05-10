@@ -7,8 +7,9 @@ import pcd.assignment.tasks.executors.model.AbstractModel;
 import pcd.assignment.tasks.executors.model.data.Intervals;
 import pcd.assignment.tasks.executors.model.data.IntervalsImpl;
 import pcd.assignment.tasks.executors.model.data.UnmodifiableIntervals;
+import pcd.assignment.tasks.executors.model.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFilesImpl;
+import pcd.assignment.tasks.executors.model.data.monitor.BasicLongestFiles;
 import pcd.assignment.tasks.executors.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.utilities.Pair;
 
@@ -32,7 +33,7 @@ public class ModelImpl extends AbstractModel implements ModelData {
     public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
         this.vertx = Vertx.vertx();
         this.intervals = new IntervalsImpl(this.getNi(), this.getMaxl());
-        this.longestFiles = new LongestFilesImpl(this.getN());
+        this.longestFiles = new ConcurrentLongestFiles(this.getN());
         this.results = new LinkedBlockingQueue<>();
 
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();

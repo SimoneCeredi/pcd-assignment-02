@@ -12,10 +12,10 @@ public class SimpleRx {
 
     public static void main(String[] args) throws InterruptedException {
 
-        String rootPath = "/home/luca/eclipse-workspace/";
+        String rootPath = "/home/luca/Desktop/tmp1/";
 
-        Subject<FileInfo> sourcesAnalyzer = PublishSubject.create();
-        sourcesAnalyzer
+        Subject<FileInfo> maxFileIntervalsComputer = PublishSubject.create();
+        maxFileIntervalsComputer
                 .observeOn(Schedulers.single())
                 .subscribe(r -> {
                     // Here I reactively compute the maximum file in length and intervals
@@ -23,12 +23,12 @@ public class SimpleRx {
                     // log("I should update maxfile and interval");
                 });
 
-        Observable<File> explorerManager = Observable.create(new ExplorerManager(rootPath, sourcesAnalyzer));
+        Observable<File> explorerManager = Observable.create(new ExplorerManager(rootPath, maxFileIntervalsComputer));
 
         explorerManager
                 // Since it reads files (I/O operations), run the observer using the io() scheduler
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
                 .subscribe(s -> {
 
                     // Recursively compute all FileInfo(s) from the directory specified by the manager
@@ -39,7 +39,7 @@ public class SimpleRx {
                     recursiveExplorer
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.computation())
-                            .subscribe(sourcesAnalyzer::onNext);
+                            .subscribe(maxFileIntervalsComputer::onNext);
                 });
 
         // This shouldn't be a problem if the GUI is up (?)

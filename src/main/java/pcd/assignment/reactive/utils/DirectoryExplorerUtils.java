@@ -22,7 +22,7 @@ public class DirectoryExplorerUtils {
                         subdirectories.add(file);
                     } else {
                         if (file.getName().endsWith(".java") && file.canRead()) {
-                            SimpleRx.log(file.toString());
+                            //SimpleRx.log(file.toString());
                             try {
                                 long fileLength = FilesUtils.countLines(file);
                                 fileInfos.add(new FileInfo(file, fileLength));

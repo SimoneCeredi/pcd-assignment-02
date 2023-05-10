@@ -34,7 +34,7 @@ public class ExplorerManager implements ObservableOnSubscribe<File> {
         int currentNStreams = 1;
         while (subdirectories.size() > 0) {
             File firstSubdirectory = subdirectories.remove(0);
-            if (currentNStreams < MAX_STREAMS) {
+            if (true){//currentNStreams < MAX_STREAMS) {
                 emitter.onNext(firstSubdirectory);
                 currentNStreams++;
             } else {
