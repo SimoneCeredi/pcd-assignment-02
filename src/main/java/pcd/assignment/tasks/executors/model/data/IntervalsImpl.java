@@ -73,12 +73,12 @@ public class IntervalsImpl implements Intervals {
     }
 
     @Override
-    public Map<Pair<Integer, Integer>, UnmodifiableCounter> get() {
+    public synchronized Map<Pair<Integer, Integer>, UnmodifiableCounter> get() {
         return Collections.unmodifiableMap(this.map);
     }
 
     @Override
-    public Intervals getCopy() {
+    public synchronized Intervals getCopy() {
         return new IntervalsImpl(this.intervals, this.maxLines, this.map);
     }
 }

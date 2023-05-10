@@ -23,6 +23,7 @@ public class ModelImpl extends AbstractModel implements ModelData {
     private BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
     private Intervals intervals;
     private LongestFiles longestFiles;
+    private volatile boolean stopped = false;
 
     public ModelImpl(int ni, int maxl, int n) {
         super(ni, maxl, n);
@@ -31,6 +32,7 @@ public class ModelImpl extends AbstractModel implements ModelData {
 
     @Override
     public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
+        this.stopped = false;
         this.vertx = Vertx.vertx();
         this.intervals = new IntervalsImpl(this.getNi(), this.getMaxl());
         this.longestFiles = new ConcurrentLongestFiles(this.getN());
@@ -45,13 +47,20 @@ public class ModelImpl extends AbstractModel implements ModelData {
             } else {
                 completableFuture.cancel(true);
             }
+            this.vertx.close();
         });
         return new Pair<>(results, completableFuture);
     }
 
     @Override
     public void stop() {
-        vertx.close();
+        this.stopped = true;
+        this.vertx.close();
+    }
+
+    @Override
+    public boolean shouldStop() {
+        return this.stopped;
     }
 
     @Override
