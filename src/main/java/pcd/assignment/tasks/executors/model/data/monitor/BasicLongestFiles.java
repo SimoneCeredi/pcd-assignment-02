@@ -15,12 +15,6 @@ public class BasicLongestFiles implements LongestFiles {
         this.queue = queue;
     }
 
-    /*public LongestFilesImpl(int filesToKeep) {
-        this.filesToKeep = filesToKeep;
-        this.queue = new PriorityQueue<>(Comparator.comparingLong(FileInfo::getLineCount));
-    }
-    */
-
     @Override
     public void put(FileInfo fileInfo) {
         if (this.queue.size() < this.filesToKeep ||
