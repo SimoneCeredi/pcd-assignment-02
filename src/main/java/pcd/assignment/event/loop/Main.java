@@ -1,11 +1,13 @@
 package pcd.assignment.event.loop;
 
-import pcd.assignment.event.loop.model.ModelImpl;
-import pcd.assignment.tasks.executors.controller.Controller;
-import pcd.assignment.tasks.executors.controller.ControllerImpl;
-import pcd.assignment.view.ConsoleViewImpl;
-import pcd.assignment.view.GuiViewImpl;
-import pcd.assignment.view.View;
+import pcd.assignment.common.controller.Controller;
+import pcd.assignment.common.controller.ControllerImpl;
+import pcd.assignment.common.model.Model;
+import pcd.assignment.common.model.ModelBuilderImpl;
+import pcd.assignment.common.view.ConsoleViewImpl;
+import pcd.assignment.common.view.GuiViewImpl;
+import pcd.assignment.common.view.View;
+import pcd.assignment.event.loop.source.analyzer.SourceAnalyzerImpl;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;
@@ -23,8 +25,14 @@ public class Main {
             maxl = Integer.parseInt(args[2]);
             n = Integer.parseInt(args[3]);
         }
+        Model model = new ModelBuilderImpl()
+                .setNi(ni)
+                .setMaxl(maxl)
+                .setN(n)
+                .setSourceAnalyzer(SourceAnalyzerImpl::new)
+                .build();
         View gui = new GuiViewImpl();
-        Controller controller = new ControllerImpl(new ModelImpl(ni, maxl, n), new ConsoleViewImpl(), gui);
+        Controller controller = new ControllerImpl(model, new ConsoleViewImpl(), gui);
         controller.startConsole(directory);
         gui.initialize(controller, directory);
     }

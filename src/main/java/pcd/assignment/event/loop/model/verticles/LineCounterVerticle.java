@@ -2,9 +2,9 @@ package pcd.assignment.event.loop.model.verticles;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import pcd.assignment.event.loop.model.ModelData;
-import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.utilities.Pair;
+import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.event.loop.source.analyzer.SourceAnalyzerData;
+import pcd.assignment.tasks.executors.data.FileInfo;
 
 import java.io.File;
 
@@ -12,9 +12,9 @@ public class LineCounterVerticle extends AbstractVerticle {
 
     private final String file;
     private final Promise<Void> promise;
-    private final ModelData model;
+    private final SourceAnalyzerData model;
 
-    public LineCounterVerticle(String file, Promise<Void> promise, ModelData model) {
+    public LineCounterVerticle(String file, Promise<Void> promise, SourceAnalyzerData model) {
         this.file = file;
         this.promise = promise;
         this.model = model;
