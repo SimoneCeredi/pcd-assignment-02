@@ -9,18 +9,13 @@ import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 
-// TODO: will become the only model impl.
-// TODO: A builder used to create the impl to specify which Source analyzer to setUp
+
 public class ModelImpl implements Model {
+    private final BaseModel baseModel;
     private SourceAnalyzer sourceAnalyzer;
-    private int ni;
-    private int maxl;
-    private int n;
 
     protected ModelImpl(int ni, int maxl, int n) {
-        this.ni = ni;
-        this.maxl = maxl;
-        this.n = n;
+        this.baseModel = new BaseModelImpl(ni, maxl, n);
     }
 
     @Override
@@ -30,32 +25,32 @@ public class ModelImpl implements Model {
 
     @Override
     public int getNi() {
-        return ni;
+        return this.baseModel.getNi();
     }
 
     @Override
     public void setNi(int ni) {
-        this.ni = ni;
+        this.baseModel.setNi(ni);
     }
 
     @Override
     public int getMaxl() {
-        return maxl;
+        return this.baseModel.getMaxl();
     }
 
     @Override
     public void setMaxl(int maxl) {
-        this.maxl = maxl;
+        this.baseModel.setMaxl(maxl);
     }
 
     @Override
     public int getN() {
-        return n;
+        return this.baseModel.getN();
     }
 
     @Override
     public void setN(int n) {
-        this.n = n;
+        this.baseModel.setN(n);
     }
 
     @Override
