@@ -8,9 +8,11 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 public class  ConcurrentLongestFiles extends BaseLongestFiles {
 
+    private static final int DEFAULT_INITIAL_CAPACITY = 5_000;
+
     public ConcurrentLongestFiles(int filesToKeep) {
         super(filesToKeep,
-                new PriorityBlockingQueue<>(filesToKeep + 1, Comparator.comparingLong(FileInfo::getLineCount)));
+                new PriorityBlockingQueue<>(DEFAULT_INITIAL_CAPACITY, Comparator.comparingLong(FileInfo::getLineCount)));
     }
 
     public ConcurrentLongestFiles(int filesToKeep, Queue<FileInfo> queue) {
