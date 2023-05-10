@@ -2,15 +2,18 @@ package pcd.assignment.tasks.executors.model.data.monitor;
 
 import pcd.assignment.tasks.executors.model.data.FileInfo;
 
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.PriorityBlockingQueue;
 
-public class BasicLongestFiles implements LongestFiles {
-    private final int filesToKeep;
-    private final Queue<FileInfo> queue;
+public abstract class BaseLongestFiles implements LongestFiles {
 
-    public BasicLongestFiles(int filesToKeep, Queue<FileInfo> queue) {
+    protected final int filesToKeep;
+    protected final Queue<FileInfo> queue;
+
+    public BaseLongestFiles(int filesToKeep, Queue<FileInfo> queue) {
         this.filesToKeep = filesToKeep;
         this.queue = queue;
     }
@@ -37,12 +40,8 @@ public class BasicLongestFiles implements LongestFiles {
     }
 
     @Override
-    public synchronized Queue<FileInfo> get() {
+    public Queue<FileInfo> get() {
         return this.queue;
     }
 
-    @Override
-    public synchronized LongestFiles getCopy() {
-        return new BasicLongestFiles(this.filesToKeep, new PriorityQueue<>(this.queue));
-    }
 }
