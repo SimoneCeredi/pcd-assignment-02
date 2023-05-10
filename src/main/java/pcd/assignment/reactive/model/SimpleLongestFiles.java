@@ -1,12 +1,10 @@
 package pcd.assignment.reactive.model;
 
-import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.tasks.executors.model.data.monitor.BaseLongestFiles;
-import pcd.assignment.tasks.executors.model.data.monitor.ConcurrentLongestFiles;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
+import pcd.assignment.tasks.executors.data.FileInfo;
+import pcd.assignment.tasks.executors.data.monitor.BaseLongestFiles;
+import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
 
 import java.util.*;
-import java.util.concurrent.PriorityBlockingQueue;
 
 public class SimpleLongestFiles extends BaseLongestFiles {
 

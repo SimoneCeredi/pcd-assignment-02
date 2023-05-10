@@ -4,9 +4,10 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.subjects.Subject;
+import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
-import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.utilities.Pair;
+import pcd.assignment.tasks.executors.data.FileInfo;
+
 
 import java.io.File;
 import java.util.List;

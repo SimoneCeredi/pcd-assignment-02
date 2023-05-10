@@ -5,7 +5,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;
 import io.vertx.core.file.FileProps;
-import pcd.assignment.event.loop.model.ModelData;
+import pcd.assignment.event.loop.source.analyzer.SourceAnalyzerData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +16,9 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     private final String directory;
     private final Promise<Void> promise;
-    private final ModelData model;
+    private final SourceAnalyzerData model;
 
-    public DirectoryExplorerVerticle(String directory, Promise<Void> promise, ModelData model) {
+    public DirectoryExplorerVerticle(String directory, Promise<Void> promise, SourceAnalyzerData model) {
         this.directory = directory;
         this.promise = promise;
         this.model = model;

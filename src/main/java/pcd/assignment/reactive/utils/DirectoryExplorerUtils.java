@@ -1,13 +1,13 @@
 package pcd.assignment.reactive.utils;
 
-import pcd.assignment.reactive.model.SimpleRx;
-import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.utilities.FilesUtils;
-import pcd.assignment.utilities.Pair;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import pcd.assignment.common.utilities.FilesUtils;
+import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.tasks.executors.data.FileInfo;
+
 
 public class DirectoryExplorerUtils {
 

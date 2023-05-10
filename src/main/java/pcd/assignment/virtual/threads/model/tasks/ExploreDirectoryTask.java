@@ -1,10 +1,10 @@
 package pcd.assignment.virtual.threads.model.tasks;
 
-import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.tasks.executors.model.data.Intervals;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
-import pcd.assignment.tasks.executors.model.tasks.strategy.MemorizeStrategy;
-import pcd.assignment.utilities.Pair;
+import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.tasks.executors.data.FileInfo;
+import pcd.assignment.tasks.executors.data.Intervals;
+import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
+import pcd.assignment.tasks.executors.tasks.strategy.MemorizeStrategy;
 
 import java.io.File;
 import java.util.LinkedList;

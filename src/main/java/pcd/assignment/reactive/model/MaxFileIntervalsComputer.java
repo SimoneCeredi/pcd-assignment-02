@@ -1,9 +1,10 @@
 package pcd.assignment.reactive.model;
 
 import io.reactivex.rxjava3.functions.Consumer;
-import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.tasks.executors.model.data.Intervals;
-import pcd.assignment.tasks.executors.model.data.monitor.LongestFiles;
+import pcd.assignment.tasks.executors.data.FileInfo;
+import pcd.assignment.tasks.executors.data.Intervals;
+import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
+
 
 public class MaxFileIntervalsComputer implements Consumer<FileInfo> {
 

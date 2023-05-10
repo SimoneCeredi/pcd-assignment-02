@@ -1,7 +1,7 @@
 package pcd.assignment.virtual.threads.model.tasks;
 
-import pcd.assignment.tasks.executors.model.data.FileInfo;
-import pcd.assignment.utilities.FilesUtils;
+import pcd.assignment.common.utilities.FilesUtils;
+import pcd.assignment.tasks.executors.data.FileInfo;
 
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
