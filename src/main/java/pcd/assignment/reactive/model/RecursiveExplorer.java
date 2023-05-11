@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
 import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
 import pcd.assignment.common.model.data.FileInfo;
 
@@ -24,7 +25,7 @@ public class RecursiveExplorer implements ObservableOnSubscribe<FileInfo> {
     @Override
     public void subscribe(@NonNull ObservableEmitter<FileInfo> emitter) throws Throwable {
         this.emitter = emitter;
-        SimpleRx.log("Hello, I'm recursive and I start producing");
+        //SourceAnalyzerImpl.log("Hello, I'm recursive and I start producing");
         List<File> subdirectories = new ArrayList<>(List.of(this.directory));
 
         Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(this.directory);

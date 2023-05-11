@@ -6,7 +6,7 @@ import java.util.List;
 
 import pcd.assignment.common.utilities.FilesUtils;
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.reactive.model.SimpleRx;
+import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
 import pcd.assignment.common.model.data.FileInfo;
 
 
@@ -26,7 +26,7 @@ public class DirectoryExplorerUtils {
                             long fileLength =
                                     FilesUtils.countLines(file);
                             fileInfos.add(new FileInfo(file, fileLength));
-                            SimpleRx.log(file + ": " + fileLength);
+                            //SourceAnalyzerImpl.log(file + ": " + fileLength);
                         }
                     }
                 }

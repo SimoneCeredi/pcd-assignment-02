@@ -5,6 +5,7 @@ import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.subjects.Subject;
 import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
 import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
 import pcd.assignment.common.model.data.FileInfo;
 
@@ -14,21 +15,19 @@ import java.util.List;
 
 public class ExplorerManager implements ObservableOnSubscribe<File> {
 
-    private String rootPath;
+    private File rootDirectory;
     private Subject<FileInfo> sourcesAnalyzer;
     private static final int MAX_STREAMS = 20;
 
-    public ExplorerManager(String rootPath, Subject<FileInfo> sourcesAnalyzer) {
-        this.rootPath = rootPath;
+    public ExplorerManager(File rootDirectory, Subject<FileInfo> sourcesAnalyzer) {
+        this.rootDirectory = rootDirectory;
         this.sourcesAnalyzer = sourcesAnalyzer;
     }
 
     @Override
     public void subscribe(@NonNull ObservableEmitter emitter) {
-        SimpleRx.log("Hello, I'm the manager");
-
-        File rootDirectory = new File(this.rootPath);
-        Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(rootDirectory);
+        //SourceAnalyzerImpl.log("Hello, I'm the manager");
+        Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(this.rootDirectory);
         onNextAnalyze(content.getY());
         List<File> subdirectories = content.getX();
 
