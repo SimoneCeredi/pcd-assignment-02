@@ -38,4 +38,9 @@ public class ConsoleViewImpl implements View {
         System.out.println("Total files -> " + result.getX().get().values().stream().mapToInt(UnmodifiableCounter::getValue).sum());
 
     }
+
+    @Override
+    public void setExecutionStatus(ExecutionStatus status) {
+
+    }
 }

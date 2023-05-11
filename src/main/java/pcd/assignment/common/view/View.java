@@ -11,6 +11,7 @@ import java.io.File;
 public interface View {
     void initialize(Controller controller, File directory);
 
-
     void show(Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result) throws OperationNotSupportedException;
+
+    void setExecutionStatus(ExecutionStatus status);
 }

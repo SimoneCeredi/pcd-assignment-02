@@ -2,6 +2,7 @@ package pcd.assignment.common.controller;
 
 import pcd.assignment.common.model.Model;
 import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.common.view.ExecutionStatus;
 import pcd.assignment.common.view.View;
 import pcd.assignment.tasks.executors.data.UnmodifiableIntervals;
 import pcd.assignment.tasks.executors.data.monitor.UnmodifiableLongestFiles;
@@ -39,12 +40,13 @@ public class ControllerImpl implements Controller {
 
     @Override
     public void startGui(File directory) {
+        this.guiView.setExecutionStatus(ExecutionStatus.STARTED);
         var ret = this.model.analyzeSources(directory);
         var results = ret.getX();
         var future = ret.getY();
 
         var worker = getSwingWorker(results, future);
-
+        future.whenComplete((unused, throwable) -> this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED));
         worker.execute();
     }
 
@@ -85,6 +87,7 @@ public class ControllerImpl implements Controller {
     @Override
     public void stop() {
         this.model.stop();
+        this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED);
     }
 
     private SwingWorker<Void, Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getSwingWorker(

@@ -69,6 +69,20 @@ public class GuiViewImpl extends JFrame implements View {
         });
     }
 
+    @Override
+    public void setExecutionStatus(ExecutionStatus status) {
+        switch (status) {
+            case STARTED -> {
+                this.startButton.setEnabled(false);
+                this.stopButton.setEnabled(true);
+            }
+            case COMPLETED -> {
+                this.startButton.setEnabled(true);
+                this.stopButton.setEnabled(false);
+            }
+        }
+    }
+
     private void generateGui() {
         // Set the title of the JFrame
         setTitle("My Java Swing View");
@@ -191,6 +205,10 @@ public class GuiViewImpl extends JFrame implements View {
 
         // Add the list panel below the input boxes
         add(listPanel, BorderLayout.SOUTH);
+
+        // Sets start and stop button beginning status
+        this.startButton.setEnabled(true);
+        this.stopButton.setEnabled(false);
 
         // Set the JFrame to be visible
         setVisible(true);
