@@ -1,9 +1,9 @@
-package pcd.assignment.tasks.executors.data.monitor;
+package pcd.assignment.common.model.data.monitor;
 
 import java.util.Comparator;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
-import pcd.assignment.tasks.executors.data.FileInfo;
+import pcd.assignment.common.model.data.FileInfo;
 
 public class  ConcurrentLongestFiles extends BaseLongestFiles {
 

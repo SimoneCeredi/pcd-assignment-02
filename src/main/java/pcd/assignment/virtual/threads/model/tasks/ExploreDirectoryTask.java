@@ -1,9 +1,9 @@
 package pcd.assignment.virtual.threads.model.tasks;
 
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.tasks.executors.data.FileInfo;
-import pcd.assignment.tasks.executors.data.Intervals;
-import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
+import pcd.assignment.common.model.data.FileInfo;
+import pcd.assignment.common.model.data.Intervals;
+import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.tasks.executors.tasks.strategy.MemorizeStrategy;
 
 import java.io.File;

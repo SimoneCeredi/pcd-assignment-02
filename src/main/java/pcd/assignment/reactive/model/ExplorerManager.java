@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.subjects.Subject;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
-import pcd.assignment.tasks.executors.data.FileInfo;
+import pcd.assignment.common.model.data.FileInfo;
 
 
 import java.io.File;

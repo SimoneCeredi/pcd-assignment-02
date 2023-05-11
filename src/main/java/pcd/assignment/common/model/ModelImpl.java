@@ -2,8 +2,8 @@ package pcd.assignment.common.model;
 
 import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.tasks.executors.data.UnmodifiableIntervals;
-import pcd.assignment.tasks.executors.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;

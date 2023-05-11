@@ -4,7 +4,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.event.loop.source.analyzer.SourceAnalyzerData;
-import pcd.assignment.tasks.executors.data.FileInfo;
+import pcd.assignment.common.model.data.FileInfo;
 
 import java.io.File;
 

@@ -1,7 +1,7 @@
-package pcd.assignment.tasks.executors.data;
+package pcd.assignment.common.model.data;
 
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.tasks.executors.data.monitor.UnmodifiableCounter;
+import pcd.assignment.common.model.data.monitor.UnmodifiableCounter;
 
 import java.util.Map;
 

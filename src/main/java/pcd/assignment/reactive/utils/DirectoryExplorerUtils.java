@@ -1,16 +1,13 @@
 package pcd.assignment.reactive.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import pcd.assignment.common.utilities.FilesUtils;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.reactive.model.SimpleRx;
-import pcd.assignment.tasks.executors.data.FileInfo;
+import pcd.assignment.common.model.data.FileInfo;
 
 
 public class DirectoryExplorerUtils {

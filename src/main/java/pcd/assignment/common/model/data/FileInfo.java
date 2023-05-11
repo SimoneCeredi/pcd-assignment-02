@@ -1,4 +1,4 @@
-package pcd.assignment.tasks.executors.data;
+package pcd.assignment.common.model.data;
 
 import java.io.File;
 

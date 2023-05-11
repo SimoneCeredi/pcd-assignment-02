@@ -3,11 +3,10 @@ package pcd.assignment.tasks.executors.source.analyzer;
 import pcd.assignment.common.model.Model;
 import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.tasks.executors.data.BaseIntervals;
-import pcd.assignment.tasks.executors.data.ConcurrentIntervals;
-import pcd.assignment.tasks.executors.data.UnmodifiableIntervals;
-import pcd.assignment.tasks.executors.data.monitor.UnmodifiableLongestFiles;
-import pcd.assignment.tasks.executors.data.monitor.ConcurrentLongestFiles;
+import pcd.assignment.common.model.data.ConcurrentIntervals;
+import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.model.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.tasks.executors.tasks.factory.ExploreDirectoryTaskFactory;
 
 import java.io.File;

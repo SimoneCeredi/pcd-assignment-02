@@ -2,9 +2,9 @@ package pcd.assignment.common.view;
 
 import pcd.assignment.common.controller.Controller;
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.tasks.executors.data.FileInfo;
-import pcd.assignment.tasks.executors.data.UnmodifiableIntervals;
-import pcd.assignment.tasks.executors.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.model.data.FileInfo;
+import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;

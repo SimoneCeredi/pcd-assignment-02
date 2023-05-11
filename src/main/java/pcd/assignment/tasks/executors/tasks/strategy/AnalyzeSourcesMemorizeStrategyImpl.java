@@ -1,10 +1,10 @@
 package pcd.assignment.tasks.executors.tasks.strategy;
 
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.tasks.executors.data.Intervals;
-import pcd.assignment.tasks.executors.data.UnmodifiableIntervals;
-import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
-import pcd.assignment.tasks.executors.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.model.data.Intervals;
+import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.monitor.LongestFiles;
+import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 
 import java.util.concurrent.BlockingQueue;
 

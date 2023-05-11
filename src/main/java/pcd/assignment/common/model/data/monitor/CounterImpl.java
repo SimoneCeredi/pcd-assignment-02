@@ -1,4 +1,4 @@
-package pcd.assignment.tasks.executors.data.monitor;
+package pcd.assignment.common.model.data.monitor;
 
 public class CounterImpl implements Counter {
     private int value;
