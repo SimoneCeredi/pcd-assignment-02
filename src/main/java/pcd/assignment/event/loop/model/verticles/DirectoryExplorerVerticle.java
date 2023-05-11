@@ -5,7 +5,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;
 import io.vertx.core.file.FileProps;
-import pcd.assignment.event.loop.source.analyzer.SourceAnalyzerData;
+import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
 
 import java.util.ArrayList;
 import java.util.List;
