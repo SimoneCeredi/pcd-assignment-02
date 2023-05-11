@@ -15,7 +15,7 @@ import java.io.File;
 public class Main {
 
     public static void main(String[] args) throws OperationNotSupportedException {
-        File directory = new File("./files");
+        File directory = new File("./benchmarks/fs");
         int ni = 5;
         int maxl = 1000;
         int n = 10;

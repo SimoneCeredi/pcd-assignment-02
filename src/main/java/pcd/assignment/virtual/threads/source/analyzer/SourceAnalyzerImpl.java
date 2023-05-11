@@ -8,8 +8,8 @@ import pcd.assignment.tasks.executors.data.Intervals;
 import pcd.assignment.tasks.executors.data.BaseIntervals;
 import pcd.assignment.tasks.executors.data.UnmodifiableIntervals;
 import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
-import pcd.assignment.tasks.executors.data.monitor.LongestFilesImpl;
 import pcd.assignment.tasks.executors.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.tasks.executors.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.virtual.threads.model.tasks.factory.ExploreDirectoryTaskFactory;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                 this.factory.analyzeSourcesTask(
                         directory,
                         new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl()),
-                        new LongestFilesImpl(this.model.getN()),
+                        new ConcurrentLongestFiles(this.model.getN()),
                         future,
                         this.threadList,
                         results

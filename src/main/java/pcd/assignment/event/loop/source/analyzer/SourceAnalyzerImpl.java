@@ -11,9 +11,8 @@ import pcd.assignment.tasks.executors.data.Intervals;
 import pcd.assignment.tasks.executors.data.BaseIntervals;
 import pcd.assignment.tasks.executors.data.UnmodifiableIntervals;
 import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
-import pcd.assignment.tasks.executors.data.monitor.LongestFilesImpl;
 import pcd.assignment.tasks.executors.data.monitor.UnmodifiableLongestFiles;
-
+import pcd.assignment.tasks.executors.data.monitor.ConcurrentLongestFiles;
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +36,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
         this.stopped = false;
         this.vertx = Vertx.vertx();
         this.intervals = new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl());
-        this.longestFiles = new LongestFilesImpl(this.model.getN());
+        this.longestFiles = new ConcurrentLongestFiles(this.model.getN());
         this.results = new LinkedBlockingQueue<>();
 
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
