@@ -1,14 +1,15 @@
 package pcd.assignment.virtual.threads.source.analyzer;
 
 import pcd.assignment.common.model.Model;
-import pcd.assignment.common.source.analyzer.SourceAnalyzer;
-import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.common.model.data.ConcurrentIntervals;
 import pcd.assignment.common.model.data.Intervals;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
-import pcd.assignment.common.model.data.monitor.ConcurrentLongestFiles;
+import pcd.assignment.common.source.analyzer.SourceAnalyzer;
+import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
+import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.virtual.threads.model.tasks.factory.ExploreDirectoryTaskFactory;
 
 import java.io.File;
@@ -17,11 +18,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class SourceAnalyzerImpl implements SourceAnalyzer {
+public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
 
     private final ExploreDirectoryTaskFactory factory = new ExploreDirectoryTaskFactory();
-    private final BlockingQueue<Thread> threadList = new LinkedBlockingQueue<>();
     private final Model model;
+    private BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
+    private Intervals intervals;
+    private LongestFiles longestFiles;
+    private volatile boolean stopped = false;
 
     public SourceAnalyzerImpl(Model model) {
         this.model = model;
@@ -29,19 +33,19 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
 
     @Override
     public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
-        BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results = new LinkedBlockingQueue<>();
+        this.stopped = false;
+        this.results = new LinkedBlockingQueue<>();
+        this.intervals = new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl());
+        this.longestFiles = new ConcurrentLongestFiles(this.model.getN());
         CompletableFuture<Pair<Intervals, LongestFiles>> future = new CompletableFuture<>();
         CompletableFuture<Void> ret = new CompletableFuture<>();
-        this.threadList.add(Thread.ofVirtual().start(
+        Thread.ofVirtual().start(
                 this.factory.analyzeSourcesTask(
                         directory,
-                        new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl()),
-                        new ConcurrentLongestFiles(this.model.getN()),
                         future,
-                        this.threadList,
-                        results
+                        this
                 )
-        ));
+        );
         ret.completeAsync(() -> {
             try {
                 future.get();
@@ -55,13 +59,26 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
 
     @Override
     public void stop() {
-        while (!this.threadList.isEmpty()) {
-            try {
-                Thread t = this.threadList.take();
-                t.interrupt();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        this.stopped = true;
+    }
+
+    @Override
+    public BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getResults() {
+        return this.results;
+    }
+
+    @Override
+    public Intervals getIntervals() {
+        return this.intervals;
+    }
+
+    @Override
+    public LongestFiles getLongestFiles() {
+        return this.longestFiles;
+    }
+
+    @Override
+    public boolean shouldStop() {
+        return this.stopped;
     }
 }
