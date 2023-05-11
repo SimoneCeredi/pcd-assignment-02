@@ -26,14 +26,10 @@ public class DirectoryExplorerUtils {
                         subdirectories.add(file);
                     } else {
                         if (file.getName().endsWith(".java") && file.canRead()) {
-                            try {
-                                long fileLength =
-                                        new BufferedReader(new FileReader(file.getAbsolutePath())).lines().count();
-                                fileInfos.add(new FileInfo(file, fileLength));
-                                SimpleRx.log(file + ": " + fileLength);
-                            } catch (FileNotFoundException e) {
-                                throw new RuntimeException(e);
-                            }
+                            long fileLength =
+                                    FilesUtils.countLines(file);
+                            fileInfos.add(new FileInfo(file, fileLength));
+                            SimpleRx.log(file + ": " + fileLength);
                         }
                     }
                 }
