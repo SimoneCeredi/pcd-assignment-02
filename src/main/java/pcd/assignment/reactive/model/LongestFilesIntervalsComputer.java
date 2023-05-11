@@ -6,12 +6,12 @@ import pcd.assignment.tasks.executors.data.Intervals;
 import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
 
 
-public class MaxFileIntervalsComputer implements Consumer<FileInfo> {
+public class LongestFilesIntervalsComputer implements Consumer<FileInfo> {
 
     private Intervals intervals;
     private LongestFiles longestFiles;
 
-    public MaxFileIntervalsComputer(Intervals intervals, LongestFiles longestFiles) {
+    public LongestFilesIntervalsComputer(Intervals intervals, LongestFiles longestFiles) {
         this.intervals = intervals;
         this.longestFiles = longestFiles;
     }
@@ -21,4 +21,5 @@ public class MaxFileIntervalsComputer implements Consumer<FileInfo> {
         this.intervals.store(fileInfo);
         this.longestFiles.put(fileInfo);
     }
+
 }
