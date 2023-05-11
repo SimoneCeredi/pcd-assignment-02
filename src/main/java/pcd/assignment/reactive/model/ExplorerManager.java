@@ -28,7 +28,7 @@ public class ExplorerManager implements ObservableOnSubscribe<File> {
         SimpleRx.log("Hello, I'm the manager");
 
         File rootDirectory = new File(this.rootPath);
-         Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(rootDirectory);
+        Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(rootDirectory);
         onNextAnalyze(content.getY());
         List<File> subdirectories = content.getX();
 
