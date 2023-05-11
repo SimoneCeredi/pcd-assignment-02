@@ -6,8 +6,9 @@ import pcd.assignment.common.model.Model;
 import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.event.loop.model.verticles.DirectoryExplorerVerticle;
+import pcd.assignment.tasks.executors.data.ConcurrentIntervals;
 import pcd.assignment.tasks.executors.data.Intervals;
-import pcd.assignment.tasks.executors.data.IntervalsImpl;
+import pcd.assignment.tasks.executors.data.BaseIntervals;
 import pcd.assignment.tasks.executors.data.UnmodifiableIntervals;
 import pcd.assignment.tasks.executors.data.monitor.LongestFiles;
 import pcd.assignment.tasks.executors.data.monitor.LongestFilesImpl;
@@ -35,7 +36,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
         this.stopped = false;
         this.vertx = Vertx.vertx();
-        this.intervals = new IntervalsImpl(this.model.getNi(), this.model.getMaxl());
+        this.intervals = new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl());
         this.longestFiles = new LongestFilesImpl(this.model.getN());
         this.results = new LinkedBlockingQueue<>();
 

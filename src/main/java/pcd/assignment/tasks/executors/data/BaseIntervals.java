@@ -9,14 +9,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class IntervalsImpl implements Intervals {
-    private final Map<Pair<Integer, Integer>, Counter> map;
+public abstract class BaseIntervals implements Intervals {
+    protected final Map<Pair<Integer, Integer>, Counter> map;
 
-    private final int intervals;
+    protected final int intervals;
 
-    private final int maxLines;
+    protected final int maxLines;
 
-    public IntervalsImpl(int intervals, int maxLines, Map<Pair<Integer, Integer>, Counter> map) {
+    public BaseIntervals(int intervals, int maxLines, Map<Pair<Integer, Integer>, Counter> map) {
         Map<Pair<Integer, Integer>, Counter> mapCopy = new HashMap<>();
         map.forEach((key, value) -> mapCopy.put(key, new CounterImpl(value.getValue())));
         this.map = mapCopy;
@@ -25,7 +25,7 @@ public class IntervalsImpl implements Intervals {
 
     }
 
-    public IntervalsImpl(int intervals, int maxLines) {
+    public BaseIntervals(int intervals, int maxLines) {
         this.map = new HashMap<>();
         this.intervals = intervals;
         this.maxLines = maxLines;
@@ -72,13 +72,4 @@ public class IntervalsImpl implements Intervals {
         return maxLines;
     }
 
-    @Override
-    public synchronized Map<Pair<Integer, Integer>, UnmodifiableCounter> get() {
-        return Collections.unmodifiableMap(this.map);
-    }
-
-    @Override
-    public synchronized Intervals getCopy() {
-        return new IntervalsImpl(this.intervals, this.maxLines, this.map);
-    }
 }
