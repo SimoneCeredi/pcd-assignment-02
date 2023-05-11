@@ -74,7 +74,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                 });
 
         functionsCalc
-                .observeOn(Schedulers.single())
+                .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.single())
                 .doOnComplete(() -> {
                     //System.out.println("End!");
