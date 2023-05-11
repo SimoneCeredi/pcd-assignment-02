@@ -13,7 +13,7 @@ public class SimpleRx {
 
     public static void main(String[] args) throws InterruptedException {
 
-        String rootPath = "/home/luca/Desktop/tmp1/";
+        String rootPath = "./benchmarks/fs/";
 
         Subject<FileInfo> maxFileIntervalsComputer = PublishSubject.create();
         maxFileIntervalsComputer
@@ -44,7 +44,7 @@ public class SimpleRx {
                 });
 
         // This shouldn't be a problem if the GUI is up (?)
-        Thread.sleep(10000);
+        Thread.sleep(30_000);
     }
 
     public static void log(String msg) {

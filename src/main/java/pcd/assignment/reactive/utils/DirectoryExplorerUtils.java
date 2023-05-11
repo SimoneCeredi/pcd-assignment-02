@@ -1,11 +1,15 @@
 package pcd.assignment.reactive.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import pcd.assignment.common.utilities.FilesUtils;
 import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.reactive.model.SimpleRx;
 import pcd.assignment.tasks.executors.data.FileInfo;
 
 
@@ -22,12 +26,14 @@ public class DirectoryExplorerUtils {
                         subdirectories.add(file);
                     } else {
                         if (file.getName().endsWith(".java") && file.canRead()) {
-                            //SimpleRx.log(file.toString());
                             try {
-                                long fileLength = FilesUtils.countLines(file);
+                                long fileLength =
+                                        new BufferedReader(new FileReader(file.getAbsolutePath())).lines().count();
                                 fileInfos.add(new FileInfo(file, fileLength));
-                            } catch (Exception ignored) {}
-
+                                SimpleRx.log(file + ": " + fileLength);
+                            } catch (FileNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }
