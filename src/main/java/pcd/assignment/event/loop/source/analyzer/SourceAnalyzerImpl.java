@@ -13,6 +13,7 @@ import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.event.loop.model.verticles.DirectoryExplorerVerticle;
+import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
@@ -39,10 +40,9 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
         this.intervals = new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl());
         this.longestFiles = new ConcurrentLongestFiles(this.model.getN());
         this.results = new LinkedBlockingQueue<>();
-
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
         Promise<Void> promise = Promise.promise();
-        vertx.deployVerticle(new DirectoryExplorerVerticle(directory.getAbsolutePath(), promise, this));
+        vertx.deployVerticle(new DirectoryExplorerVerticle(directory.getAbsolutePath(), promise, this), VerticleDeployUtils.getDeploymentOptions());
         promise.future().onComplete(as -> {
             if (as.succeeded()) {
                 completableFuture.complete(null);

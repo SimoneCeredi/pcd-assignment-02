@@ -5,6 +5,7 @@ import io.vertx.core.Promise;
 import pcd.assignment.common.model.data.FileInfo;
 import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
 import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
 import java.io.File;
 
@@ -22,6 +23,8 @@ public class LineCounterVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
+        // TODO: delete log, it's just for demonstration
+        VerticleDeployUtils.log("reading file len of " + this.file);
         vertx.fileSystem().readFile(this.file, res -> {
             if (res.succeeded()) {
                 FileInfo fileInfo = new FileInfo(new File(this.file), res.result().toString().split("\\r?\\n").length);
