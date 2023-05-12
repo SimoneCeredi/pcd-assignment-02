@@ -17,6 +17,7 @@ import pcd.assignment.reactive.model.data.SimpleIntervals;
 import pcd.assignment.reactive.model.data.SimpleLongestFiles;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -48,17 +49,18 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                         new SimpleLongestFiles(model.getN()),
                         results);
 
-        Observable<File> explorerManager = Observable.create(new ExplorerManager(directory, functionsCalc));
+        Observable<Pair<File, List<File>>> explorerManager =
+                Observable.create(new ExplorerManager(directory));
         AtomicInteger counter = new AtomicInteger();
         explorerManager
                 // Since it reads files (I/O operations), run the observer using the io() scheduler
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
-                .subscribe(s -> {
+                .subscribe(p -> {
 
                     // Recursively compute all FileInfo(s) from the directory specified by the manager
                     Observable<FileInfo> recursiveExplorer =
-                            Observable.create(new RecursiveExplorer(s));
+                            Observable.create(new RecursiveExplorer(p.getX(), p.getY()));
                     counter.getAndIncrement();
                     // Same as explorer manager
                     recursiveExplorer

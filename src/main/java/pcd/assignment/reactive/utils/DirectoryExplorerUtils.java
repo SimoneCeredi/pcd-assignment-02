@@ -2,6 +2,7 @@ package pcd.assignment.reactive.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import pcd.assignment.common.utilities.FilesUtils;
@@ -33,6 +34,41 @@ public class DirectoryExplorerUtils {
             }
         }
         return new Pair<>(subdirectories, fileInfos);
+    }
+
+    public static List<FileInfo> listFiles(File directory) {
+        List<FileInfo> fileInfos = new ArrayList<>();
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.isDirectory()) {
+                        if (file.getName().endsWith(".java") && file.canRead()) {
+                            long fileLength =
+                                    FilesUtils.countLines(file);
+                            fileInfos.add(new FileInfo(file, fileLength));
+                            //SourceAnalyzerImpl.log(file + ": " + fileLength);
+                        }
+                    }
+                }
+            }
+        }
+        return fileInfos;
+    }
+
+    public static List<File> listDirectories(File directory) {
+        List<File> subdirectories = new ArrayList<>();
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        subdirectories.add(file);
+                    }
+                }
+            }
+        }
+        return subdirectories;
     }
 
 }

@@ -1,6 +1,7 @@
 package pcd.assignment.reactive.model;
 
 import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -11,43 +12,41 @@ import pcd.assignment.common.model.data.FileInfo;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ExplorerManager implements ObservableOnSubscribe<File> {
+public class ExplorerManager implements ObservableOnSubscribe<Pair<File, List<File>>> {
 
     private File rootDirectory;
-    private Subject<FileInfo> sourcesAnalyzer;
-    private static final int MAX_STREAMS = 20;
+    private ObservableEmitter emitter;
 
-    public ExplorerManager(File rootDirectory, Subject<FileInfo> sourcesAnalyzer) {
+    public ExplorerManager(File rootDirectory) {
         this.rootDirectory = rootDirectory;
-        this.sourcesAnalyzer = sourcesAnalyzer;
     }
 
     @Override
     public void subscribe(@NonNull ObservableEmitter emitter) {
-        //SourceAnalyzerImpl.log("Hello, I'm the manager");
-        Pair<List<File>, List<FileInfo>> content = DirectoryExplorerUtils.exploreDirectory(this.rootDirectory);
-        onNextAnalyze(content.getY());
-        List<File> subdirectories = content.getX();
-
-        int currentNStreams = 1;
-        while (subdirectories.size() > 0) {
-            File firstSubdirectory = subdirectories.remove(0);
-            if (true){//currentNStreams < MAX_STREAMS) {
-                emitter.onNext(firstSubdirectory);
-                currentNStreams++;
-            } else {
-                content = DirectoryExplorerUtils.exploreDirectory(firstSubdirectory);
-                onNextAnalyze(content.getY());
-                subdirectories.addAll(content.getX());
-            }
-        }
+        this.emitter = emitter;
+        dfs(new ArrayList<>(List.of(this.rootDirectory)), new ArrayList<>());
         emitter.onComplete();
     }
 
-    private void onNextAnalyze(List<FileInfo> fileInfos) {
-        fileInfos.forEach(file -> sourcesAnalyzer.onNext(file));
+    private void dfs(List<File> nodes, List<File> explored) {
+        if (nodes.size() > 0) {
+            // Explore first directory
+            var exploringNode = nodes.remove(0);
+            var subnodes = DirectoryExplorerUtils.listDirectories(exploringNode);
+            // Insert all subdirs into the head
+            if (subnodes.size() > 0) {
+                for (int i = 0; i < subnodes.size(); i++) {
+                    nodes.add(i, subnodes.get(i));
+                }
+            } else {
+                this.emitter.onNext(new Pair<>(exploringNode, explored));
+                explored.add(exploringNode);
+            }
+            dfs(nodes, explored);
+        }
     }
 
 }
