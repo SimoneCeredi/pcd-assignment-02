@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExplorerManager implements ObservableOnSubscribe<Pair<File, List<File>>> {
+public class ExplorerManager implements ObservableOnSubscribe<File> {
 
     private File rootDirectory;
     private ObservableEmitter emitter;
@@ -27,11 +27,11 @@ public class ExplorerManager implements ObservableOnSubscribe<Pair<File, List<Fi
     @Override
     public void subscribe(@NonNull ObservableEmitter emitter) {
         this.emitter = emitter;
-        dfs(new ArrayList<>(List.of(this.rootDirectory)), new ArrayList<>());
+        dfs(new ArrayList<>(List.of(this.rootDirectory)));
         emitter.onComplete();
     }
 
-    private void dfs(List<File> nodes, List<File> explored) {
+    private void dfs(List<File> nodes) {
         if (nodes.size() > 0) {
             // Explore first directory
             var exploringNode = nodes.remove(0);
@@ -42,10 +42,9 @@ public class ExplorerManager implements ObservableOnSubscribe<Pair<File, List<Fi
                     nodes.add(i, subnodes.get(i));
                 }
             } else {
-                this.emitter.onNext(new Pair<>(exploringNode, explored));
-                explored.add(exploringNode);
+                this.emitter.onNext(exploringNode);
             }
-            dfs(nodes, explored);
+            dfs(nodes);
         }
     }
 

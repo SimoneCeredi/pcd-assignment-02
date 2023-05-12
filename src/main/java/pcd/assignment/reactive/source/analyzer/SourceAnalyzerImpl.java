@@ -49,18 +49,18 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                         new SimpleLongestFiles(model.getN()),
                         results);
 
-        Observable<Pair<File, List<File>>> explorerManager =
+        Observable<File> explorerManager =
                 Observable.create(new ExplorerManager(directory));
         AtomicInteger counter = new AtomicInteger();
         explorerManager
                 // Since it reads files (I/O operations), run the observer using the io() scheduler
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
-                .subscribe(p -> {
+                .subscribe(d -> {
 
                     // Recursively compute all FileInfo(s) from the directory specified by the manager
                     Observable<FileInfo> recursiveExplorer =
-                            Observable.create(new RecursiveExplorer(p.getX(), p.getY()));
+                            Observable.create(new RecursiveExplorer(d));
                     counter.getAndIncrement();
                     // Same as explorer manager
                     recursiveExplorer
