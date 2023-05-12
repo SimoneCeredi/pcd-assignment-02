@@ -17,15 +17,15 @@ import java.util.List;
 
 public class ExplorerManager implements ObservableOnSubscribe<File> {
 
-    private File rootDirectory;
-    private ObservableEmitter emitter;
+    private final File rootDirectory;
+    private ObservableEmitter<File> emitter;
 
     public ExplorerManager(File rootDirectory) {
         this.rootDirectory = rootDirectory;
     }
 
     @Override
-    public void subscribe(@NonNull ObservableEmitter emitter) {
+    public void subscribe(@NonNull ObservableEmitter<File> emitter) {
         this.emitter = emitter;
         dfs(new ArrayList<>(List.of(this.rootDirectory)));
         emitter.onComplete();
