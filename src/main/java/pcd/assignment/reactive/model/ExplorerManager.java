@@ -27,25 +27,18 @@ public class ExplorerManager implements ObservableOnSubscribe<File> {
     @Override
     public void subscribe(@NonNull ObservableEmitter<File> emitter) {
         this.emitter = emitter;
-        dfs(new ArrayList<>(List.of(this.rootDirectory)));
+        bfs(new ArrayList<>(List.of(this.rootDirectory)));
         emitter.onComplete();
     }
 
-    private void dfs(List<File> nodes) {
+    private void bfs(List<File> nodes) {
         if (nodes.size() > 0) {
-            // Explore first directory
-            var exploringNode = nodes.remove(0);
-            var subnodes = DirectoryExplorerUtils.listDirectories(exploringNode);
-            // Insert all subdirs into the head
-            if (subnodes.size() > 0) {
-                for (int i = 0; i < subnodes.size(); i++) {
-                    nodes.add(i, subnodes.get(i));
-                }
-            } else {
-                this.emitter.onNext(exploringNode);
+            nodes.forEach(n -> this.emitter.onNext(n));
+            List<File> subdirs = new ArrayList<>();
+            for (File node : nodes) {
+                subdirs.addAll(DirectoryExplorerUtils.listDirectories(node));
             }
-            dfs(nodes);
+            bfs(subdirs);
         }
     }
-
 }

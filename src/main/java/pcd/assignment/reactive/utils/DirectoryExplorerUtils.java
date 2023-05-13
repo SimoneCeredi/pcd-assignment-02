@@ -13,29 +13,6 @@ import pcd.assignment.common.model.data.FileInfo;
 
 public class DirectoryExplorerUtils {
 
-    public static Pair<List<File>, List<FileInfo>> exploreDirectory(File directory) {
-        List<File> subdirectories = new ArrayList<>();
-        List<FileInfo> fileInfos = new ArrayList<>();
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        subdirectories.add(file);
-                    } else {
-                        if (file.getName().endsWith(".java") && file.canRead()) {
-                            long fileLength =
-                                    FilesUtils.countLines(file);
-                            fileInfos.add(new FileInfo(file, fileLength));
-                            //SourceAnalyzerImpl.log(file + ": " + fileLength);
-                        }
-                    }
-                }
-            }
-        }
-        return new Pair<>(subdirectories, fileInfos);
-    }
-
     public static List<FileInfo> listFiles(File directory) {
         List<FileInfo> fileInfos = new ArrayList<>();
         if (directory.isDirectory()) {

@@ -7,20 +7,19 @@ import pcd.assignment.common.model.data.UnmodifiableIntervals;
 import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
 
 import java.util.concurrent.BlockingQueue;
 
 
-public class LongestFilesIntervalsConsumer implements Consumer<FileInfo> {
+public class FunctionsConsumer implements Consumer<FileInfo> {
 
     private final Intervals intervals;
     private final LongestFiles longestFiles;
     private final BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
 
-    public LongestFilesIntervalsConsumer(Intervals intervals,
-                                         LongestFiles longestFiles,
-                                         BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results) {
+    public FunctionsConsumer(Intervals intervals,
+                             LongestFiles longestFiles,
+                             BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results) {
         this.intervals = intervals;
         this.longestFiles = longestFiles;
         this.results = results;
