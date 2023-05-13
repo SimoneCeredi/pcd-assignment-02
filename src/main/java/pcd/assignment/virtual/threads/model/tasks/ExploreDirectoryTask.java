@@ -67,16 +67,18 @@ public class ExploreDirectoryTask implements Runnable {
             File[] files = this.directory.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.isDirectory()) {
-                        CompletableFuture<Pair<Intervals, LongestFiles>> future = new CompletableFuture<>();
-                        Thread.ofVirtual().start(this.getExploreDirectoryTask(file, future));
-                        directoryFutures.add(future);
-                    } else {
-                        if (file.getName().endsWith(".java")) {
-                            CompletableFuture<FileInfo> future = new CompletableFuture<>();
-                            ReadLinesTask task = new ReadLinesTask(file, future, data);
-                            Thread.ofVirtual().start(task);
-                            filesFutures.add(future);
+                    if (!this.data.shouldStop()) {
+                        if (file.isDirectory()) {
+                            CompletableFuture<Pair<Intervals, LongestFiles>> future = new CompletableFuture<>();
+                            Thread.ofVirtual().start(this.getExploreDirectoryTask(file, future));
+                            directoryFutures.add(future);
+                        } else {
+                            if (file.getName().endsWith(".java")) {
+                                CompletableFuture<FileInfo> future = new CompletableFuture<>();
+                                ReadLinesTask task = new ReadLinesTask(file, future, data);
+                                Thread.ofVirtual().start(task);
+                                filesFutures.add(future);
+                            }
                         }
                     }
                 }
