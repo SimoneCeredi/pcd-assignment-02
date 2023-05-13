@@ -32,7 +32,7 @@ public class Main {
                 .build();
         View gui = new GuiViewImpl();
         Controller controller = new ControllerImpl(model, new ConsoleViewImpl(), gui);
-        controller.startConsole(directory);
+        //controller.startConsole(directory);
         gui.initialize(controller, directory);
     }
 }

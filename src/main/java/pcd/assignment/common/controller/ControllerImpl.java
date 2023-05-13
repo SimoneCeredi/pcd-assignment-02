@@ -6,9 +6,11 @@ import pcd.assignment.common.view.ExecutionStatus;
 import pcd.assignment.common.view.View;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
+import javax.xml.transform.Source;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -20,6 +22,8 @@ public class ControllerImpl implements Controller {
     private final Model model;
     private final View consoleView;
     private final View guiView;
+    private SwingWorker<Void, Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> worker;
+    private volatile boolean stop;
 
     public ControllerImpl(Model model, View consoleView, View guiView) {
         this.model = model;
@@ -40,14 +44,17 @@ public class ControllerImpl implements Controller {
 
     @Override
     public void startGui(File directory) {
+        this.stop = false;
         this.guiView.setExecutionStatus(ExecutionStatus.STARTED);
         var ret = this.model.analyzeSources(directory);
         var results = ret.getX();
         var future = ret.getY();
 
-        var worker = getSwingWorker(results, future);
-        future.whenComplete((unused, throwable) -> this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED));
-        worker.execute();
+        this.worker = getSwingWorker(results, future);
+        future.whenComplete((unused, throwable) -> {
+            this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED);
+        });
+        this.worker.execute();
     }
 
 
@@ -86,6 +93,7 @@ public class ControllerImpl implements Controller {
 
     @Override
     public void stop() {
+        this.stop = true;
         this.model.stop();
         this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED);
     }
@@ -98,7 +106,7 @@ public class ControllerImpl implements Controller {
 
             @Override
             protected Void doInBackground() throws Exception {
-                while (!results.isEmpty() || !future.isDone()) {
+                while ((!results.isEmpty() || !future.isDone()) && !stop) {
                     Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result;
                     while ((result = results.poll()) != null) {
                         if (results.isEmpty()) {
@@ -117,18 +125,9 @@ public class ControllerImpl implements Controller {
                     } catch (OperationNotSupportedException e) {
                         throw new RuntimeException(e);
                     }
-
                 }
             }
 
-            @Override
-            protected void done() {
-                try {
-                    get();
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         };
     }
 

@@ -6,42 +6,45 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 import pcd.assignment.common.model.Model;
+import pcd.assignment.common.model.data.ConcurrentIntervals;
 import pcd.assignment.common.model.data.FileInfo;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.reactive.model.ExplorerManager;
 import pcd.assignment.reactive.model.FunctionsConsumer;
 import pcd.assignment.reactive.model.RecursiveExplorer;
-import pcd.assignment.reactive.model.data.SimpleIntervals;
-import pcd.assignment.reactive.model.data.SimpleLongestFiles;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SourceAnalyzerImpl implements SourceAnalyzer {
 
     private final Model model;
+    private final AtomicBoolean stop;
 
     public SourceAnalyzerImpl(Model model) {
         this.model = model;
-    }
-
-    public static void log(String msg) {
-        System.out.println("[ " + Thread.currentThread().getName() + "  ] " + msg);
+        this.stop = new AtomicBoolean(true);
     }
 
     @Override
-    public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
-        // Return data structures
+    public Pair<
+            BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>,
+            CompletableFuture<Void>> analyzeSources(File directory) {
         BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results =
                 new LinkedBlockingQueue<>();
         CompletableFuture<Void> future = new CompletableFuture<>();
-        chain(results, future, directory);
+        if (this.stop.get()) {
+            this.stop.set(false);
+            chain(results, future, directory);
+        }
         return new Pair<>(results, future);
     }
 
@@ -50,7 +53,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                        File directory){
         Subject<FileInfo> functionsCalculator = PublishSubject.create();
         Observable<File> explorerManager =
-                Observable.create(new ExplorerManager(directory));
+                Observable.create(new ExplorerManager(directory, this.stop));
         explorerChain(explorerManager, functionsCalculator);
         functionsChain(functionsCalculator, results, future);
     }
@@ -65,7 +68,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                 .subscribe(d -> {
                     // Recursively compute all FileInfo(s) from the directory specified by the manager
                     Observable<FileInfo> recursiveExplorer =
-                            Observable.create(new RecursiveExplorer(d));
+                            Observable.create(new RecursiveExplorer(d, this.stop));
                     counter.getAndIncrement();
                     // Same as explorer manager
                     recursiveExplorer
@@ -86,21 +89,24 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                                 CompletableFuture<Void> future) {
         Consumer<FileInfo> functionsConsumer =
                 new FunctionsConsumer(
-                        new SimpleIntervals(model.getNi(), model.getMaxl()),
-                        new SimpleLongestFiles(model.getN()),
+                        new ConcurrentIntervals(model.getNi(), model.getMaxl()),
+                        new ConcurrentLongestFiles(model.getN()),
                         results);
         functionsCalculator
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.single())
                 .doOnComplete(() -> {
-                    //System.out.println("End!");
-                    future.complete(null);
+                    if (!this.stop.get()) {
+                        future.complete(null);
+                    }
+                    this.stop.set(true);
                 })
                 .subscribe(functionsConsumer);
     }
 
     @Override
     public void stop() {
-
+        System.out.println("Stopping");
+        this.stop.set(true);
     }
 }

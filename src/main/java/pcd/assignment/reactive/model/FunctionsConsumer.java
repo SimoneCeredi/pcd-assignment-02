@@ -35,6 +35,4 @@ public class FunctionsConsumer implements Consumer<FileInfo> {
         results.put(new Pair<>(this.intervals, this.longestFiles));
     }
 
-
-
 }
