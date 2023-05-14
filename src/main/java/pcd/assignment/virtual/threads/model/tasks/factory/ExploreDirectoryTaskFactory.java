@@ -8,11 +8,12 @@ import pcd.assignment.tasks.executors.tasks.strategy.AnalyzeSourcesMemorizeStrat
 import pcd.assignment.virtual.threads.model.tasks.ExploreDirectoryTask;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 
 public class ExploreDirectoryTaskFactory {
 
-    public ExploreDirectoryTask analyzeSourcesTask(File directory, CompletableFuture<Pair<Intervals, LongestFiles>> future, SourceAnalyzerData data) {
-        return new ExploreDirectoryTask(directory, future, data, new AnalyzeSourcesMemorizeStrategyImpl(data.getResults()));
+    public ExploreDirectoryTask analyzeSourcesTask(File directory, CompletableFuture<Pair<Intervals, LongestFiles>> future, SourceAnalyzerData data, BlockingQueue<Thread> threads) {
+        return new ExploreDirectoryTask(directory, future, data, new AnalyzeSourcesMemorizeStrategyImpl(data.getResults()), threads);
     }
 }

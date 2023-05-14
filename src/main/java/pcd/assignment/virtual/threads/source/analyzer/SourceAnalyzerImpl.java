@@ -22,10 +22,12 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
 
     private final ExploreDirectoryTaskFactory factory = new ExploreDirectoryTaskFactory();
     private final Model model;
+    private final BlockingQueue<Thread> threads = new LinkedBlockingQueue<>();
     private BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
     private Intervals intervals;
     private LongestFiles longestFiles;
     private volatile boolean stopped = false;
+    private CompletableFuture<Pair<Intervals, LongestFiles>> future;
 
     public SourceAnalyzerImpl(Model model) {
         this.model = model;
@@ -37,13 +39,14 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
         this.results = new LinkedBlockingQueue<>();
         this.intervals = new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl());
         this.longestFiles = new ConcurrentLongestFiles(this.model.getN());
-        CompletableFuture<Pair<Intervals, LongestFiles>> future = new CompletableFuture<>();
+        this.future = new CompletableFuture<>();
         CompletableFuture<Void> ret = new CompletableFuture<>();
         Thread.ofVirtual().start(
                 this.factory.analyzeSourcesTask(
                         directory,
                         future,
-                        this
+                        this,
+                        this.threads
                 )
         );
         ret.completeAsync(() -> {
@@ -60,6 +63,13 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     @Override
     public void stop() {
         this.stopped = true;
+        this.future.complete(null);
+        while (!this.threads.isEmpty()) {
+            try {
+                this.threads.take().interrupt();
+            } catch (InterruptedException ignored) {
+            }
+        }
     }
 
     @Override
