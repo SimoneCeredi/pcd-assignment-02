@@ -8,7 +8,6 @@ import pcd.assignment.common.view.ExecutionStatus;
 import pcd.assignment.common.view.View;
 
 import javax.naming.OperationNotSupportedException;
-import javax.swing.*;
 import java.io.File;
 import java.util.concurrent.*;
 
@@ -18,7 +17,6 @@ public class ControllerImpl implements Controller {
     private final View consoleView;
     private final View guiView;
     private ExecutorService executorService;
-    private SwingWorker<Void, Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> worker;
     private volatile boolean stop;
 
     public ControllerImpl(Model model, View consoleView, View guiView) {
