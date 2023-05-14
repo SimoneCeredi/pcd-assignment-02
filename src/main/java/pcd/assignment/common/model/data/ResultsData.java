@@ -12,4 +12,5 @@ public interface ResultsData {
     void stop();
 
     boolean isStopped();
+
 }

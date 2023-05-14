@@ -1,11 +1,12 @@
 package pcd.assignment.common.view;
 
 import pcd.assignment.common.controller.Controller;
+import pcd.assignment.common.controller.ControllerImpl;
+import pcd.assignment.common.model.*;
 import pcd.assignment.common.model.data.Result;
-import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.model.data.UnmodifiableIntervals;
-import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.source.analyzer.SourceAnalyzer;
+import pcd.assignment.event.loop.source.analyzer.SourceAnalyzerImpl;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
@@ -14,6 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Comparator;
+import java.util.function.Function;
 
 public class GuiViewImpl extends JFrame implements View {
 
@@ -27,21 +29,14 @@ public class GuiViewImpl extends JFrame implements View {
     private JList<String> linesCounters; // linesCounters
     private boolean initialized = false;
     private Controller controller;
-    private File d;
-    private int ni;
-    private int maxl;
-    private int n;
+    private File rootDirectory;
 
     @Override
-    public void initialize(Controller controller, File directory) {
-        this.controller = controller;
-        this.d = directory;
-        this.ni = this.controller.getNi();
-        this.maxl = this.controller.getMaxl();
-        this.n = this.controller.getN();
-        generateGui();
+    public void initialize(Function<Model, SourceAnalyzer> sourceAnalyzerFunction,
+                           File directory) {
+        this.rootDirectory = directory;
+        generateGUI(sourceAnalyzerFunction);
         this.initialized = true;
-
     }
 
     @Override
@@ -84,7 +79,7 @@ public class GuiViewImpl extends JFrame implements View {
         }
     }
 
-    private void generateGui() {
+    private void generateGUI(Function<Model, SourceAnalyzer> sourceAnalyzerFunction) {
         // Set the title of the JFrame
         setTitle("My Java Swing View");
 
@@ -101,15 +96,15 @@ public class GuiViewImpl extends JFrame implements View {
         // Create a JPanel for the folder selection
         JPanel folderPanel = new JPanel(new BorderLayout());
         JLabel dLabel = new JLabel("Select a folder:");
-        dTextField = new JTextField(this.d.getAbsolutePath());
+        dTextField = new JTextField(this.rootDirectory.getAbsolutePath());
         JButton dButton = new JButton("...");
         dButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int option = fileChooser.showOpenDialog(GuiViewImpl.this);
             if (option == JFileChooser.APPROVE_OPTION) {
-                this.d = new File(fileChooser.getSelectedFile().getAbsolutePath());
-                dTextField.setText(this.d.getAbsolutePath());
+                this.rootDirectory = new File(fileChooser.getSelectedFile().getAbsolutePath());
+                dTextField.setText(this.rootDirectory.getAbsolutePath());
             }
         });
         folderPanel.add(dLabel, BorderLayout.WEST);
@@ -124,11 +119,11 @@ public class GuiViewImpl extends JFrame implements View {
 
         // Create the input boxes and labels
         JLabel niLabel = new JLabel("NI:");
-        niTextField = new JTextField(String.valueOf(this.ni));
+        niTextField = new JTextField();
         JLabel maxlLabel = new JLabel("MAXL:");
-        maxlTextField = new JTextField(String.valueOf(this.maxl));
+        maxlTextField = new JTextField();
         JLabel nLabel = new JLabel("N:");
-        nTextField = new JTextField(String.valueOf(this.n));
+        nTextField = new JTextField();
 
         // Add the input boxes and labels to the input panel
         inputPanel.add(niLabel);
@@ -141,27 +136,8 @@ public class GuiViewImpl extends JFrame implements View {
         // Add the input panel to the input panel
         inputBoxPanel.add(inputPanel, BorderLayout.CENTER);
 
-        // Create a button to change parameters after N but before closing input
-        JButton changeParametersButton = new JButton("Update Parameters");
-        changeParametersButton.addActionListener(l -> {
-            try {
-                this.ni = Integer.parseInt(niTextField.getText());
-                this.maxl = Integer.parseInt(maxlTextField.getText());
-                this.n = Integer.parseInt(nTextField.getText());
-                this.controller.setNi(this.ni);
-                this.controller.setMaxl(this.maxl);
-                this.controller.setN(this.n);
-            } catch (NumberFormatException er) {
-                JOptionPane.showMessageDialog(GuiViewImpl.this, "NI, MAXL, N should be numbers", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        // Add the button to the input panel
-        inputBoxPanel.add(changeParametersButton, BorderLayout.SOUTH);
-
         // Add the input panel to the JFrame
         add(inputBoxPanel, BorderLayout.CENTER);
-
 
         // Create a JPanel for the lists and buttons
         JPanel listPanel = new JPanel(new BorderLayout());
@@ -191,7 +167,25 @@ public class GuiViewImpl extends JFrame implements View {
         startButton = new JButton("Start");
         startButton.addActionListener(l -> {
             try {
-                this.controller.startGui(this.d);
+
+                Configuration configuration;
+                String ni = niTextField.getText();
+                String maxl = maxlTextField.getText();
+                String n = nTextField.getText();
+                if (!ni.isEmpty() && !maxl.isEmpty() && !n.isEmpty()) {
+                    configuration = new ConfigurationImpl(
+                            Integer.parseInt(ni),
+                            Integer.parseInt(maxl),
+                            Integer.parseInt(n));
+                } else {
+                    configuration = new ConfigurationImpl();
+                }
+                Model model = new ModelBuilderImpl()
+                        .setConfiguration(configuration)
+                        .setSourceAnalyzer(sourceAnalyzerFunction)
+                        .build();
+                this.controller = new ControllerImpl(null, this);
+                this.controller.start(model, this.rootDirectory);
             } catch (OperationNotSupportedException e) {
                 throw new RuntimeException(e);
             }

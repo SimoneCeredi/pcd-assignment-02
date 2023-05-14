@@ -18,18 +18,18 @@ import java.util.concurrent.ExecutionException;
 
 public class ControllerImpl implements Controller {
 
-    private final Model model;
+    private Model model;
     private final View consoleView;
     private final View guiView;
 
-    public ControllerImpl(Model model, View consoleView, View guiView) {
-        this.model = model;
+    public ControllerImpl(View consoleView, View guiView) {
         this.consoleView = consoleView;
         this.guiView = guiView;
     }
 
     @Override
-    public void startConsole(File directory) throws OperationNotSupportedException {
+    public void startConsole(Model model, File directory) throws OperationNotSupportedException {
+        this.model = model;
         try {
             long startTime = System.currentTimeMillis();
             this.consoleView.show(this.model.getReport(directory).get());
@@ -40,8 +40,8 @@ public class ControllerImpl implements Controller {
     }
 
     @Override
-    public void startGui(File directory) {
-
+    public void start(Model model, File directory) {
+        this.model = model;
         this.guiView.setExecutionStatus(ExecutionStatus.STARTED);
         ResultsData resultsData = this.model.analyzeSources(directory);
         var worker = getSwingWorker(resultsData);
@@ -49,40 +49,6 @@ public class ControllerImpl implements Controller {
                 .whenComplete((unused, throwable) ->
                         this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED));
         worker.execute();
-    }
-
-
-    @Override
-    public int getNi() {
-        return this.model.getNumberOfIntervals();
-    }
-
-    @Override
-    public void setNi(int ni) {
-        this.model.setNumberOfIntervals(ni);
-
-    }
-
-    @Override
-    public int getMaxl() {
-        return this.model.getMaximumLines();
-    }
-
-    @Override
-    public void setMaxl(int maxl) {
-        this.model.setMaximumLines(maxl);
-
-    }
-
-    @Override
-    public int getN() {
-        return this.model.getAtMostNFiles();
-    }
-
-    @Override
-    public void setN(int n) {
-        this.model.setAtMostNFiles(n);
-
     }
 
     @Override

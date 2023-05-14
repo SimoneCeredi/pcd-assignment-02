@@ -35,8 +35,10 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     public ResultsData analyzeSources(File directory) {
         this.stopped = false;
         this.vertx = Vertx.vertx();
-        this.intervals = new ConcurrentIntervals(this.model.getNumberOfIntervals(), this.model.getMaximumLines());
-        this.longestFiles = new ConcurrentLongestFiles(this.model.getAtMostNFiles());
+        this.intervals = new ConcurrentIntervals(
+                this.model.getConfiguration().getNumberOfIntervals(),
+                this.model.getConfiguration().getMaximumLines());
+        this.longestFiles = new ConcurrentLongestFiles(this.model.getConfiguration().getAtMostNFiles());
         this.results = new LinkedBlockingQueue<>();
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
         Promise<Void> promise = Promise.promise();

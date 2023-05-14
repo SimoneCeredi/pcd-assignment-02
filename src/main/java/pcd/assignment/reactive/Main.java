@@ -2,8 +2,11 @@ package pcd.assignment.reactive;
 
 import pcd.assignment.common.controller.Controller;
 import pcd.assignment.common.controller.ControllerImpl;
+import pcd.assignment.common.model.ConfigurationImpl;
 import pcd.assignment.common.model.Model;
 import pcd.assignment.common.model.ModelBuilderImpl;
+import pcd.assignment.common.model.ModelImpl;
+import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import pcd.assignment.common.view.ConsoleViewImpl;
 import pcd.assignment.common.view.GuiViewImpl;
 import pcd.assignment.common.view.View;
@@ -11,6 +14,7 @@ import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;
+import java.util.function.Function;
 
 public class Main {
     public static void main(String[] args) throws OperationNotSupportedException {
@@ -24,15 +28,12 @@ public class Main {
             maxl = Integer.parseInt(args[2]);
             n = Integer.parseInt(args[3]);
         }
-        Model model = new ModelBuilderImpl()
-                .setNi(ni)
-                .setMaxl(maxl)
-                .setN(n)
-                .setSourceAnalyzer(SourceAnalyzerImpl::new)
-                .build();
+
+        Function<Model, SourceAnalyzer> sourceAnalyzerFunction = SourceAnalyzerImpl::new;
         View gui = new GuiViewImpl();
-        Controller controller = new ControllerImpl(model, new ConsoleViewImpl(), gui);
-        //controller.startConsole(directory);
-        gui.initialize(controller, directory);
+        Controller controller = new ControllerImpl(new ConsoleViewImpl(), gui);
+        //controller.startConsole(model, directory);
+        gui.initialize(sourceAnalyzerFunction, directory);
     }
+
 }

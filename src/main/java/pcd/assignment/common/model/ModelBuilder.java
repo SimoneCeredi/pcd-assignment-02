@@ -5,11 +5,8 @@ import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import java.util.function.Function;
 
 public interface ModelBuilder {
-    ModelBuilder setNi(int ni);
 
-    ModelBuilder setMaxl(int maxl);
-
-    ModelBuilder setN(int n);
+    ModelBuilder setConfiguration(Configuration configuration);
 
     ModelBuilder setSourceAnalyzer(Function<Model, SourceAnalyzer> sourceAnalyzer);
 

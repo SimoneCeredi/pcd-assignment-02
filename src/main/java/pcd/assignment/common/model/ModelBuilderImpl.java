@@ -5,34 +5,20 @@ import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import java.util.function.Function;
 
 public class ModelBuilderImpl implements ModelBuilder {
-    private int ni;
-    private int maxl;
-    private int n;
     private Model model;
     private SourceAnalyzer sourceAnalyzer;
+    private Configuration configuration;
 
 
     @Override
-    public ModelBuilder setNi(int ni) {
-        this.ni = ni;
-        return this;
-    }
-
-    @Override
-    public ModelBuilder setMaxl(int maxl) {
-        this.maxl = maxl;
-        return this;
-    }
-
-    @Override
-    public ModelBuilder setN(int n) {
-        this.n = n;
+    public ModelBuilder setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
         return this;
     }
 
     @Override
     public ModelBuilder setSourceAnalyzer(Function<Model, SourceAnalyzer> sourceAnalyzer) {
-        this.model = new ModelImpl(new ConfigurationImpl(this.ni, this.maxl, this.n));
+        this.model = new ModelImpl(configuration);
         this.sourceAnalyzer = sourceAnalyzer.apply(this.model);
         return this;
     }

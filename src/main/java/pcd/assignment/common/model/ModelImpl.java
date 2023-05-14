@@ -14,7 +14,7 @@ public class ModelImpl implements Model {
     private SourceAnalyzer sourceAnalyzer;
     private ResultsData resultsData;
 
-    protected ModelImpl(Configuration configuration) {
+    public ModelImpl(Configuration configuration) {
         this.configuration = configuration;
     }
 
@@ -29,6 +29,11 @@ public class ModelImpl implements Model {
     }
 
     @Override
+    public Configuration getConfiguration() {
+        return this.configuration;
+    }
+
+    @Override
     public CompletableFuture<Result> getReport(File directory) {
         return this.sourceAnalyzer.getReport(directory);
     }
@@ -39,33 +44,5 @@ public class ModelImpl implements Model {
         return this.resultsData;
     }
 
-    @Override
-    public int getNumberOfIntervals() {
-        return configuration.getNumberOfIntervals();
-    }
 
-    @Override
-    public void setNumberOfIntervals(int ni) {
-        configuration.setNumberOfIntervals(ni);
-    }
-
-    @Override
-    public int getMaximumLines() {
-        return configuration.getMaximumLines();
-    }
-
-    @Override
-    public void setMaximumLines(int maximumLines) {
-        configuration.setMaximumLines(maximumLines);
-    }
-
-    @Override
-    public int getAtMostNFiles() {
-        return configuration.getAtMostNFiles();
-    }
-
-    @Override
-    public void setAtMostNFiles(int maximumNFiles) {
-        configuration.setAtMostNFiles(maximumNFiles);
-    }
 }

@@ -34,8 +34,10 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
         this.stopped = false;
         this.results = new LinkedBlockingQueue<>();
         this.analyzeSourcesPool = new ForkJoinPool();
-        this.intervals = new ConcurrentIntervals(this.model.getNumberOfIntervals(), this.model.getMaximumLines());
-        this.longestFiles = new ConcurrentLongestFiles(this.model.getAtMostNFiles());
+        this.intervals = new ConcurrentIntervals(
+                this.model.getConfiguration().getNumberOfIntervals(),
+                this.model.getConfiguration().getMaximumLines());
+        this.longestFiles = new ConcurrentLongestFiles(this.model.getConfiguration().getAtMostNFiles());
         CompletableFuture<Void> future = new CompletableFuture<>();
         future.completeAsync(() -> {
             this.analyzeSourcesPool.invoke(factory.analyzeSourcesTask(directory, this));

@@ -77,9 +77,9 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
     private void functionsChain(Subject<FileInfo> functionsCalculator) {
         Consumer<FileInfo> functionsConsumer =
                 new FunctionsConsumer(
-                        new SimpleIntervals(model.getNumberOfIntervals(),
-                                model.getMaximumLines()),
-                        new SimpleLongestFiles(model.getAtMostNFiles()),
+                        new SimpleIntervals(model.getConfiguration().getNumberOfIntervals(),
+                                model.getConfiguration().getMaximumLines()),
+                        new SimpleLongestFiles(model.getConfiguration().getAtMostNFiles()),
                         resultsData.getResults());
         functionsCalculator
                 .observeOn(Schedulers.computation())

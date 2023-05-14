@@ -1,25 +1,15 @@
 package pcd.assignment.common.controller;
 
+import pcd.assignment.common.model.Model;
+
 import javax.naming.OperationNotSupportedException;
 import java.io.File;
 
 public interface Controller {
-    void startConsole(File directory) throws OperationNotSupportedException;
 
-    void startGui(File directory) throws OperationNotSupportedException;
+    void startConsole(Model model, File directory) throws OperationNotSupportedException;
 
-    int getNi();
-
-    void setNi(int ni);
-
-    int getMaxl();
-
-    void setMaxl(int maxl);
-
-    int getN();
-
-    void setN(int n);
-
+    void start(Model model, File directory) throws OperationNotSupportedException;
 
     void stop();
 

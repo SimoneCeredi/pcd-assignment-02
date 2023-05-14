@@ -1,7 +1,9 @@
 package pcd.assignment.common.view;
 
 import pcd.assignment.common.controller.Controller;
+import pcd.assignment.common.model.Model;
 import pcd.assignment.common.model.data.Result;
+import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.common.model.data.FileInfo;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
@@ -10,12 +12,14 @@ import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ConsoleViewImpl implements View {
 
     @Override
-    public void initialize(Controller controller, File directory) {
+    public void initialize(Function<Model, SourceAnalyzer> sourceAnalyzerFunction,
+                           File directory) {
 
     }
 
