@@ -1,10 +1,10 @@
 package pcd.assignment.common.view;
 
 import pcd.assignment.common.controller.Controller;
-import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.common.model.data.FileInfo;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.utilities.Pair;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
@@ -71,16 +71,18 @@ public class GuiViewImpl extends JFrame implements View {
 
     @Override
     public void setExecutionStatus(ExecutionStatus status) {
-        switch (status) {
-            case STARTED -> {
-                this.startButton.setEnabled(false);
-                this.stopButton.setEnabled(true);
+        SwingUtilities.invokeLater(() -> {
+            switch (status) {
+                case STARTED -> {
+                    this.startButton.setEnabled(false);
+                    this.stopButton.setEnabled(true);
+                }
+                case COMPLETED -> {
+                    this.startButton.setEnabled(true);
+                    this.stopButton.setEnabled(false);
+                }
             }
-            case COMPLETED -> {
-                this.startButton.setEnabled(true);
-                this.stopButton.setEnabled(false);
-            }
-        }
+        });
     }
 
     private void generateGui() {
