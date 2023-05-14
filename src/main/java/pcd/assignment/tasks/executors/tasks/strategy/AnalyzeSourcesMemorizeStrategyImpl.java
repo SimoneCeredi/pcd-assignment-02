@@ -1,10 +1,10 @@
 package pcd.assignment.tasks.executors.tasks.strategy;
 
-import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.common.model.data.Intervals;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
 import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.utilities.Pair;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -19,9 +19,8 @@ public class AnalyzeSourcesMemorizeStrategyImpl implements MemorizeStrategy {
     public void saveResult(Intervals lineCounter, LongestFiles longestFiles) {
         try {
             this.results.put(new Pair<>(lineCounter.getCopy(), longestFiles.getCopy()));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+        } catch (InterruptedException ignored) {
+            // It's normal, happens on Stop press
         }
     }
 
