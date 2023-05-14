@@ -68,7 +68,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
             }
         }
         CompositeFuture.all(filePromises.stream().map(Promise::future).collect(Collectors.toList()))
-                .onComplete(as -> this.promise.complete());
+                .onComplete(as -> this.promise.tryComplete());
     }
 
     private void manageProps(String file, Promise<Void> filePromise, AsyncResult<FileProps> res) {

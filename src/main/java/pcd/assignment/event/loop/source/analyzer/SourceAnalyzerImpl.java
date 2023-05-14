@@ -55,8 +55,8 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, StoppableSourceAnalyz
     @Override
     public void stop() {
         this.stopped = true;
-        this.promise.fail("Stopped");
         this.vertx.close();
+        this.promise.tryFail("Stopped");
     }
 
     @Override

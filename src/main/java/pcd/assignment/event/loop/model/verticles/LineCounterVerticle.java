@@ -52,8 +52,8 @@ public class LineCounterVerticle extends AbstractVerticle {
         this.longestFiles.put(fileInfo);
         try {
             this.results.put(new Pair<>(this.intervals.getCopy(), this.longestFiles.getCopy()));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (InterruptedException ignored) {
+            // This happens on stop button press
         }
     }
 }
