@@ -3,32 +3,40 @@ package pcd.assignment.event.loop.model.verticles;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
+import pcd.assignment.common.model.data.Intervals;
+import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.monitor.LongestFiles;
+import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.source.analyzer.StoppableSourceAnalyzer;
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
 
 public class LineCounterVerticle extends AbstractVerticle {
 
     private final String file;
     private final Promise<Void> promise;
-    private final SourceAnalyzerData model;
+    private final Intervals intervals;
+    private final LongestFiles longestFiles;
+    private final BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
+    private final StoppableSourceAnalyzer sourceAnalyzer;
 
-    public LineCounterVerticle(String file, Promise<Void> promise, SourceAnalyzerData model) {
+    public LineCounterVerticle(String file, Promise<Void> promise, Intervals intervals, LongestFiles longestFiles, BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results, StoppableSourceAnalyzer sourceAnalyzer) {
         this.file = file;
         this.promise = promise;
-        this.model = model;
+        this.intervals = intervals;
+        this.longestFiles = longestFiles;
+        this.results = results;
+        this.sourceAnalyzer = sourceAnalyzer;
     }
 
     @Override
     public void start() {
-        // TODO: delete log, it's just for demonstration
-        VerticleDeployUtils.log("reading file len of " + this.file);
         vertx.fileSystem().readFile(this.file, res -> {
             if (res.succeeded()) {
                 FileInfo fileInfo = new FileInfo(new File(this.file), res.result().toString().split("\\r?\\n").length);
-                if (!this.model.shouldStop()) {
+                if (!this.sourceAnalyzer.shouldStop()) {
                     saveFileInfo(fileInfo);
                 }
                 this.promise.complete();
@@ -40,10 +48,10 @@ public class LineCounterVerticle extends AbstractVerticle {
     }
 
     private void saveFileInfo(FileInfo fileInfo) {
-        this.model.getIntervals().store(fileInfo);
-        this.model.getLongestFiles().put(fileInfo);
+        this.intervals.store(fileInfo);
+        this.longestFiles.put(fileInfo);
         try {
-            this.model.getResults().put(new Pair<>(this.model.getIntervals().getCopy(), this.model.getLongestFiles().getCopy()));
+            this.results.put(new Pair<>(this.intervals.getCopy(), this.longestFiles.getCopy()));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
