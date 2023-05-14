@@ -22,7 +22,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
 
     private final ExploreDirectoryTaskFactory factory = new ExploreDirectoryTaskFactory();
     private final Model model;
-    private final BlockingQueue<Thread> threads = new LinkedBlockingQueue<>();
+    private BlockingQueue<Thread> threads;
     private BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
     private Intervals intervals;
     private LongestFiles longestFiles;
@@ -36,6 +36,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     @Override
     public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
         this.stopped = false;
+        this.threads = new LinkedBlockingQueue<>();
         this.results = new LinkedBlockingQueue<>();
         this.intervals = new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl());
         this.longestFiles = new ConcurrentLongestFiles(this.model.getN());
@@ -55,6 +56,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
+            this.stop();
             return null;
         });
         return new Pair<>(results, ret);
@@ -64,6 +66,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     public void stop() {
         this.stopped = true;
         this.future.complete(null);
+        System.out.println(this.threads.size());
         while (!this.threads.isEmpty()) {
             try {
                 this.threads.take().interrupt();

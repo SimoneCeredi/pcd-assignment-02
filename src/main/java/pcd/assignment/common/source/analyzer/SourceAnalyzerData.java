@@ -8,12 +8,11 @@ import pcd.assignment.common.utilities.Pair;
 
 import java.util.concurrent.BlockingQueue;
 
-public interface SourceAnalyzerData {
+public interface SourceAnalyzerData extends StoppableSourceAnalyzer {
     BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getResults();
 
     Intervals getIntervals();
 
     LongestFiles getLongestFiles();
 
-    boolean shouldStop();
 }

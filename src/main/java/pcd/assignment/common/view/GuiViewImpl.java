@@ -190,15 +190,15 @@ public class GuiViewImpl extends JFrame implements View {
 
         // Create the Start and Stop buttons
         startButton = new JButton("Start");
-        startButton.addActionListener(l -> {
+        startButton.addActionListener(l -> Thread.ofVirtual().start(() -> {
             try {
                 this.controller.startGui(this.d);
             } catch (OperationNotSupportedException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }));
         stopButton = new JButton("Stop");
-        stopButton.addActionListener(l -> this.controller.stop());
+        stopButton.addActionListener(l -> Thread.ofVirtual().start(() -> this.controller.stop()));
 
         // Add the buttons to the button panel
         buttonPanel.add(stopButton);

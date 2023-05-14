@@ -14,6 +14,6 @@ import java.util.concurrent.CompletableFuture;
 public class ExploreDirectoryTaskFactory {
 
     public ExploreDirectoryTask analyzeSourcesTask(File directory, CompletableFuture<Pair<Intervals, LongestFiles>> future, SourceAnalyzerData data, BlockingQueue<Thread> threads) {
-        return new ExploreDirectoryTask(directory, future, data, new AnalyzeSourcesMemorizeStrategyImpl(data.getResults()), threads);
+        return new ExploreDirectoryTask(directory, future, data.getIntervals(), data.getLongestFiles(), new AnalyzeSourcesMemorizeStrategyImpl(data.getResults()), threads, data);
     }
 }
