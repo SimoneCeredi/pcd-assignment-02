@@ -3,9 +3,7 @@ package pcd.assignment.event.loop.source.analyzer;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import pcd.assignment.common.model.Model;
-import pcd.assignment.common.model.data.ConcurrentIntervals;
-import pcd.assignment.common.model.data.Intervals;
-import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.*;
 import pcd.assignment.common.model.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
@@ -23,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     private final Model model;
     private Vertx vertx;
-    private BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
+    private BlockingQueue<Result> results;
     private Intervals intervals;
     private LongestFiles longestFiles;
     private volatile boolean stopped = false;
@@ -34,11 +32,11 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
 
 
     @Override
-    public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
+    public ResultsData analyzeSources(File directory) {
         this.stopped = false;
         this.vertx = Vertx.vertx();
-        this.intervals = new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl());
-        this.longestFiles = new ConcurrentLongestFiles(this.model.getN());
+        this.intervals = new ConcurrentIntervals(this.model.getNumberOfIntervals(), this.model.getMaximumLines());
+        this.longestFiles = new ConcurrentLongestFiles(this.model.getAtMostNFiles());
         this.results = new LinkedBlockingQueue<>();
         CompletableFuture<Void> completableFuture = new CompletableFuture<>();
         Promise<Void> promise = Promise.promise();
@@ -51,14 +49,14 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
             }
             this.vertx.close();
         });
-        return new Pair<>(results, completableFuture);
+        return new ResultsDataImpl(results, completableFuture);
     }
 
-    @Override
-    public void stop() {
-        this.stopped = true;
-        this.vertx.close();
-    }
+    //@Override
+    //public void stop() {
+    //    this.stopped = true;
+    //    this.vertx.close();
+    //}
 
     @Override
     public boolean shouldStop() {
@@ -66,7 +64,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     }
 
     @Override
-    public BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getResults() {
+    public BlockingQueue<Result> getResults() {
         return this.results;
     }
 

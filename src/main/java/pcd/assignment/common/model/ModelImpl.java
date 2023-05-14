@@ -1,21 +1,21 @@
 package pcd.assignment.common.model;
 
+import pcd.assignment.common.model.data.Result;
+import pcd.assignment.common.model.data.ResultsData;
 import pcd.assignment.common.source.analyzer.SourceAnalyzer;
-import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.common.model.data.UnmodifiableIntervals;
-import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 
 import java.io.File;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 
 
 public class ModelImpl implements Model {
-    private final BaseModel baseModel;
-    private SourceAnalyzer sourceAnalyzer;
 
-    protected ModelImpl(int ni, int maxl, int n) {
-        this.baseModel = new BaseModelImpl(ni, maxl, n);
+    private final Configuration configuration;
+    private SourceAnalyzer sourceAnalyzer;
+    private ResultsData resultsData;
+
+    protected ModelImpl(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
@@ -24,47 +24,48 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public int getNi() {
-        return this.baseModel.getNi();
+    public ResultsData getResultsData() {
+        return this.resultsData;
     }
 
     @Override
-    public void setNi(int ni) {
-        this.baseModel.setNi(ni);
-    }
-
-    @Override
-    public int getMaxl() {
-        return this.baseModel.getMaxl();
-    }
-
-    @Override
-    public void setMaxl(int maxl) {
-        this.baseModel.setMaxl(maxl);
-    }
-
-    @Override
-    public int getN() {
-        return this.baseModel.getN();
-    }
-
-    @Override
-    public void setN(int n) {
-        this.baseModel.setN(n);
-    }
-
-    @Override
-    public CompletableFuture<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getReport(File directory) {
+    public CompletableFuture<Result> getReport(File directory) {
         return this.sourceAnalyzer.getReport(directory);
     }
 
     @Override
-    public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
-        return this.sourceAnalyzer.analyzeSources(directory);
+    public ResultsData analyzeSources(File directory) {
+        this.resultsData = this.sourceAnalyzer.analyzeSources(directory);
+        return this.resultsData;
     }
 
     @Override
-    public void stop() {
-        this.sourceAnalyzer.stop();
+    public int getNumberOfIntervals() {
+        return configuration.getNumberOfIntervals();
+    }
+
+    @Override
+    public void setNumberOfIntervals(int ni) {
+        configuration.setNumberOfIntervals(ni);
+    }
+
+    @Override
+    public int getMaximumLines() {
+        return configuration.getMaximumLines();
+    }
+
+    @Override
+    public void setMaximumLines(int maximumLines) {
+        configuration.setMaximumLines(maximumLines);
+    }
+
+    @Override
+    public int getAtMostNFiles() {
+        return configuration.getAtMostNFiles();
+    }
+
+    @Override
+    public void setAtMostNFiles(int maximumNFiles) {
+        configuration.setAtMostNFiles(maximumNFiles);
     }
 }

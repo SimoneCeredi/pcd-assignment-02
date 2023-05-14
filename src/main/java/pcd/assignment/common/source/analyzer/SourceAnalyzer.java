@@ -1,30 +1,31 @@
 package pcd.assignment.common.source.analyzer;
 
+import pcd.assignment.common.model.data.ResultsData;
+import pcd.assignment.common.model.data.Result;
 import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.common.model.data.UnmodifiableIntervals;
-import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 
 public interface SourceAnalyzer {
-    default CompletableFuture<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getReport(File directory) {
-        var res = this.analyzeSources(directory);
-        CompletableFuture<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> ret = new CompletableFuture<>();
-        res.getY().whenComplete((unused, throwable) -> ret.completeAsync(() -> {
-            List<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> coll = new ArrayList<>();
-            res.getX().drainTo(coll);
-            var last = coll.get(coll.size() - 1);
-            return new Pair<>(last.getX(), last.getY());
-        }));
-        return ret;
+
+    default CompletableFuture<Result> getReport(File directory) {
+        ResultsData resultsData = this.analyzeSources(directory);
+        CompletableFuture<Result> finalResultFuture = new CompletableFuture<>();
+        resultsData
+                .getCompletionFuture()
+                .whenComplete((unused, throwable) ->
+                        finalResultFuture.completeAsync(() -> {
+                            List<Result> results = new ArrayList<>();
+                            resultsData.getResults().drainTo(results);
+                            return results.get(results.size() - 1);
+                        })
+                );
+        return finalResultFuture;
     }
 
-    Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory);
-
-    void stop();
+    ResultsData analyzeSources(File directory);
 
 }

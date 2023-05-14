@@ -1,9 +1,7 @@
 package pcd.assignment.tasks.executors.source.analyzer;
 
 import pcd.assignment.common.model.Model;
-import pcd.assignment.common.model.data.ConcurrentIntervals;
-import pcd.assignment.common.model.data.Intervals;
-import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.*;
 import pcd.assignment.common.model.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
@@ -22,7 +20,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     private final ExploreDirectoryTaskFactory factory = new ExploreDirectoryTaskFactory();
     private final Model model;
     private ForkJoinPool analyzeSourcesPool;
-    private BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results;
+    private BlockingQueue<Result> results;
     private Intervals intervals;
     private LongestFiles longestFiles;
     private volatile boolean stopped = false;
@@ -32,30 +30,30 @@ public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
     }
 
     @Override
-    public Pair<BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>, CompletableFuture<Void>> analyzeSources(File directory) {
+    public ResultsData analyzeSources(File directory) {
         this.stopped = false;
         this.results = new LinkedBlockingQueue<>();
         this.analyzeSourcesPool = new ForkJoinPool();
-        this.intervals = new ConcurrentIntervals(this.model.getNi(), this.model.getMaxl());
-        this.longestFiles = new ConcurrentLongestFiles(this.model.getN());
+        this.intervals = new ConcurrentIntervals(this.model.getNumberOfIntervals(), this.model.getMaximumLines());
+        this.longestFiles = new ConcurrentLongestFiles(this.model.getAtMostNFiles());
         CompletableFuture<Void> future = new CompletableFuture<>();
         future.completeAsync(() -> {
             this.analyzeSourcesPool.invoke(factory.analyzeSourcesTask(directory, this));
             return null;
         });
-        return new Pair<>(results, future);
+        return new ResultsDataImpl(results, future);
     }
 
-    @Override
+    /*@Override
     public void stop() {
         this.stopped = true;
         if (this.analyzeSourcesPool != null && !this.analyzeSourcesPool.isTerminated()) {
             this.analyzeSourcesPool.shutdownNow();
         }
-    }
+    }*/
 
     @Override
-    public BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getResults() {
+    public BlockingQueue<Result> getResults() {
         return this.results;
     }
 

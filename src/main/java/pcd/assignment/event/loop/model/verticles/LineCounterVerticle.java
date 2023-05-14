@@ -3,6 +3,7 @@ package pcd.assignment.event.loop.model.verticles;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import pcd.assignment.common.model.data.FileInfo;
+import pcd.assignment.common.model.data.ResultImpl;
 import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.event.loop.utils.VerticleDeployUtils;
@@ -43,7 +44,12 @@ public class LineCounterVerticle extends AbstractVerticle {
         this.model.getIntervals().store(fileInfo);
         this.model.getLongestFiles().put(fileInfo);
         try {
-            this.model.getResults().put(new Pair<>(this.model.getIntervals().getCopy(), this.model.getLongestFiles().getCopy()));
+            this.model.getResults().put(
+                    new ResultImpl(
+                            this.model.getIntervals().getCopy(),
+                            this.model.getLongestFiles().getCopy()
+                    )
+            );
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

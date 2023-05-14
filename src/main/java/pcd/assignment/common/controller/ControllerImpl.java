@@ -1,20 +1,19 @@
 package pcd.assignment.common.controller;
 
 import pcd.assignment.common.model.Model;
+import pcd.assignment.common.model.data.Result;
+import pcd.assignment.common.model.data.ResultsData;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.common.view.ExecutionStatus;
 import pcd.assignment.common.view.View;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
-import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
-import javax.xml.transform.Source;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class ControllerImpl implements Controller {
@@ -22,8 +21,6 @@ public class ControllerImpl implements Controller {
     private final Model model;
     private final View consoleView;
     private final View guiView;
-    private SwingWorker<Void, Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> worker;
-    private volatile boolean stop;
 
     public ControllerImpl(Model model, View consoleView, View guiView) {
         this.model = model;
@@ -44,70 +41,65 @@ public class ControllerImpl implements Controller {
 
     @Override
     public void startGui(File directory) {
-        this.stop = false;
-        this.guiView.setExecutionStatus(ExecutionStatus.STARTED);
-        var ret = this.model.analyzeSources(directory);
-        var results = ret.getX();
-        var future = ret.getY();
 
-        this.worker = getSwingWorker(results, future);
-        future.whenComplete((unused, throwable) -> {
-            this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED);
-        });
-        this.worker.execute();
+        this.guiView.setExecutionStatus(ExecutionStatus.STARTED);
+        ResultsData resultsData = this.model.analyzeSources(directory);
+        var worker = getSwingWorker(resultsData);
+        resultsData.getCompletionFuture()
+                .whenComplete((unused, throwable) ->
+                        this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED));
+        worker.execute();
     }
 
 
     @Override
     public int getNi() {
-        return this.model.getNi();
+        return this.model.getNumberOfIntervals();
     }
 
     @Override
     public void setNi(int ni) {
-        this.model.setNi(ni);
+        this.model.setNumberOfIntervals(ni);
 
     }
 
     @Override
     public int getMaxl() {
-        return this.model.getMaxl();
+        return this.model.getMaximumLines();
     }
 
     @Override
     public void setMaxl(int maxl) {
-        this.model.setMaxl(maxl);
+        this.model.setMaximumLines(maxl);
 
     }
 
     @Override
     public int getN() {
-        return this.model.getN();
+        return this.model.getAtMostNFiles();
     }
 
     @Override
     public void setN(int n) {
-        this.model.setN(n);
+        this.model.setAtMostNFiles(n);
 
     }
 
     @Override
     public void stop() {
-        this.stop = true;
-        this.model.stop();
+        this.model.getResultsData().stop();
         this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED);
     }
 
-    private SwingWorker<Void, Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> getSwingWorker(
-            BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results,
-            CompletableFuture<Void> future
-    ) {
+    private SwingWorker<Void, Result> getSwingWorker(ResultsData resultsData) {
         return new SwingWorker<>() {
 
             @Override
-            protected Void doInBackground() throws Exception {
-                while ((!results.isEmpty() || !future.isDone()) && !stop) {
-                    Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result;
+            protected Void doInBackground() {
+                BlockingQueue<Result> results = resultsData.getResults();
+                Result result;
+                while ((!results.isEmpty() || !resultsData.getCompletionFuture().isDone()) &&
+                        !resultsData.isStopped()) {
                     while ((result = results.poll()) != null) {
                         if (results.isEmpty()) {
                             publish(result);
@@ -118,7 +110,7 @@ public class ControllerImpl implements Controller {
             }
 
             @Override
-            protected void process(List<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> chunks) {
+            protected void process(List<Result> chunks) {
                 for (var result : chunks) {
                     try {
                         guiView.show(result);

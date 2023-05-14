@@ -1,6 +1,7 @@
 package pcd.assignment.common.view;
 
 import pcd.assignment.common.controller.Controller;
+import pcd.assignment.common.model.data.Result;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.common.model.data.FileInfo;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
@@ -44,12 +45,12 @@ public class GuiViewImpl extends JFrame implements View {
     }
 
     @Override
-    public void show(Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result) throws OperationNotSupportedException {
+    public void show(Result result) throws OperationNotSupportedException {
         if (!initialized) {
             throw new OperationNotSupportedException("Gui not yet initialized");
         }
         SwingUtilities.invokeLater(() -> {
-            this.linesCounters.setListData(result.getX().get().entrySet().stream()
+            this.linesCounters.setListData(result.getIntervals().get().entrySet().stream()
                     .sorted(Comparator.comparingInt(e -> e.getKey().getX()))
                     .map(e ->
                             e.getValue().getValue() +
@@ -61,7 +62,7 @@ public class GuiViewImpl extends JFrame implements View {
                     .toArray(String[]::new)
             );
             this.longestFiles.setListData(
-                    result.getY().get().stream()
+                    result.getLongestFiles().get().stream()
                             .sorted(Comparator.comparingLong(FileInfo::getLineCount))
                             .map(f -> f.getFile().getName() + " -> " + f.getLineCount())
                             .toArray(String[]::new)

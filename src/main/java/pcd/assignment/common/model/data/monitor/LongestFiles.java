@@ -12,6 +12,5 @@ public interface LongestFiles extends UnmodifiableLongestFiles {
 
     int getFilesToKeep();
 
-
     LongestFiles getCopy();
 }

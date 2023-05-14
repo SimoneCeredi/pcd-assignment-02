@@ -6,9 +6,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 import pcd.assignment.common.model.Model;
-import pcd.assignment.common.model.data.ConcurrentIntervals;
-import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.model.data.UnmodifiableIntervals;
+import pcd.assignment.common.model.data.*;
 import pcd.assignment.common.model.data.monitor.ConcurrentLongestFiles;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.common.source.analyzer.SourceAnalyzer;
@@ -16,6 +14,8 @@ import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.reactive.model.ExplorerManager;
 import pcd.assignment.reactive.model.FunctionsConsumer;
 import pcd.assignment.reactive.model.RecursiveExplorer;
+import pcd.assignment.reactive.model.data.SimpleIntervals;
+import pcd.assignment.reactive.model.data.SimpleLongestFiles;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
@@ -27,35 +27,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SourceAnalyzerImpl implements SourceAnalyzer {
 
     private final Model model;
-    private final AtomicBoolean stop;
+    private ResultsData resultsData;
 
     public SourceAnalyzerImpl(Model model) {
         this.model = model;
-        this.stop = new AtomicBoolean(true);
     }
 
     @Override
-    public Pair<
-            BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>>,
-            CompletableFuture<Void>> analyzeSources(File directory) {
-        BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results =
-                new LinkedBlockingQueue<>();
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        if (this.stop.get()) {
-            this.stop.set(false);
-            chain(results, future, directory);
-        }
-        return new Pair<>(results, future);
+    public ResultsData analyzeSources(File directory) {
+        this.resultsData = new ResultsDataImpl();
+        chain(directory);
+        return this.resultsData;
     }
 
-    private void chain(BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results,
-                       CompletableFuture<Void> future,
-                       File directory){
+    private void chain(File directory){
         Subject<FileInfo> functionsCalculator = PublishSubject.create();
         Observable<File> explorerManager =
-                Observable.create(new ExplorerManager(directory, this.stop));
+                Observable.create(new ExplorerManager(directory, resultsData));
         explorerChain(explorerManager, functionsCalculator);
-        functionsChain(functionsCalculator, results, future);
+        functionsChain(functionsCalculator);
     }
 
     private void explorerChain(Observable<File> explorerManager,
@@ -68,7 +58,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                 .subscribe(d -> {
                     // Recursively compute all FileInfo(s) from the directory specified by the manager
                     Observable<FileInfo> recursiveExplorer =
-                            Observable.create(new RecursiveExplorer(d, this.stop));
+                            Observable.create(new RecursiveExplorer(d, resultsData));
                     counter.getAndIncrement();
                     // Same as explorer manager
                     recursiveExplorer
@@ -84,29 +74,24 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                 });
     }
 
-    private void functionsChain(Subject<FileInfo> functionsCalculator,
-                                BlockingQueue<Pair<UnmodifiableIntervals, UnmodifiableLongestFiles>> results,
-                                CompletableFuture<Void> future) {
+    private void functionsChain(Subject<FileInfo> functionsCalculator) {
         Consumer<FileInfo> functionsConsumer =
                 new FunctionsConsumer(
-                        new ConcurrentIntervals(model.getNi(), model.getMaxl()),
-                        new ConcurrentLongestFiles(model.getN()),
-                        results);
+                        new SimpleIntervals(model.getNumberOfIntervals(),
+                                model.getMaximumLines()),
+                        new SimpleLongestFiles(model.getAtMostNFiles()),
+                        resultsData.getResults());
         functionsCalculator
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.single())
                 .doOnComplete(() -> {
-                    if (!this.stop.get()) {
-                        future.complete(null);
+
+                    if (!this.resultsData.isStopped()) {
+                        resultsData.getCompletionFuture().complete(null);
                     }
-                    this.stop.set(true);
+                    //this.stop.set(true);
                 })
                 .subscribe(functionsConsumer);
     }
 
-    @Override
-    public void stop() {
-        System.out.println("Stopping");
-        this.stop.set(true);
-    }
 }

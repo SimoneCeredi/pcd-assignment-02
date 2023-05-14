@@ -1,6 +1,7 @@
 package pcd.assignment.common.view;
 
 import pcd.assignment.common.controller.Controller;
+import pcd.assignment.common.model.data.Result;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.common.model.data.FileInfo;
 import pcd.assignment.common.model.data.UnmodifiableIntervals;
@@ -19,14 +20,14 @@ public class ConsoleViewImpl implements View {
     }
 
     @Override
-    public void show(Pair<UnmodifiableIntervals, UnmodifiableLongestFiles> result) {
+    public void show(Result result) {
         System.out.println("Longest Files");
-        System.out.println(result.getY().get().stream()
+        System.out.println(result.getLongestFiles().get().stream()
                 .sorted(Comparator.comparingLong(FileInfo::getLineCount))
                 .map(f -> f.getFile().getAbsolutePath() + " -> " + f.getLineCount())
                 .collect(Collectors.joining("\n")));
         System.out.println("\n\nLines distribution");
-        result.getX().get().entrySet().stream()
+        result.getIntervals().get().entrySet().stream()
                 .sorted(Comparator.comparingInt(e -> e.getKey().getX()))
                 .forEach(e -> System.out.println(
                         e.getValue().getValue() +
@@ -35,8 +36,12 @@ public class ConsoleViewImpl implements View {
                                 (e.getKey().getY() == Integer.MAX_VALUE ? "+" : ("," + e.getKey().getY())) +
                                 "]"
                 ));
-        System.out.println("Total files -> " + result.getX().get().values().stream().mapToInt(UnmodifiableCounter::getValue).sum());
-
+        System.out.println("Total files -> " +
+                result.getIntervals()
+                        .get()
+                        .values()
+                        .stream()
+                        .mapToInt(UnmodifiableCounter::getValue).sum());
     }
 
     @Override

@@ -32,7 +32,7 @@ public class ModelBuilderImpl implements ModelBuilder {
 
     @Override
     public ModelBuilder setSourceAnalyzer(Function<Model, SourceAnalyzer> sourceAnalyzer) {
-        this.model = new ModelImpl(this.ni, this.maxl, this.n);
+        this.model = new ModelImpl(new ConfigurationImpl(this.ni, this.maxl, this.n));
         this.sourceAnalyzer = sourceAnalyzer.apply(this.model);
         return this;
     }

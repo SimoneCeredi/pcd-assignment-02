@@ -3,6 +3,7 @@ package pcd.assignment.reactive.model;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+import pcd.assignment.common.model.data.ResultsData;
 import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
 
 
@@ -14,12 +15,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ExplorerManager implements ObservableOnSubscribe<File> {
 
     private final File rootDirectory;
-    private final AtomicBoolean stop;
+    private final ResultsData resultsData;
     private ObservableEmitter<File> emitter;
 
-    public ExplorerManager(File rootDirectory, AtomicBoolean stop) {
+    public ExplorerManager(File rootDirectory, ResultsData resultsData) {
         this.rootDirectory = rootDirectory;
-        this.stop = stop;
+        this.resultsData = resultsData;
     }
 
     @Override
@@ -30,11 +31,11 @@ public class ExplorerManager implements ObservableOnSubscribe<File> {
     }
 
     private void bfs(List<File> nodes) {
-        if (nodes.size() > 0 && !stop.get()) {
+        if (nodes.size() > 0 && !this.resultsData.isStopped()) {
             nodes.forEach(n -> this.emitter.onNext(n));
             List<File> subdirs = new ArrayList<>();
             for (File node : nodes) {
-                if (stop.get()) {
+                if (this.resultsData.isStopped()) {
                     return;
                 }
                 subdirs.addAll(DirectoryExplorerUtils.listDirectories(node));
