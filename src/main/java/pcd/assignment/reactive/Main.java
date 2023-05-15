@@ -18,22 +18,23 @@ import java.util.function.Function;
 
 public class Main {
     public static void main(String[] args) throws OperationNotSupportedException {
-        File directory = new File("./benchmarks/fs");
-        int ni = 5;
-        int maxl = 1000;
-        int n = 10;
-        if (args.length == 4) {
-            directory = new File(args[0]);
-            ni = Integer.parseInt(args[1]);
-            maxl = Integer.parseInt(args[2]);
-            n = Integer.parseInt(args[3]);
-        }
-
+        System.out.println("4) Reactive based approach");
         Function<Model, SourceAnalyzer> sourceAnalyzerFunction = SourceAnalyzerImpl::new;
         View gui = new GuiViewImpl();
-        Controller controller = new ControllerImpl(new ConsoleViewImpl(), gui);
-        //controller.startConsole(model, directory);
-        gui.initialize(sourceAnalyzerFunction, directory);
+        if (args.length == 4) {
+            File directory = new File(args[0]);
+            int ni = Integer.parseInt(args[1]);
+            int maxl = Integer.parseInt(args[2]);
+            int n = Integer.parseInt(args[3]);
+            Model model = new ModelImpl(
+                    new ConfigurationImpl(ni, maxl, n));
+            model.setSourceAnalyzer(sourceAnalyzerFunction.apply(model));
+            new ControllerImpl(new ConsoleViewImpl(), gui)
+                    .start(model, directory);
+        } else {
+            File directory = new File("./benchmarks/fs");
+            gui.initialize(sourceAnalyzerFunction, directory);
+        }
     }
 
 }
