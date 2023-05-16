@@ -9,6 +9,7 @@ import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
 import pcd.assignment.common.source.analyzer.SourceAnalyzer;
 import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
+import pcd.assignment.common.source.analyzer.SourceAnalyzerDataImpl;
 import pcd.assignment.common.utilities.Pair;
 import pcd.assignment.event.loop.model.verticles.DirectoryExplorerVerticle;
 import pcd.assignment.event.loop.utils.VerticleDeployUtils;
@@ -18,65 +19,39 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class SourceAnalyzerImpl implements SourceAnalyzer, SourceAnalyzerData {
+public class SourceAnalyzerImpl implements SourceAnalyzer {
+
     private final Model model;
     private Vertx vertx;
-    private BlockingQueue<Result> results;
-    private Intervals intervals;
-    private LongestFiles longestFiles;
-    private volatile boolean stopped = false;
 
     public SourceAnalyzerImpl(Model model) {
         this.model = model;
     }
 
-
     @Override
     public ResultsData analyzeSources(File directory) {
-        this.stopped = false;
         this.vertx = Vertx.vertx();
-        this.intervals = new ConcurrentIntervals(
+        Intervals intervals = new ConcurrentIntervals(
                 this.model.getConfiguration().getNumberOfIntervals(),
                 this.model.getConfiguration().getMaximumLines());
-        this.longestFiles = new ConcurrentLongestFiles(this.model.getConfiguration().getAtMostNFiles());
-        this.results = new LinkedBlockingQueue<>();
-        CompletableFuture<Void> completableFuture = new CompletableFuture<>();
+        LongestFiles longestFiles = new ConcurrentLongestFiles(this.model.getConfiguration().getAtMostNFiles());
+        CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+        ResultsData resultsData = new ResultsDataImpl(new LinkedBlockingQueue<>(), completionFuture);
+
         Promise<Void> promise = Promise.promise();
-        vertx.deployVerticle(new DirectoryExplorerVerticle(directory.getAbsolutePath(), promise, this), VerticleDeployUtils.getDeploymentOptions());
+        vertx.deployVerticle(new DirectoryExplorerVerticle(directory.getAbsolutePath(),
+                        promise,
+                        new SourceAnalyzerDataImpl(resultsData, intervals, longestFiles)),
+                VerticleDeployUtils.getDeploymentOptions());
         promise.future().onComplete(as -> {
             if (as.succeeded()) {
-                completableFuture.complete(null);
+                completionFuture.complete(null);
             } else {
-                completableFuture.cancel(true);
+                completionFuture.cancel(true);
             }
             this.vertx.close();
         });
-        return new ResultsDataImpl(results, completableFuture);
+        return resultsData;
     }
 
-    //@Override
-    //public void stop() {
-    //    this.stopped = true;
-    //    this.vertx.close();
-    //}
-
-    @Override
-    public boolean shouldStop() {
-        return this.stopped;
-    }
-
-    @Override
-    public BlockingQueue<Result> getResults() {
-        return this.results;
-    }
-
-    @Override
-    public Intervals getIntervals() {
-        return this.intervals;
-    }
-
-    @Override
-    public LongestFiles getLongestFiles() {
-        return this.longestFiles;
-    }
 }

@@ -1,7 +1,6 @@
 package pcd.assignment.tasks.executors.tasks;
 
-import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.model.data.Intervals;
+import pcd.assignment.common.model.data.*;
 import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
 import pcd.assignment.common.utilities.Pair;
@@ -12,56 +11,65 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
-public class ExploreDirectoryTask extends RecursiveTask<Pair<Intervals, LongestFiles>> {
+public class ExploreDirectoryTask extends RecursiveTask<Result> {
     private final File directory;
-    private final MemorizeStrategy strategy;
     private final SourceAnalyzerData data;
 
-    public ExploreDirectoryTask(File directory, SourceAnalyzerData data, MemorizeStrategy strategy) {
+    public ExploreDirectoryTask(File directory, SourceAnalyzerData data) {
         this.directory = directory;
         this.data = data;
-        this.strategy = strategy;
     }
 
 
     @Override
-    protected Pair<Intervals, LongestFiles> compute() {
-        List<RecursiveTask<Pair<Intervals, LongestFiles>>> directoryForks = new LinkedList<>();
+    protected Result compute() {
+        List<RecursiveTask<Result>> directoryForks = new LinkedList<>();
         List<RecursiveTask<FileInfo>> filesForks = new LinkedList<>();
         exploreAndFork(directoryForks, filesForks);
         joinDirectoriesTask(directoryForks);
         joinReadLinesTasks(filesForks);
-        this.strategy.saveResult(this.data.getIntervals(), this.data.getLongestFiles());
-        return new Pair<>(this.data.getIntervals(), this.data.getLongestFiles());
+
+        if (!this.data.getResultsData().isStopped()) {
+            try {
+                this.data
+                        .getResultsData()
+                        .getResults()
+                        .put(new ResultImpl(this.data.getCurrentIntervals().getCopy(),
+                                this.data.getCurrentLongestFiles().getCopy()));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new ResultImpl(this.data.getCurrentIntervals(), this.data.getCurrentLongestFiles());
     }
 
     private void joinReadLinesTasks(List<RecursiveTask<FileInfo>> filesForks) {
         for (var task : filesForks) {
             FileInfo fileInfo = task.join();
-            this.data.getIntervals().store(fileInfo);
-            this.data.getLongestFiles().put(fileInfo);
+            this.data.getCurrentIntervals().store(fileInfo);
+            this.data.getCurrentLongestFiles().put(fileInfo);
         }
     }
 
-    private void joinDirectoriesTask(List<RecursiveTask<Pair<Intervals, LongestFiles>>> directoryForks) {
+    private void joinDirectoriesTask(List<RecursiveTask<Result>> directoryForks) {
         for (var task : directoryForks) {
             task.join();
         }
     }
 
-    private void exploreAndFork(List<RecursiveTask<Pair<Intervals, LongestFiles>>> directoryForks,
+    private void exploreAndFork(List<RecursiveTask<Result>> directoryForks,
                                 List<RecursiveTask<FileInfo>> filesForks) {
         if (this.directory.isDirectory()) {
             File[] files = this.directory.listFiles();
             if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        ExploreDirectoryTask task = getExploreDirectoryTask(file);
+                for (int i = 0; i < files.length && !this.data.getResultsData().isStopped(); i++) {
+                    if (files[i].isDirectory()) {
+                        ExploreDirectoryTask task = getExploreDirectoryTask(files[i]);
                         directoryForks.add(task);
                         task.fork();
                     } else {
-                        if (file.getName().endsWith(".java")) {
-                            ReadLinesTask task = new ReadLinesTask(file);
+                        if (files[i].getName().endsWith(".java")) {
+                            ReadLinesTask task = new ReadLinesTask(files[i]);
                             filesForks.add(task);
                             task.fork();
                         }
@@ -72,10 +80,6 @@ public class ExploreDirectoryTask extends RecursiveTask<Pair<Intervals, LongestF
     }
 
     private ExploreDirectoryTask getExploreDirectoryTask(File file) {
-        return new ExploreDirectoryTask(
-                file,
-                this.data,
-                this.strategy
-        );
+        return new ExploreDirectoryTask(file, this.data);
     }
 }

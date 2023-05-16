@@ -14,12 +14,12 @@ public class LineCounterVerticle extends AbstractVerticle {
 
     private final String file;
     private final Promise<Void> promise;
-    private final SourceAnalyzerData model;
+    private final SourceAnalyzerData data;
 
-    public LineCounterVerticle(String file, Promise<Void> promise, SourceAnalyzerData model) {
+    public LineCounterVerticle(String file, Promise<Void> promise, SourceAnalyzerData data) {
         this.file = file;
         this.promise = promise;
-        this.model = model;
+        this.data = data;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class LineCounterVerticle extends AbstractVerticle {
         vertx.fileSystem().readFile(this.file, res -> {
             if (res.succeeded()) {
                 FileInfo fileInfo = new FileInfo(new File(this.file), res.result().toString().split("\\r?\\n").length);
-                if (!this.model.shouldStop()) {
+                if (!this.data.getResultsData().isStopped()) {
                     saveFileInfo(fileInfo);
                 }
                 this.promise.complete();
@@ -41,13 +41,13 @@ public class LineCounterVerticle extends AbstractVerticle {
     }
 
     private void saveFileInfo(FileInfo fileInfo) {
-        this.model.getIntervals().store(fileInfo);
-        this.model.getLongestFiles().put(fileInfo);
+        this.data.getCurrentIntervals().store(fileInfo);
+        this.data.getCurrentLongestFiles().put(fileInfo);
         try {
-            this.model.getResults().put(
+            this.data.getResultsData().getResults().put(
                     new ResultImpl(
-                            this.model.getIntervals().getCopy(),
-                            this.model.getLongestFiles().getCopy()
+                            this.data.getCurrentIntervals().getCopy(),
+                            this.data.getCurrentLongestFiles().getCopy()
                     )
             );
         } catch (InterruptedException e) {

@@ -15,20 +15,15 @@ import java.util.concurrent.Future;
 public class ExploreDirectoryTask implements Runnable {
     private final File directory;
     private final CompletableFuture<Result> currentDirFuture;
-    private final ResultsData resultsData;
-    private final Intervals intervals;
-    private final LongestFiles longestFiles;
+    private final SourceAnalyzerData data;
+
 
     public ExploreDirectoryTask(File directory,
                                 CompletableFuture<Result> currentDirFuture,
-                                ResultsData resultsData,
-                                Intervals intervals,
-                                LongestFiles longestFiles) {
+                                SourceAnalyzerData data) {
         this.directory = directory;
         this.currentDirFuture = currentDirFuture;
-        this.resultsData = resultsData;
-        this.intervals = intervals;
-        this.longestFiles = longestFiles;
+        this.data = data;
     }
 
     @Override
@@ -38,23 +33,27 @@ public class ExploreDirectoryTask implements Runnable {
         exploreDirectory(directoryFutures, filesFutures);
         collectDirectoryData(directoryFutures);
         collectFilesData(filesFutures);
-        if (!this.resultsData.isStopped()) {
+        if (!this.data.getResultsData().isStopped()) {
             try {
-                this.resultsData.getResults().put(
-                        new ResultImpl(this.intervals.getCopy(), this.longestFiles.getCopy()));
+                this.data
+                        .getResultsData()
+                        .getResults()
+                        .put(new ResultImpl(this.data.getCurrentIntervals().getCopy(),
+                                this.data.getCurrentLongestFiles().getCopy()));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        currentDirFuture.complete(new ResultImpl(this.intervals, this.longestFiles));
+        currentDirFuture.complete(new ResultImpl(this.data.getCurrentIntervals(),
+                this.data.getCurrentLongestFiles()));
     }
 
     private void collectFilesData(List<Future<FileInfo>> filesFutures) {
         for (var future : filesFutures) {
             try {
                 FileInfo fileInfo = future.get();
-                this.intervals.store(fileInfo);
-                this.longestFiles.put(fileInfo);
+                this.data.getCurrentIntervals().store(fileInfo);
+                this.data.getCurrentLongestFiles().put(fileInfo);
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -76,21 +75,19 @@ public class ExploreDirectoryTask implements Runnable {
         if (this.directory.isDirectory()) {
             File[] files = this.directory.listFiles();
             if (files != null) {
-                for (File file : files) {
-                    if (!this.resultsData.isStopped()) {
-                        if (file.isDirectory()) {
-                            CompletableFuture<Result> subdirFuture = new CompletableFuture<>();
-                            // Start a new virtual thread with a new future
-                            Thread.ofVirtual().start(this.getExploreDirectoryTask(file, subdirFuture));
-                            // Wait all subdirectories' tasks to complete to get their results
-                            directoryFutures.add(subdirFuture);
-                        } else {
-                            if (file.getName().endsWith(".java")) {
-                                CompletableFuture<FileInfo> subtaskFuture = new CompletableFuture<>();
-                                ReadLinesTask task = new ReadLinesTask(file, subtaskFuture);
-                                Thread.ofVirtual().start(task);
-                                filesFutures.add(subtaskFuture);
-                            }
+                for (int i = 0; i < files.length && !this.data.getResultsData().isStopped(); i++) {
+                    if (files[i].isDirectory()) {
+                        CompletableFuture<Result> subdirFuture = new CompletableFuture<>();
+                        // Start a new virtual thread with a new future
+                        Thread.ofVirtual().start(this.getExploreDirectoryTask(files[i], subdirFuture));
+                        // Wait all subdirectories' tasks to complete to get their results
+                        directoryFutures.add(subdirFuture);
+                    } else {
+                        if (files[i].getName().endsWith(".java")) {
+                            CompletableFuture<FileInfo> subtaskFuture = new CompletableFuture<>();
+                            ReadLinesTask task = new ReadLinesTask(files[i], subtaskFuture);
+                            Thread.ofVirtual().start(task);
+                            filesFutures.add(subtaskFuture);
                         }
                     }
                 }
@@ -100,12 +97,6 @@ public class ExploreDirectoryTask implements Runnable {
 
     private ExploreDirectoryTask getExploreDirectoryTask(File file,
                                                          CompletableFuture<Result> subdirFuture) {
-        return new ExploreDirectoryTask(
-                file,
-                subdirFuture,
-                this.resultsData,
-                this.intervals,
-                this.longestFiles
-        );
+        return new ExploreDirectoryTask(file, subdirFuture, this.data);
     }
 }

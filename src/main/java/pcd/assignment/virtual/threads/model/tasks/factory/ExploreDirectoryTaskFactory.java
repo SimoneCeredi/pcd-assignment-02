@@ -16,9 +16,7 @@ public class ExploreDirectoryTaskFactory {
 
     public ExploreDirectoryTask analyzeSourcesTask(File directory,
                                                    CompletableFuture<Result> tasksFuture,
-                                                   ResultsData resultsData,
-                                                   Intervals intervals,
-                                                   LongestFiles longestFiles) {
-        return new ExploreDirectoryTask(directory, tasksFuture, resultsData, intervals, longestFiles);
+                                                   SourceAnalyzerData data) {
+        return new ExploreDirectoryTask(directory, tasksFuture, data);
     }
 }

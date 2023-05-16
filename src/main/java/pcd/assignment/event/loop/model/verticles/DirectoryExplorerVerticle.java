@@ -5,6 +5,9 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;
 import io.vertx.core.file.FileProps;
+import pcd.assignment.common.model.data.Intervals;
+import pcd.assignment.common.model.data.ResultsData;
+import pcd.assignment.common.model.data.monitor.LongestFiles;
 import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
 import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
@@ -17,12 +20,14 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     private final String directory;
     private final Promise<Void> promise;
-    private final SourceAnalyzerData model;
+    private final SourceAnalyzerData data;
 
-    public DirectoryExplorerVerticle(String directory, Promise<Void> promise, SourceAnalyzerData model) {
+    public DirectoryExplorerVerticle(String directory,
+                                     Promise<Void> promise,
+                                     SourceAnalyzerData data) {
         this.directory = directory;
         this.promise = promise;
-        this.model = model;
+        this.data = data;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
     private void exploreDirectory(List<String> fileList) {
         List<Promise<Void>> filePromises = new ArrayList<>(fileList.size());
         for (String file : fileList) {
-            if (!this.model.shouldStop()) {
+            if (!this.data.getResultsData().isStopped()) {
                 Promise<Void> filePromise = Promise.promise();
                 filePromises.add(filePromise);
                 vertx.fileSystem().props(file, res -> {
@@ -64,7 +69,8 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
     private void manageProps(String file, Promise<Void> filePromise, AsyncResult<FileProps> res) {
         FileProps fileProps = res.result();
         if (fileProps.isDirectory()) {
-            vertx.deployVerticle(new DirectoryExplorerVerticle(file, filePromise, model), VerticleDeployUtils.getDeploymentOptions());
+            vertx.deployVerticle(new DirectoryExplorerVerticle(file, filePromise, this.data),
+                    VerticleDeployUtils.getDeploymentOptions());
         } else {
             exploreFile(file, filePromise);
         }
@@ -72,7 +78,8 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     private void exploreFile(String file, Promise<Void> filePromise) {
         if (file.endsWith(".java")) {
-            vertx.deployVerticle(new LineCounterVerticle(file, filePromise, model), VerticleDeployUtils.getDeploymentOptions());
+            vertx.deployVerticle(new LineCounterVerticle(file, filePromise, this.data),
+                    VerticleDeployUtils.getDeploymentOptions());
         } else {
             filePromise.complete();
         }
