@@ -1,10 +1,9 @@
 package pcd.assignment.reactive.model.data;
 
-import pcd.assignment.common.model.data.BaseIntervals;
-import pcd.assignment.common.model.data.ConcurrentIntervals;
-import pcd.assignment.common.model.data.Intervals;
-import pcd.assignment.common.model.data.monitor.Counter;
-import pcd.assignment.common.model.data.monitor.UnmodifiableCounter;
+import pcd.assignment.common.model.data.functions.BaseIntervals;
+import pcd.assignment.common.model.data.functions.Intervals;
+import pcd.assignment.common.model.data.functions.Counter;
+import pcd.assignment.common.model.data.functions.UnmodifiableCounter;
 import pcd.assignment.common.utilities.Pair;
 
 import java.util.Collections;

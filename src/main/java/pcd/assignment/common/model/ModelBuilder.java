@@ -1,6 +1,7 @@
 package pcd.assignment.common.model;
 
-import pcd.assignment.common.source.analyzer.SourceAnalyzer;
+import pcd.assignment.common.model.configuration.Configuration;
+import pcd.assignment.common.analyzer.SourceAnalyzer;
 
 import java.util.function.Function;
 

@@ -1,8 +1,8 @@
 package pcd.assignment.reactive.model.data;
 
-import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.model.data.monitor.BaseLongestFiles;
-import pcd.assignment.common.model.data.monitor.LongestFiles;
+import pcd.assignment.common.model.data.results.FileInfo;
+import pcd.assignment.common.model.data.functions.BaseLongestFiles;
+import pcd.assignment.common.model.data.functions.LongestFiles;
 
 import java.util.*;
 

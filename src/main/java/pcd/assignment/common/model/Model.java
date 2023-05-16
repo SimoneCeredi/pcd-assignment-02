@@ -1,7 +1,8 @@
 package pcd.assignment.common.model;
 
-import pcd.assignment.common.model.data.ResultsData;
-import pcd.assignment.common.source.analyzer.SourceAnalyzer;
+import pcd.assignment.common.model.configuration.Configuration;
+import pcd.assignment.common.model.data.results.ResultsData;
+import pcd.assignment.common.analyzer.SourceAnalyzer;
 
 public interface Model extends SourceAnalyzer {
 

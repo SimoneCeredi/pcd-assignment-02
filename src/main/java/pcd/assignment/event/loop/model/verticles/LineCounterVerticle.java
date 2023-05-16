@@ -2,10 +2,9 @@ package pcd.assignment.event.loop.model.verticles;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.model.data.ResultImpl;
-import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
-import pcd.assignment.common.utilities.Pair;
+import pcd.assignment.common.model.data.results.FileInfo;
+import pcd.assignment.common.model.data.results.ResultImpl;
+import pcd.assignment.common.analyzer.SourceAnalyzerData;
 import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
 import java.io.File;

@@ -2,13 +2,10 @@ package pcd.assignment.reactive.utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import pcd.assignment.common.utilities.FilesUtils;
-import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
-import pcd.assignment.common.model.data.FileInfo;
+import pcd.assignment.common.model.data.results.FileInfo;
 
 
 public class DirectoryExplorerUtils {

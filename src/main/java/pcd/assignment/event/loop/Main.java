@@ -1,14 +1,14 @@
 package pcd.assignment.event.loop;
 
 import pcd.assignment.common.controller.ControllerImpl;
-import pcd.assignment.common.model.ConfigurationImpl;
+import pcd.assignment.common.model.configuration.ConfigurationImpl;
 import pcd.assignment.common.model.Model;
 import pcd.assignment.common.model.ModelImpl;
-import pcd.assignment.common.source.analyzer.SourceAnalyzer;
+import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.view.ConsoleViewImpl;
 import pcd.assignment.common.view.GuiViewImpl;
 import pcd.assignment.common.view.View;
-import pcd.assignment.event.loop.source.analyzer.SourceAnalyzerImpl;
+import pcd.assignment.event.loop.analyzer.SourceAnalyzerImpl;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;

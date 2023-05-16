@@ -5,10 +5,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;
 import io.vertx.core.file.FileProps;
-import pcd.assignment.common.model.data.Intervals;
-import pcd.assignment.common.model.data.ResultsData;
-import pcd.assignment.common.model.data.monitor.LongestFiles;
-import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
+import pcd.assignment.common.analyzer.SourceAnalyzerData;
 import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
 import java.util.ArrayList;

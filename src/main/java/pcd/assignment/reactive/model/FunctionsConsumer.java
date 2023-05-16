@@ -1,8 +1,11 @@
 package pcd.assignment.reactive.model;
 
 import io.reactivex.rxjava3.functions.Consumer;
-import pcd.assignment.common.model.data.*;
-import pcd.assignment.common.model.data.monitor.LongestFiles;
+import pcd.assignment.common.model.data.functions.Intervals;
+import pcd.assignment.common.model.data.functions.LongestFiles;
+import pcd.assignment.common.model.data.results.FileInfo;
+import pcd.assignment.common.model.data.results.Result;
+import pcd.assignment.common.model.data.results.ResultImpl;
 
 import java.util.concurrent.BlockingQueue;
 

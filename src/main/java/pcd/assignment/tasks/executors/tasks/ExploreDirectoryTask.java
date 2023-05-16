@@ -1,10 +1,9 @@
 package pcd.assignment.tasks.executors.tasks;
 
-import pcd.assignment.common.model.data.*;
-import pcd.assignment.common.model.data.monitor.LongestFiles;
-import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
-import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.tasks.executors.tasks.strategy.MemorizeStrategy;
+import pcd.assignment.common.model.data.results.FileInfo;
+import pcd.assignment.common.model.data.results.Result;
+import pcd.assignment.common.model.data.results.ResultImpl;
+import pcd.assignment.common.analyzer.SourceAnalyzerData;
 
 import java.io.File;
 import java.util.LinkedList;

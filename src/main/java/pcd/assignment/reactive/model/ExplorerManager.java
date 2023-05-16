@@ -3,14 +3,13 @@ package pcd.assignment.reactive.model;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import pcd.assignment.common.model.data.ResultsData;
+import pcd.assignment.common.model.data.results.ResultsData;
 import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
 
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ExplorerManager implements ObservableOnSubscribe<File> {
 

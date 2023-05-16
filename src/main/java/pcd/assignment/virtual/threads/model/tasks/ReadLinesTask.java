@@ -1,7 +1,6 @@
 package pcd.assignment.virtual.threads.model.tasks;
 
-import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.source.analyzer.SourceAnalyzerData;
+import pcd.assignment.common.model.data.results.FileInfo;
 import pcd.assignment.common.utilities.FilesUtils;
 
 import java.io.File;

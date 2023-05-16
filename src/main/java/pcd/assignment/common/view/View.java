@@ -1,12 +1,8 @@
 package pcd.assignment.common.view;
 
-import pcd.assignment.common.controller.Controller;
 import pcd.assignment.common.model.Model;
-import pcd.assignment.common.model.data.Result;
-import pcd.assignment.common.source.analyzer.SourceAnalyzer;
-import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.common.model.data.UnmodifiableIntervals;
-import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.model.data.results.Result;
+import pcd.assignment.common.analyzer.SourceAnalyzer;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;

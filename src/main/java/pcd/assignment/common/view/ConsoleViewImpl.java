@@ -1,14 +1,10 @@
 package pcd.assignment.common.view;
 
-import pcd.assignment.common.controller.Controller;
 import pcd.assignment.common.model.Model;
-import pcd.assignment.common.model.data.Result;
-import pcd.assignment.common.source.analyzer.SourceAnalyzer;
-import pcd.assignment.common.utilities.Pair;
-import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.model.data.UnmodifiableIntervals;
-import pcd.assignment.common.model.data.monitor.UnmodifiableCounter;
-import pcd.assignment.common.model.data.monitor.UnmodifiableLongestFiles;
+import pcd.assignment.common.model.data.results.Result;
+import pcd.assignment.common.analyzer.SourceAnalyzer;
+import pcd.assignment.common.model.data.results.FileInfo;
+import pcd.assignment.common.model.data.functions.UnmodifiableCounter;
 
 import java.io.File;
 import java.util.Comparator;

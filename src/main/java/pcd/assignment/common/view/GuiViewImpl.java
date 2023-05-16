@@ -3,9 +3,11 @@ package pcd.assignment.common.view;
 import pcd.assignment.common.controller.Controller;
 import pcd.assignment.common.controller.ControllerImpl;
 import pcd.assignment.common.model.*;
-import pcd.assignment.common.model.data.Result;
-import pcd.assignment.common.model.data.FileInfo;
-import pcd.assignment.common.source.analyzer.SourceAnalyzer;
+import pcd.assignment.common.model.configuration.Configuration;
+import pcd.assignment.common.model.configuration.ConfigurationImpl;
+import pcd.assignment.common.model.data.results.Result;
+import pcd.assignment.common.model.data.results.FileInfo;
+import pcd.assignment.common.analyzer.SourceAnalyzer;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;

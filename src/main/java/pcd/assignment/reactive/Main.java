@@ -1,16 +1,14 @@
 package pcd.assignment.reactive;
 
-import pcd.assignment.common.controller.Controller;
 import pcd.assignment.common.controller.ControllerImpl;
-import pcd.assignment.common.model.ConfigurationImpl;
+import pcd.assignment.common.model.configuration.ConfigurationImpl;
 import pcd.assignment.common.model.Model;
-import pcd.assignment.common.model.ModelBuilderImpl;
 import pcd.assignment.common.model.ModelImpl;
-import pcd.assignment.common.source.analyzer.SourceAnalyzer;
+import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.view.ConsoleViewImpl;
 import pcd.assignment.common.view.GuiViewImpl;
 import pcd.assignment.common.view.View;
-import pcd.assignment.reactive.source.analyzer.SourceAnalyzerImpl;
+import pcd.assignment.reactive.analyzer.SourceAnalyzerImpl;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;
@@ -30,7 +28,7 @@ public class Main {
                     new ConfigurationImpl(ni, maxl, n));
             model.setSourceAnalyzer(sourceAnalyzerFunction.apply(model));
             new ControllerImpl(new ConsoleViewImpl(), gui)
-                    .start(model, directory);
+                    .startConsole(model, directory);
         } else {
             File directory = new File("./benchmarks/fs");
             gui.initialize(sourceAnalyzerFunction, directory);

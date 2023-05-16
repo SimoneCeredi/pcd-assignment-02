@@ -3,9 +3,9 @@ package pcd.assignment.reactive.model;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import pcd.assignment.common.model.data.ResultsData;
+import pcd.assignment.common.model.data.results.ResultsData;
 import pcd.assignment.reactive.utils.DirectoryExplorerUtils;
-import pcd.assignment.common.model.data.FileInfo;
+import pcd.assignment.common.model.data.results.FileInfo;
 
 
 import java.io.File;
