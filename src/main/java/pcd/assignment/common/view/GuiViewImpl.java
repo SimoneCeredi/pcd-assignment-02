@@ -6,7 +6,6 @@ import pcd.assignment.common.model.*;
 import pcd.assignment.common.model.data.Result;
 import pcd.assignment.common.model.data.FileInfo;
 import pcd.assignment.common.source.analyzer.SourceAnalyzer;
-import pcd.assignment.event.loop.source.analyzer.SourceAnalyzerImpl;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;

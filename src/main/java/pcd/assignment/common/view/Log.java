@@ -1,4 +1,4 @@
-package pcd.assignment.reactive.utils;
+package pcd.assignment.common.view;
 
 public class Log {
 

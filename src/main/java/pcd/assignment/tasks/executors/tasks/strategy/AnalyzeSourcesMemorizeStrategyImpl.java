@@ -27,7 +27,6 @@ public class AnalyzeSourcesMemorizeStrategyImpl implements MemorizeStrategy {
         }
     }
 
-
     @Override
     public Intervals getChildLineCounter(Intervals lineCounter) {
         return lineCounter;
@@ -37,4 +36,5 @@ public class AnalyzeSourcesMemorizeStrategyImpl implements MemorizeStrategy {
     public LongestFiles getChildLongestFiles(LongestFiles filesQueue) {
         return filesQueue;
     }
+
 }

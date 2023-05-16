@@ -9,18 +9,16 @@ import java.util.concurrent.CompletableFuture;
 
 public class ReadLinesTask implements Runnable {
     private final File file;
-    private final CompletableFuture<FileInfo> future;
-    private final SourceAnalyzerData data;
+    private final CompletableFuture<FileInfo> fileResFuture;
 
-    public ReadLinesTask(File file, CompletableFuture<FileInfo> future, SourceAnalyzerData data) {
+    public ReadLinesTask(File file, CompletableFuture<FileInfo> fileResFuture) {
         this.file = file;
-        this.future = future;
-        this.data = data;
+        this.fileResFuture = fileResFuture;
     }
 
     @Override
     public void run() {
-        this.future.completeAsync(() -> {
+        this.fileResFuture.completeAsync(() -> {
             final long fileLength = FilesUtils.countLines(file);
             return new FileInfo(this.file, fileLength);
         });
