@@ -42,22 +42,20 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     }
 
-
     private void exploreDirectory(List<String> fileList) {
         List<Promise<Void>> filePromises = new ArrayList<>(fileList.size());
-        for (String file : fileList) {
-            if (!this.data.getResultsData().isStopped()) {
-                Promise<Void> filePromise = Promise.promise();
-                filePromises.add(filePromise);
-                vertx.fileSystem().props(file, res -> {
-                    if (res.succeeded()) {
-                        manageProps(file, filePromise, res);
-                    } else {
-                        System.err.println("Failed to get file properties: " + res.cause().getMessage());
-                        filePromise.fail(res.cause().getMessage());
-                    }
-                });
-            }
+        for (int i = 0; i < fileList.size() && this.data.getResultsData().isStopped(); i++) {
+            String file = fileList.get(i);
+            Promise<Void> filePromise = Promise.promise();
+            filePromises.add(filePromise);
+            vertx.fileSystem().props(file, res -> {
+                if (res.succeeded()) {
+                    manageProps(file, filePromise, res);
+                } else {
+                    System.err.println("Failed to get file properties: " + res.cause().getMessage());
+                    filePromise.fail(res.cause().getMessage());
+                }
+            });
         }
         CompositeFuture.all(filePromises.stream().map(Promise::future).collect(Collectors.toList()))
                 .onComplete(as -> this.promise.complete());
