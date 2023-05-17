@@ -44,7 +44,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     private void exploreDirectory(List<String> fileList) {
         List<Promise<Void>> filePromises = new ArrayList<>(fileList.size());
-        for (int i = 0; i < fileList.size() && this.data.getResultsData().isStopped(); i++) {
+        for (int i = 0; i < fileList.size() && !this.data.getResultsData().isStopped(); i++) {
             String file = fileList.get(i);
             Promise<Void> filePromise = Promise.promise();
             filePromises.add(filePromise);
@@ -57,8 +57,13 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
                 }
             });
         }
-        CompositeFuture.all(filePromises.stream().map(Promise::future).collect(Collectors.toList()))
-                .onComplete(as -> this.promise.complete());
+        // TODO: must check
+        if (this.data.getResultsData().isStopped()) {
+            this.promise.complete();
+        } else {
+            CompositeFuture.all(filePromises.stream().map(Promise::future).collect(Collectors.toList()))
+                    .onComplete(as -> this.promise.complete());
+        }
     }
 
     private void manageProps(String file, Promise<Void> filePromise, AsyncResult<FileProps> res) {
