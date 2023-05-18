@@ -68,16 +68,18 @@ public class GuiViewImpl extends JFrame implements View {
 
     @Override
     public void setExecutionStatus(ExecutionStatus status) {
-        switch (status) {
-            case STARTED -> {
-                this.startButton.setEnabled(false);
-                this.stopButton.setEnabled(true);
+        SwingUtilities.invokeLater(() -> {
+            switch (status) {
+                case STARTED -> {
+                    this.startButton.setEnabled(false);
+                    this.stopButton.setEnabled(true);
+                }
+                case COMPLETED -> {
+                    this.startButton.setEnabled(true);
+                    this.stopButton.setEnabled(false);
+                }
             }
-            case COMPLETED -> {
-                this.startButton.setEnabled(true);
-                this.stopButton.setEnabled(false);
-            }
-        }
+        });
     }
 
     private void generateGUI(Function<Model, SourceAnalyzer> sourceAnalyzerFunction) {
@@ -166,9 +168,8 @@ public class GuiViewImpl extends JFrame implements View {
 
         // Create the Start and Stop buttons
         startButton = new JButton("Start");
-        startButton.addActionListener(l -> {
+        startButton.addActionListener(l -> Thread.ofVirtual().start(() -> {
             try {
-
                 Configuration configuration;
                 String ni = niTextField.getText();
                 String maxl = maxlTextField.getText();
@@ -190,9 +191,9 @@ public class GuiViewImpl extends JFrame implements View {
             } catch (OperationNotSupportedException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }));
         stopButton = new JButton("Stop");
-        stopButton.addActionListener(l -> this.controller.stop());
+        stopButton.addActionListener(l -> Thread.ofVirtual().start(() -> this.controller.stop()));
 
         // Add the buttons to the button panel
         buttonPanel.add(stopButton);

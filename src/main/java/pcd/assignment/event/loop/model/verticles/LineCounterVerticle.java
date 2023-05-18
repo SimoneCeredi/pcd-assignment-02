@@ -5,7 +5,6 @@ import io.vertx.core.Promise;
 import pcd.assignment.common.model.data.results.FileInfo;
 import pcd.assignment.common.model.data.results.ResultImpl;
 import pcd.assignment.common.analyzer.SourceAnalyzerData;
-import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
 import java.io.File;
 

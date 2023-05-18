@@ -64,8 +64,7 @@ public class ExploreDirectoryTask implements Runnable {
         for (var future : directoryFutures) {
             try {
                 future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException | ExecutionException ignored) {
             }
         }
     }
@@ -96,7 +95,8 @@ public class ExploreDirectoryTask implements Runnable {
     }
 
     private ExploreDirectoryTask getExploreDirectoryTask(File file,
-                                                         CompletableFuture<Result> subdirFuture) {
+                                                         CompletableFuture<Result> subdirFuture){
         return new ExploreDirectoryTask(file, subdirFuture, this.data);
     }
+
 }

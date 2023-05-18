@@ -1,5 +1,4 @@
 package pcd.assignment.virtual.threads.model.tasks;
-
 import pcd.assignment.common.model.data.results.FileInfo;
 import pcd.assignment.common.utilities.FilesUtils;
 

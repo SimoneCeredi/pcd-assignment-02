@@ -7,11 +7,9 @@ import pcd.assignment.common.view.ExecutionStatus;
 import pcd.assignment.common.view.View;
 
 import javax.naming.OperationNotSupportedException;
-import javax.swing.*;
 import java.io.File;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 public class ControllerImpl implements Controller {
 
@@ -41,12 +39,13 @@ public class ControllerImpl implements Controller {
         this.model = model;
         this.guiView.setExecutionStatus(ExecutionStatus.STARTED);
         ResultsData resultsData = this.model.analyzeSources(directory);
-        var worker = getSwingWorker(resultsData);
-        resultsData.getCompletionFuture()
-                .whenComplete((unused, throwable) ->
-                        this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED));
-        worker.execute();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(() -> this.analyzeResults(resultsData));
+        resultsData.getCompletionFuture().whenComplete((unused, throwable) -> {
+            this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED);
+        });
     }
+
 
     @Override
     public void stop() {
@@ -54,36 +53,19 @@ public class ControllerImpl implements Controller {
         this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED);
     }
 
-    private SwingWorker<Void, Result> getSwingWorker(ResultsData resultsData) {
-        return new SwingWorker<>() {
-
-            @Override
-            protected Void doInBackground() {
-                BlockingQueue<Result> results = resultsData.getResults();
-                Result result;
-                while ((!results.isEmpty() || !resultsData.getCompletionFuture().isDone()) &&
-                        !resultsData.isStopped()) {
-                    while ((result = results.poll()) != null) {
-                        if (results.isEmpty()) {
-                            publish(result);
-                        }
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            protected void process(List<Result> chunks) {
-                for (var result : chunks) {
+    private void analyzeResults(ResultsData resultsData) {
+        Result result;
+        while ((!resultsData.getResults().isEmpty() ||
+                !resultsData.getCompletionFuture().isDone()) && !resultsData.isStopped()) {
+            while ((result = resultsData.getResults().poll()) != null) {
+                if (resultsData.getResults().isEmpty()) {
                     try {
-                        guiView.show(result);
+                        this.guiView.show(result);
                     } catch (OperationNotSupportedException e) {
                         throw new RuntimeException(e);
                     }
                 }
             }
-
-        };
+        }
     }
-
 }
