@@ -38,8 +38,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
         ResultsData resultsData = new ResultsDataImpl(new LinkedBlockingQueue<>(), completionFuture);
 
         Promise<Void> promise = Promise.promise();
-        vertx.deployVerticle(new DirectoryExplorerVerticle(directory.getAbsolutePath(),
-                        promise,
+        vertx.deployVerticle(new DirectoryExplorerVerticle(directory.getAbsolutePath(), promise,
                         new SourceAnalyzerDataImpl(resultsData, intervals, longestFiles)),
                 VerticleDeployUtils.getDeploymentOptions());
         promise.future().onComplete(as -> {

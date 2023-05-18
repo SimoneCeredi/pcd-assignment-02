@@ -23,12 +23,11 @@ public class LineCounterVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
-        // TODO: delete log, it's just for demonstration
-        VerticleDeployUtils.log("reading file len of " + this.file);
         vertx.fileSystem().readFile(this.file, res -> {
             if (res.succeeded()) {
-                FileInfo fileInfo = new FileInfo(new File(this.file), res.result().toString().split("\\r?\\n").length);
                 if (!this.data.getResultsData().isStopped()) {
+                    FileInfo fileInfo = new FileInfo(new File(this.file),
+                            res.result().toString().split("\\r?\\n").length);
                     saveFileInfo(fileInfo);
                 }
                 this.promise.complete();

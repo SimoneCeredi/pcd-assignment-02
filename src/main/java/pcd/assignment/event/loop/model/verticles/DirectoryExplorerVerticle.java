@@ -29,8 +29,6 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
-        // TODO: delete log, it's just for demonstration
-        VerticleDeployUtils.log("exploring dir " + this.directory);
         vertx.fileSystem().readDir(this.directory, res -> {
             if (res.succeeded()) {
                 exploreDirectory(res.result());
@@ -57,11 +55,11 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
                 }
             });
         }
-        // TODO: must check
         if (this.data.getResultsData().isStopped()) {
             this.promise.complete();
         } else {
             CompositeFuture.all(filePromises.stream().map(Promise::future).collect(Collectors.toList()))
+                    .onFailure(e -> this.promise.fail(e.getCause()))
                     .onComplete(as -> this.promise.complete());
         }
     }
