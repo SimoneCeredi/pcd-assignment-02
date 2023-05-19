@@ -5,6 +5,7 @@ import io.vertx.core.Promise;
 import pcd.assignment.common.model.data.results.FileInfo;
 import pcd.assignment.common.model.data.results.ResultImpl;
 import pcd.assignment.common.analyzer.SourceAnalyzerData;
+import pcd.assignment.common.utilities.FilesUtils;
 
 import java.io.File;
 
@@ -25,9 +26,9 @@ public class LineCounterVerticle extends AbstractVerticle {
         vertx.fileSystem().readFile(this.file, res -> {
             if (res.succeeded()) {
                 if (!this.data.getResultsData().isStopped()) {
-                    FileInfo fileInfo = new FileInfo(new File(this.file),
-                            res.result().toString().split("\\r?\\n").length);
-                    saveFileInfo(fileInfo);
+                    File ffile = new File(file);
+                    final long fileLength = FilesUtils.countLines(ffile);
+                    saveFileInfo(new FileInfo(ffile, fileLength));
                 }
                 this.promise.complete();
             } else {
@@ -51,4 +52,5 @@ public class LineCounterVerticle extends AbstractVerticle {
             throw new RuntimeException(e);
         }
     }
+
 }
