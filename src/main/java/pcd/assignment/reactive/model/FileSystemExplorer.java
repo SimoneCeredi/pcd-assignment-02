@@ -31,15 +31,15 @@ public class ExplorerManager implements ObservableOnSubscribe<File> {
 
     private void bfs(List<File> nodes) {
         if (nodes.size() > 0 && !this.resultsData.isStopped()) {
-            nodes.forEach(n -> this.emitter.onNext(n));
-            List<File> subdirs = new ArrayList<>();
+            List<File> subdirectories = new ArrayList<>();
             for (File node : nodes) {
                 if (this.resultsData.isStopped()) {
                     return;
                 }
-                subdirs.addAll(DirectoryExplorerUtils.listDirectories(node));
+                this.emitter.onNext(node);
+                subdirectories.addAll(DirectoryExplorerUtils.listDirectories(node));
             }
-            bfs(subdirs);
+            bfs(subdirectories);
         }
     }
 }

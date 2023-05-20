@@ -10,9 +10,9 @@ import pcd.assignment.common.model.data.results.FileInfo;
 import pcd.assignment.common.model.data.results.ResultsData;
 import pcd.assignment.common.model.data.results.ResultsDataImpl;
 import pcd.assignment.common.analyzer.SourceAnalyzer;
-import pcd.assignment.reactive.model.ExplorerManager;
+import pcd.assignment.reactive.model.FileSystemExplorer;
 import pcd.assignment.reactive.model.FunctionsConsumer;
-import pcd.assignment.reactive.model.RecursiveExplorer;
+import pcd.assignment.reactive.model.LineReader;
 import pcd.assignment.reactive.model.data.SimpleIntervals;
 import pcd.assignment.reactive.model.data.SimpleLongestFiles;
 
@@ -38,7 +38,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
     private void chain(File directory){
         Subject<FileInfo> functionsCalculator = PublishSubject.create();
         Observable<File> explorerManager =
-                Observable.create(new ExplorerManager(directory, resultsData));
+                Observable.create(new FileSystemExplorer(directory, resultsData));
         explorerChain(explorerManager, functionsCalculator);
         functionsChain(functionsCalculator);
     }
@@ -53,7 +53,7 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                 .subscribe(d -> {
                     // Recursively compute all FileInfo(s) from the directory specified by the manager
                     Observable<FileInfo> recursiveExplorer =
-                            Observable.create(new RecursiveExplorer(d, resultsData));
+                            Observable.create(new LineReader(d, resultsData));
                     counter.getAndIncrement();
                     // Same as explorer manager
                     recursiveExplorer
