@@ -10,6 +10,7 @@ import pcd.assignment.common.model.data.results.ResultsData;
 import pcd.assignment.common.model.data.results.ResultsDataImpl;
 import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.analyzer.SourceAnalyzerDataImpl;
+import pcd.assignment.tasks.executors.tasks.ExploreDirectoryTask;
 import pcd.assignment.tasks.executors.tasks.factory.ExploreDirectoryTaskFactory;
 
 import java.io.File;
@@ -18,17 +19,26 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Task-based version of SourceAnalyzer.
+ */
 public class TaskExecutorsSourceAnalyzer implements SourceAnalyzer {
-    private final ExploreDirectoryTaskFactory factory;
+
     private final Model model;
     private ForkJoinPool analyzeSourcesPool;
 
-
     public TaskExecutorsSourceAnalyzer(Model model) {
         this.model = model;
-        this.factory = new ExploreDirectoryTaskFactory();
     }
 
+    /**
+     * This analyzeSources version:
+     *      - Creates an ExecutorService for running ForkJoinTasks
+     *      - Invokes an ExploreDirectoryTask on it from the directory passed as parameter
+     *      - Completes ResultsData's CompletableFuture upon completion.
+     * @param directory
+     * @return ResultsData
+     */
     @Override
     public ResultsData analyzeSources(File directory) {
         BlockingQueue<Result> results = new LinkedBlockingQueue<>();
@@ -42,11 +52,10 @@ public class TaskExecutorsSourceAnalyzer implements SourceAnalyzer {
         ResultsData resultsData = new ResultsDataImpl(results, completionFuture);
 
         completionFuture.completeAsync(() -> {
-            this.analyzeSourcesPool.invoke(factory.analyzeSourcesTask(directory,
+            this.analyzeSourcesPool.invoke(new ExploreDirectoryTask(directory,
                     new SourceAnalyzerDataImpl(resultsData, intervals, longestFiles)));
             return null;
         });
-
         return resultsData;
     }
 

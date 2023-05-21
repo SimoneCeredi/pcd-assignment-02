@@ -31,6 +31,12 @@ public class ReactiveSourceAnalyzer implements SourceAnalyzer {
         this.model = model;
     }
 
+    /**
+     * Reactive analyzeSources() builds a set of stream responsible for explore the file system,
+     * read all the files information and update the results (ResultsData).
+     * @param directory
+     * @return
+     */
     @Override
     public ResultsData analyzeSources(File directory) {
         this.resultsData = new ResultsDataImpl();

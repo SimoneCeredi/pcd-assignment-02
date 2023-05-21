@@ -10,6 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+/**
+ * Explore directory task.
+ */
 public class ExploreDirectoryTask extends RecursiveTask<Result> {
     private final File directory;
     private final SourceAnalyzerData data;
@@ -19,6 +22,10 @@ public class ExploreDirectoryTask extends RecursiveTask<Result> {
         this.data = data;
     }
 
+    /**
+     * Computes the result of the current directory waiting the completion of its children.
+     * @return the Result
+     */
     @Override
     protected Result compute() {
         List<RecursiveTask<Result>> directoryForks = new LinkedList<>();
@@ -41,6 +48,10 @@ public class ExploreDirectoryTask extends RecursiveTask<Result> {
         return new ResultImpl(this.data.getCurrentIntervals(), this.data.getCurrentLongestFiles());
     }
 
+    /**
+     * Join ReadLinesTasks
+     * @param filesForks
+     */
     private void joinReadLinesTasks(List<RecursiveTask<FileInfo>> filesForks) {
         for (var task : filesForks) {
             FileInfo fileInfo = task.join();
@@ -49,12 +60,23 @@ public class ExploreDirectoryTask extends RecursiveTask<Result> {
         }
     }
 
+    /**
+     * Join ExploreDirectoryTasks
+     * @param directoryForks
+     */
     private void joinDirectoriesTask(List<RecursiveTask<Result>> directoryForks) {
         for (var task : directoryForks) {
             task.join();
         }
     }
 
+    /**
+     * List the content of this.directory:
+     *  - Fork a ExploreDirectoryTask for each directory
+     *  - Fork a ReadLinesTask for each file
+     * @param directoryForks
+     * @param filesForks
+     */
     private void exploreAndFork(List<RecursiveTask<Result>> directoryForks,
                                 List<RecursiveTask<FileInfo>> filesForks) {
         if (this.directory.isDirectory()) {
@@ -77,6 +99,11 @@ public class ExploreDirectoryTask extends RecursiveTask<Result> {
         }
     }
 
+    /**
+     * Get a new ExploreDirectoryTask from the current data
+     * @param file
+     * @return ExploreDirectoryTask
+     */
     private ExploreDirectoryTask getExploreDirectoryTask(File file) {
         return new ExploreDirectoryTask(file, this.data);
     }
