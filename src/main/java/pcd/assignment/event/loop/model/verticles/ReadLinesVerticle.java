@@ -9,13 +9,13 @@ import pcd.assignment.common.utilities.FilesUtils;
 
 import java.io.File;
 
-public class LineCounterVerticle extends AbstractVerticle {
+public class ReadLinesVerticle extends AbstractVerticle {
 
     private final String file;
     private final Promise<Void> promise;
     private final SourceAnalyzerData data;
 
-    public LineCounterVerticle(String file, Promise<Void> promise, SourceAnalyzerData data) {
+    public ReadLinesVerticle(String file, Promise<Void> promise, SourceAnalyzerData data) {
         this.file = file;
         this.promise = promise;
         this.data = data;

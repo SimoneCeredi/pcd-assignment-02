@@ -8,7 +8,6 @@ import io.vertx.core.file.FileProps;
 import pcd.assignment.common.analyzer.SourceAnalyzerData;
 import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +42,8 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     private void exploreDirectory(List<String> fileList) {
         List<Promise<Void>> filePromises = new ArrayList<>(fileList.size());
-        for (int i = 0; i < fileList.size() && !this.data.getResultsData().isStopped(); i++) {
+        for (int i = 0; i < fileList.size() &&
+                !this.data.getResultsData().isStopped(); i++) {
             String file = fileList.get(i);
             Promise<Void> filePromise = Promise.promise();
             filePromises.add(filePromise);
@@ -59,6 +59,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
         if (this.data.getResultsData().isStopped()) {
             this.promise.complete();
         } else {
+            // The composite future wraps a list of futures, it is useful when several futures need to be coordinated.
             CompositeFuture.all(filePromises.stream().map(Promise::future).collect(Collectors.toList()))
                     .onFailure(e -> this.promise.fail(e.getCause()))
                     .onComplete(as -> this.promise.complete());
@@ -77,7 +78,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     private void exploreFile(String file, Promise<Void> filePromise) {
         if (file.endsWith(".java")) {
-            vertx.deployVerticle(new LineCounterVerticle(file, filePromise, this.data),
+            vertx.deployVerticle(new ReadLinesVerticle(file, filePromise, this.data),
                     VerticleDeployUtils.getDeploymentOptions());
         } else {
             filePromise.complete();

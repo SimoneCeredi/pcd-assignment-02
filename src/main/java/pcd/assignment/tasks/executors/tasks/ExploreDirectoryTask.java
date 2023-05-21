@@ -19,7 +19,6 @@ public class ExploreDirectoryTask extends RecursiveTask<Result> {
         this.data = data;
     }
 
-
     @Override
     protected Result compute() {
         List<RecursiveTask<Result>> directoryForks = new LinkedList<>();

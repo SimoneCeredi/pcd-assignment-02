@@ -19,12 +19,12 @@ import pcd.assignment.reactive.model.data.SimpleLongestFiles;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SourceAnalyzerImpl implements SourceAnalyzer {
+public class ReactiveSourceAnalyzer implements SourceAnalyzer {
 
     private final Model model;
     private ResultsData resultsData;
 
-    public SourceAnalyzerImpl(Model model) {
+    public ReactiveSourceAnalyzer(Model model) {
         this.model = model;
     }
 
@@ -80,11 +80,9 @@ public class SourceAnalyzerImpl implements SourceAnalyzer {
                 .observeOn(Schedulers.computation())
                 .subscribeOn(Schedulers.single())
                 .doOnComplete(() -> {
-
                     if (!this.resultsData.isStopped()) {
                         resultsData.getCompletionFuture().complete(null);
                     }
-                    //this.stop.set(true);
                 })
                 .subscribe(functionsConsumer);
     }

@@ -18,13 +18,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class SourceAnalyzerImpl implements SourceAnalyzer {
+public class VirtualThreadsSourceAnalyzer implements SourceAnalyzer {
 
     private final ExploreDirectoryTaskFactory factory;
     private final Model model;
 
 
-    public SourceAnalyzerImpl(Model model) {
+    public VirtualThreadsSourceAnalyzer(Model model) {
         this.model = model;
         this.factory = new ExploreDirectoryTaskFactory();
     }

@@ -8,7 +8,7 @@ import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.view.ConsoleViewImpl;
 import pcd.assignment.common.view.GuiViewImpl;
 import pcd.assignment.common.view.View;
-import pcd.assignment.reactive.analyzer.SourceAnalyzerImpl;
+import pcd.assignment.reactive.analyzer.ReactiveSourceAnalyzer;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;
@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class Main {
     public static void main(String[] args) throws OperationNotSupportedException {
         System.out.println("4) Reactive based approach");
-        Function<Model, SourceAnalyzer> sourceAnalyzerFunction = SourceAnalyzerImpl::new;
+        Function<Model, SourceAnalyzer> sourceAnalyzerFunction = ReactiveSourceAnalyzer::new;
         View gui = new GuiViewImpl();
         if (args.length == 4) {
             File directory = new File(args[0]);

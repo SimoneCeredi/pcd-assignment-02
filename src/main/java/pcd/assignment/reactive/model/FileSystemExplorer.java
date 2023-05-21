@@ -11,13 +11,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExplorerManager implements ObservableOnSubscribe<File> {
+public class FileSystemExplorer implements ObservableOnSubscribe<File> {
 
     private final File rootDirectory;
     private final ResultsData resultsData;
     private ObservableEmitter<File> emitter;
 
-    public ExplorerManager(File rootDirectory, ResultsData resultsData) {
+    public FileSystemExplorer(File rootDirectory, ResultsData resultsData) {
         this.rootDirectory = rootDirectory;
         this.resultsData = resultsData;
     }

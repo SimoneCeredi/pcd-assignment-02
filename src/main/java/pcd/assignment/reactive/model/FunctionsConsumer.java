@@ -26,9 +26,6 @@ public class FunctionsConsumer implements Consumer<FileInfo> {
 
     @Override
     public void accept(FileInfo fileInfo) throws Throwable {
-        // Here I reactively compute the maximum file in length and intervals
-        // All msg must be received on the same thread
-        // log("I should update maxfile and interval");
         this.intervals.store(fileInfo);
         this.longestFiles.put(fileInfo);
         results.put(new ResultImpl(this.intervals.getCopy(), this.longestFiles.getCopy()));

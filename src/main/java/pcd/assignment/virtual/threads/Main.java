@@ -8,7 +8,7 @@ import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.view.ConsoleViewImpl;
 import pcd.assignment.common.view.GuiViewImpl;
 import pcd.assignment.common.view.View;
-import pcd.assignment.virtual.threads.analyzer.SourceAnalyzerImpl;
+import pcd.assignment.virtual.threads.analyzer.VirtualThreadsSourceAnalyzer;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;
@@ -18,7 +18,7 @@ public class Main {
 
     public static void main(String[] args) throws OperationNotSupportedException {
         System.out.println("2) Virtual Threads based approach");
-        Function<Model, SourceAnalyzer> sourceAnalyzerFunction = SourceAnalyzerImpl::new;
+        Function<Model, SourceAnalyzer> sourceAnalyzerFunction = VirtualThreadsSourceAnalyzer::new;
         View gui = new GuiViewImpl();
         if (false) {//args.length == 4) {
             File directory = new File("./benchmarks/fs");

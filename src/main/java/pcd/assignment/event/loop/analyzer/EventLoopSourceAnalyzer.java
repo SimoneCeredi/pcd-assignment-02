@@ -18,12 +18,12 @@ import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class SourceAnalyzerImpl implements SourceAnalyzer {
+public class EventLoopSourceAnalyzer implements SourceAnalyzer {
 
     private final Model model;
     private Vertx vertx;
 
-    public SourceAnalyzerImpl(Model model) {
+    public EventLoopSourceAnalyzer(Model model) {
         this.model = model;
     }
 
