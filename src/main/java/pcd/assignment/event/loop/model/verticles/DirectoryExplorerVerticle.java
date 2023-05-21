@@ -47,6 +47,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     /**
      * Explores all the files passed as input from the start() method.
+     * The promise is completed once all the children's are completed.
      * @param fileList
      */
     private void exploreDirectory(List<String> fileList) {
@@ -78,9 +79,9 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     /**
      * If file props:
-     *      - Is a directory, deploy a new DirectoryExplorerVerticle on
-     *          the same Vertx instance.
- *          - Is a file, call exploreFile()
+     *  - Is a directory, deploy a new DirectoryExplorerVerticle on
+     *      the same Vertx instance.
+     *  - Is a file, call exploreFile()
      * @param file which represents the directory name
      * @param filePromise to async wait the completion
      * @param res the FileProps

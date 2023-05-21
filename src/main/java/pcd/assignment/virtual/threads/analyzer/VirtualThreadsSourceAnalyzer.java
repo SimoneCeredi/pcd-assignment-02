@@ -10,7 +10,7 @@ import pcd.assignment.common.model.data.results.ResultsData;
 import pcd.assignment.common.model.data.results.ResultsDataImpl;
 import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.analyzer.SourceAnalyzerDataImpl;
-import pcd.assignment.virtual.threads.model.tasks.factory.ExploreDirectoryTaskFactory;
+import pcd.assignment.virtual.threads.model.tasks.ExploreDirectoryTask;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
@@ -18,17 +18,24 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Virtual threads-based version of SourceAnalyzer.
+ */
 public class VirtualThreadsSourceAnalyzer implements SourceAnalyzer {
 
-    private final ExploreDirectoryTaskFactory factory;
     private final Model model;
 
 
     public VirtualThreadsSourceAnalyzer(Model model) {
         this.model = model;
-        this.factory = new ExploreDirectoryTaskFactory();
     }
 
+    /**
+     * A new Virtual thread (ExploreDirectoryTask) is run, passing a CompletableFuture to it.
+     * When the Result is ready it completes the ResultsData's CompletableFuture.
+     * @param directory where to start the computation
+     * @return ResultsData
+     */
     @Override
     public ResultsData analyzeSources(File directory) {
         BlockingQueue<Result> results = new LinkedBlockingQueue<>();
@@ -42,8 +49,9 @@ public class VirtualThreadsSourceAnalyzer implements SourceAnalyzer {
 
         ResultsData resultsData = new ResultsDataImpl(results, completionFuture);
 
+        // Start a virtual thread
         Thread.ofVirtual().start(
-                this.factory.analyzeSourcesTask(
+                new ExploreDirectoryTask(
                         directory,
                         rootDirFuture,
                         new SourceAnalyzerDataImpl(resultsData, intervals, longestFiles)

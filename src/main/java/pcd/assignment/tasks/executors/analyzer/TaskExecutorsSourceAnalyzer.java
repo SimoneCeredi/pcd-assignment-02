@@ -11,7 +11,6 @@ import pcd.assignment.common.model.data.results.ResultsDataImpl;
 import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.analyzer.SourceAnalyzerDataImpl;
 import pcd.assignment.tasks.executors.tasks.ExploreDirectoryTask;
-import pcd.assignment.tasks.executors.tasks.factory.ExploreDirectoryTaskFactory;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
@@ -32,10 +31,9 @@ public class TaskExecutorsSourceAnalyzer implements SourceAnalyzer {
     }
 
     /**
-     * This analyzeSources version:
-     *      - Creates an ExecutorService for running ForkJoinTasks
-     *      - Invokes an ExploreDirectoryTask on it from the directory passed as parameter
-     *      - Completes ResultsData's CompletableFuture upon completion.
+     *  - Create an ExecutorService for running ForkJoinTasks
+     *  - Invoke an ExploreDirectoryTask on it from the directory passed as parameter
+     *  - Complete ResultsData's CompletableFuture upon completion.
      * @param directory
      * @return ResultsData
      */
