@@ -3,16 +3,14 @@ package pcd.assignment.common.model.data.functions;
 import pcd.assignment.common.model.data.results.FileInfo;
 
 /**
- * Stores the intervals
+ * Intervals model
  */
 public interface Intervals extends UnmodifiableIntervals {
-    void store(FileInfo fileInfo);
 
-    void storeAll(Intervals lineCounter);
+    void store(FileInfo fileInfo);
 
     int getIntervals();
 
-    int getMaxLines();
-
     Intervals getCopy();
+
 }

@@ -11,6 +11,10 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.*;
 
+/**
+ * Controller implementation.
+ * This class uses the Model to fetch the final/intermediate result/s and eventually updates the View.
+ */
 public class ControllerImpl implements Controller {
 
     private Model model;
@@ -22,6 +26,12 @@ public class ControllerImpl implements Controller {
         this.guiView = guiView;
     }
 
+    /**
+     * Only the final result is needed: call model's getReport().
+     * @param model where the results are fetched, which varies according to the specific version.
+     * @param directory where to start the computation.
+     * @throws OperationNotSupportedException
+     */
     @Override
     public void startConsole(Model model, File directory) throws OperationNotSupportedException {
         this.model = model;
@@ -34,6 +44,12 @@ public class ControllerImpl implements Controller {
         }
     }
 
+    /**
+     * All the intermediate results must be shown to the GUI: start a single threaded executor
+     * to get the results from the Model and update the View
+     * @param model ""
+     * @param directory ""
+     */
     @Override
     public void start(Model model, File directory) {
         this.model = model;
@@ -46,13 +62,20 @@ public class ControllerImpl implements Controller {
         });
     }
 
-
+    /**
+     * Using ResultsData from Model's analyzeSources(), communicate with the Model
+     * that computation must be stopped.
+     */
     @Override
     public void stop() {
         this.model.getResultsData().stop();
         this.guiView.setExecutionStatus(ExecutionStatus.COMPLETED);
     }
 
+    /**
+     * Executor's loop which remains active until computation is ended or stopped.
+     * @param resultsData got from Model's analyzeSources()
+     */
     private void analyzeResults(ResultsData resultsData) {
         Result result;
         while ((!resultsData.getResults().isEmpty() ||

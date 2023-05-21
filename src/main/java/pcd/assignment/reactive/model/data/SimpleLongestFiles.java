@@ -12,7 +12,7 @@ public class SimpleLongestFiles extends BaseLongestFiles {
 
     public SimpleLongestFiles(int filesToKeep) {
         super(filesToKeep, new PriorityQueue<>(DEFAULT_INITIAL_CAPACITY,
-                Comparator.comparingLong(FileInfo::getLineCount)));
+                Comparator.comparingLong(FileInfo::getNumberOfLines)));
     }
 
     public SimpleLongestFiles(int filesToKeep, Queue<FileInfo> queue) {

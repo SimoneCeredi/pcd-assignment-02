@@ -5,6 +5,9 @@ import pcd.assignment.common.analyzer.SourceAnalyzer;
 
 import java.util.function.Function;
 
+/**
+ * A ModelBuilder implementation
+ */
 public class ModelBuilderImpl implements ModelBuilder {
     private Model model;
     private SourceAnalyzer sourceAnalyzer;

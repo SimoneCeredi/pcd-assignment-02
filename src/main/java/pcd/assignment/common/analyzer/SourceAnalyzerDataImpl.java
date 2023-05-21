@@ -4,6 +4,9 @@ import pcd.assignment.common.model.data.functions.Intervals;
 import pcd.assignment.common.model.data.results.ResultsData;
 import pcd.assignment.common.model.data.functions.LongestFiles;
 
+/**
+ * A SourceAnalyzer implementation
+ */
 public class SourceAnalyzerDataImpl implements SourceAnalyzerData {
 
     private final ResultsData resultsData;

@@ -1,5 +1,8 @@
 package pcd.assignment.common.model.data.functions;
 
+/**
+ * Counter implementation
+ */
 public class CounterImpl implements Counter {
     private int value;
 

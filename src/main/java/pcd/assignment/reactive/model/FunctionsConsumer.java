@@ -9,7 +9,9 @@ import pcd.assignment.common.model.data.results.ResultImpl;
 
 import java.util.concurrent.BlockingQueue;
 
-
+/**
+ * This class inserts Result(s) inside the BlockingQueue passed into the constructor.
+ */
 public class FunctionsConsumer implements Consumer<FileInfo> {
 
     private final Intervals intervals;

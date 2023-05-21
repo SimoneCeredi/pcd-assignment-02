@@ -19,6 +19,9 @@ import pcd.assignment.reactive.model.data.SimpleLongestFiles;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Reactive version of SourceAnalyzer.
+ */
 public class ReactiveSourceAnalyzer implements SourceAnalyzer {
 
     private final Model model;
@@ -35,6 +38,10 @@ public class ReactiveSourceAnalyzer implements SourceAnalyzer {
         return this.resultsData;
     }
 
+    /**
+     * The chain is a concat of explorerChain() and functionsChain().
+     * @param directory
+     */
     private void chain(File directory){
         Subject<FileInfo> functionsCalculator = PublishSubject.create();
         Observable<File> explorerManager =
@@ -43,6 +50,16 @@ public class ReactiveSourceAnalyzer implements SourceAnalyzer {
         functionsChain(functionsCalculator);
     }
 
+    /**
+     * Builds the explorer chain.
+     *      - For every directory emitted from the manager (FileSystemExplorer), create a new LineReader Observable
+     *          (inside subscribe()) which emits a FileInfo (<file, numberOfLines>) for each file.
+     *      - Each LineReader subscriber emits a new FileInfo inside the FunctionsCalculator stream.
+     *          The latter subscriber interactively computes the Intervals and LongestFiles functions inside
+     *          a single thread.
+     * @param explorerManager which uses FileSystemExplorer
+     * @param functionsCalculator to emit the FileInfo(s)
+     */
     private void explorerChain(Observable<File> explorerManager,
                                Subject<FileInfo> functionsCalculator) {
         AtomicInteger counter = new AtomicInteger();
@@ -51,12 +68,10 @@ public class ReactiveSourceAnalyzer implements SourceAnalyzer {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
                 .subscribe(d -> {
-                    // Recursively compute all FileInfo(s) from the directory specified by the manager
-                    Observable<FileInfo> recursiveExplorer =
+                    Observable<FileInfo> lineReader =
                             Observable.create(new LineReader(d, resultsData));
                     counter.getAndIncrement();
-                    // Same as explorer manager
-                    recursiveExplorer
+                    lineReader
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.single())
                             .doOnComplete(() -> {
@@ -69,6 +84,11 @@ public class ReactiveSourceAnalyzer implements SourceAnalyzer {
                 });
     }
 
+    /**
+     * For every FileInfo emitted from the LineReaders, a FunctionsConsumer updates the Intervals
+     * and LongestFiles of a ResultsData.
+     * @param functionsCalculator
+     */
     private void functionsChain(Subject<FileInfo> functionsCalculator) {
         Consumer<FileInfo> functionsConsumer =
                 new FunctionsConsumer(

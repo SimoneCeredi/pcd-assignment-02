@@ -7,18 +7,18 @@ import java.io.File;
  */
 public class FileInfo {
     private final File file;
-    private final long lineCount;
+    private final long numberOfLines;
 
-    public FileInfo(File file, long lineCount) {
+    public FileInfo(File file, long numberOfLines) {
         this.file = file;
-        this.lineCount = lineCount;
+        this.numberOfLines = numberOfLines;
     }
 
     public File getFile() {
         return this.file;
     }
 
-    public long getLineCount() {
-        return this.lineCount;
+    public long getNumberOfLines() {
+        return this.numberOfLines;
     }
 }

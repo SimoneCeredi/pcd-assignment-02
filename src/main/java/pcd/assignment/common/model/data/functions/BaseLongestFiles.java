@@ -17,22 +17,12 @@ public abstract class BaseLongestFiles implements LongestFiles {
     @Override
     public void put(FileInfo fileInfo) {
         if (this.queue.size() < this.filesToKeep ||
-                fileInfo.getLineCount() > Objects.requireNonNull(this.queue.peek()).getLineCount()) {
+                fileInfo.getNumberOfLines() > Objects.requireNonNull(this.queue.peek()).getNumberOfLines()) {
             this.queue.offer(fileInfo);
             if (this.queue.size() > this.filesToKeep) {
                 this.queue.poll();
             }
         }
-    }
-
-    @Override
-    public void putAll(LongestFiles filesQueue) {
-        filesQueue.get().forEach(this::put);
-    }
-
-    @Override
-    public int getFilesToKeep() {
-        return filesToKeep;
     }
 
     @Override

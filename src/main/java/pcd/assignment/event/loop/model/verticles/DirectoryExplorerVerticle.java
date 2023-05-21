@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * Directory explorer implemented as an AbstractVerticle.
+ */
 public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     private final String directory;
@@ -27,6 +29,9 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
         this.data = data;
     }
 
+    /**
+     * Explores all the files of the current directory.
+     */
     @Override
     public void start() {
         vertx.fileSystem().readDir(this.directory, res -> {
@@ -40,6 +45,10 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     }
 
+    /**
+     * Explores all the files passed as input from the start() method.
+     * @param fileList
+     */
     private void exploreDirectory(List<String> fileList) {
         List<Promise<Void>> filePromises = new ArrayList<>(fileList.size());
         for (int i = 0; i < fileList.size() &&
@@ -49,6 +58,7 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
             filePromises.add(filePromise);
             vertx.fileSystem().props(file, res -> {
                 if (res.succeeded()) {
+                    // Deploy the specific verticle based on the file's type
                     manageProps(file, filePromise, res);
                 } else {
                     System.err.println("Failed to get file properties: " + res.cause().getMessage());
@@ -66,6 +76,15 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
         }
     }
 
+    /**
+     * If file props:
+     *      - Is a directory, deploy a new DirectoryExplorerVerticle on
+     *          the same Vertx instance.
+ *          - Is a file, call exploreFile()
+     * @param file which represents the directory name
+     * @param filePromise to async wait the completion
+     * @param res the FileProps
+     */
     private void manageProps(String file, Promise<Void> filePromise, AsyncResult<FileProps> res) {
         FileProps fileProps = res.result();
         if (fileProps.isDirectory()) {
@@ -76,6 +95,12 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
         }
     }
 
+    /**
+     * Method called by manageProps.
+     * It deploys a ReadLinesVerticle whenever the file name passed as parameter is a Java source.
+     * @param file
+     * @param filePromise
+     */
     private void exploreFile(String file, Promise<Void> filePromise) {
         if (file.endsWith(".java")) {
             vertx.deployVerticle(new ReadLinesVerticle(file, filePromise, this.data),
@@ -84,4 +109,5 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
             filePromise.complete();
         }
     }
+
 }

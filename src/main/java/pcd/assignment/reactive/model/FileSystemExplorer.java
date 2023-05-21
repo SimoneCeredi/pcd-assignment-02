@@ -11,6 +11,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A file system explorer which emits all the directories inside its stream.
+ */
 public class FileSystemExplorer implements ObservableOnSubscribe<File> {
 
     private final File rootDirectory;
@@ -29,6 +32,10 @@ public class FileSystemExplorer implements ObservableOnSubscribe<File> {
         emitter.onComplete();
     }
 
+    /**
+     * Breadth-First-Search the file system's tree emitting directories inside the stream.
+     * @param nodes
+     */
     private void bfs(List<File> nodes) {
         if (nodes.size() > 0 && !this.resultsData.isStopped()) {
             List<File> subdirectories = new ArrayList<>();

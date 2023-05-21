@@ -59,8 +59,8 @@ public class GuiViewImpl extends JFrame implements View {
             );
             this.longestFiles.setListData(
                     result.getLongestFiles().get().stream()
-                            .sorted(Comparator.comparingLong(FileInfo::getLineCount))
-                            .map(f -> f.getFile().getName() + " -> " + f.getLineCount())
+                            .sorted(Comparator.comparingLong(FileInfo::getNumberOfLines))
+                            .map(f -> f.getFile().getName() + " -> " + f.getNumberOfLines())
                             .toArray(String[]::new)
             );
         });

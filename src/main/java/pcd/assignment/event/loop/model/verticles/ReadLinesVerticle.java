@@ -9,6 +9,9 @@ import pcd.assignment.common.utilities.FilesUtils;
 
 import java.io.File;
 
+/**
+ * Read lines as an AbstractVerticle.
+ */
 public class ReadLinesVerticle extends AbstractVerticle {
 
     private final String file;
@@ -21,6 +24,10 @@ public class ReadLinesVerticle extends AbstractVerticle {
         this.data = data;
     }
 
+    /**
+     * Open the file and read the number of lines it contains.
+     * In the end, complete the promise.
+     */
     @Override
     public void start() {
         vertx.fileSystem().readFile(this.file, res -> {
@@ -38,6 +45,10 @@ public class ReadLinesVerticle extends AbstractVerticle {
         });
     }
 
+    /**
+     * Save file information onto SourceAnalyzerData
+     * @param fileInfo
+     */
     private void saveFileInfo(FileInfo fileInfo) {
         this.data.getCurrentIntervals().store(fileInfo);
         this.data.getCurrentLongestFiles().put(fileInfo);

@@ -7,10 +7,12 @@ import java.util.List;
 import pcd.assignment.common.utilities.FilesUtils;
 import pcd.assignment.common.model.data.results.FileInfo;
 
-
+/**
+ * Directory explorer utils to list file system's.
+ */
 public class DirectoryExplorerUtils {
 
-    public static List<FileInfo> listFiles(File directory) {
+    public static List<FileInfo> listJavaFiles(File directory) {
         List<FileInfo> fileInfos = new ArrayList<>();
         if (directory.isDirectory()) {
             File[] files = directory.listFiles();
@@ -21,7 +23,6 @@ public class DirectoryExplorerUtils {
                             long fileLength =
                                     FilesUtils.countLines(file);
                             fileInfos.add(new FileInfo(file, fileLength));
-                            //SourceAnalyzerImpl.log(file + ": " + fileLength);
                         }
                     }
                 }

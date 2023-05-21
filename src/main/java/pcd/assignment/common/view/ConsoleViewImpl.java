@@ -23,8 +23,8 @@ public class ConsoleViewImpl implements View {
     public void show(Result result) {
         System.out.println("Longest Files");
         System.out.println(result.getLongestFiles().get().stream()
-                .sorted(Comparator.comparingLong(FileInfo::getLineCount))
-                .map(f -> f.getFile().getAbsolutePath() + " -> " + f.getLineCount())
+                .sorted(Comparator.comparingLong(FileInfo::getNumberOfLines))
+                .map(f -> f.getFile().getAbsolutePath() + " -> " + f.getNumberOfLines())
                 .collect(Collectors.joining("\n")));
         System.out.println("\n\nLines distribution");
         result.getIntervals().get().entrySet().stream()

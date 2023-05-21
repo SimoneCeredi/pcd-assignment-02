@@ -5,6 +5,9 @@ import pcd.assignment.common.utilities.Pair;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Concurrent version of BaseIntervals
+ */
 public class ConcurrentIntervals extends BaseIntervals {
 
     public ConcurrentIntervals(int intervals, int maxLines, Map<Pair<Integer, Integer>, Counter> map) {

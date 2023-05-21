@@ -6,6 +6,9 @@ import pcd.assignment.common.utilities.Pair;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Abstract class implementation of Intervals
+ */
 public abstract class BaseIntervals implements Intervals {
     protected final Map<Pair<Integer, Integer>, Counter> map;
 
@@ -44,7 +47,7 @@ public abstract class BaseIntervals implements Intervals {
     @Override
     public void store(FileInfo fileInfo) {
         for (Map.Entry<Pair<Integer, Integer>, Counter> entry : this.map.entrySet()) {
-            if (fileInfo.getLineCount() >= entry.getKey().getX() && fileInfo.getLineCount() <= entry.getKey().getY()) {
+            if (fileInfo.getNumberOfLines() >= entry.getKey().getX() && fileInfo.getNumberOfLines() <= entry.getKey().getY()) {
                 entry.getValue().inc();
                 break;
             }
@@ -53,20 +56,8 @@ public abstract class BaseIntervals implements Intervals {
     }
 
     @Override
-    public void storeAll(Intervals lineCounter) {
-        lineCounter.get().forEach((key, value) ->
-                this.map.put(key, new CounterImpl(value.getValue() + this.map.get(key).getValue()))
-        );
-    }
-
-    @Override
     public int getIntervals() {
         return intervals;
-    }
-
-    @Override
-    public int getMaxLines() {
-        return maxLines;
     }
 
 }

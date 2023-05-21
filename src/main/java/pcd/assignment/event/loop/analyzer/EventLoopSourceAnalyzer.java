@@ -18,6 +18,9 @@ import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Event loop version of SourceAnalyzer.
+ */
 public class EventLoopSourceAnalyzer implements SourceAnalyzer {
 
     private final Model model;
@@ -27,6 +30,14 @@ public class EventLoopSourceAnalyzer implements SourceAnalyzer {
         this.model = model;
     }
 
+    /**
+     * Deploys a DirectoryExplorerVerticle on a Vertx instance on
+     * the directory given as parameter.
+     * A Promise is also passed to it so when it completes, the ResultsData future
+     * is also set completed.
+     * @param directory where to start the computation
+     * @return ResultsData object
+     */
     @Override
     public ResultsData analyzeSources(File directory) {
         this.vertx = Vertx.vertx();

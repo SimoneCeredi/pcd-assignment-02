@@ -11,6 +11,9 @@ import pcd.assignment.common.model.data.results.FileInfo;
 import java.io.File;
 import java.util.List;
 
+/**
+ * This class emits a FileInfo for every Java file in its directory.
+ */
 public class LineReader implements ObservableOnSubscribe<FileInfo> {
 
     private final File directory;
@@ -23,7 +26,7 @@ public class LineReader implements ObservableOnSubscribe<FileInfo> {
 
     @Override
     public void subscribe(@NonNull ObservableEmitter<FileInfo> emitter) {
-        List<FileInfo> fileInfos = DirectoryExplorerUtils.listFiles(this.directory);
+        List<FileInfo> fileInfos = DirectoryExplorerUtils.listJavaFiles(this.directory);
         for (int i = 0; i < fileInfos.size() && !this.resultsData.isStopped(); i++) {
             emitter.onNext(fileInfos.get(i));
         }

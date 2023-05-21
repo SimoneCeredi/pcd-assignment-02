@@ -2,11 +2,10 @@ package pcd.assignment.event.loop.utils;
 
 import io.vertx.core.DeploymentOptions;
 
+/**
+ * Event loop utils.
+ */
 public class VerticleDeployUtils {
-
-    public static void log(String msg) {
-        System.out.println("[ " + Thread.currentThread().getName() + "  ] " + msg);
-    }
 
     public static DeploymentOptions getDeploymentOptions() {
         return new DeploymentOptions().setWorker(true);

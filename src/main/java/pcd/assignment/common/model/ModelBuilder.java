@@ -5,6 +5,9 @@ import pcd.assignment.common.analyzer.SourceAnalyzer;
 
 import java.util.function.Function;
 
+/**
+ * Model builder interface
+ */
 public interface ModelBuilder {
 
     ModelBuilder setConfiguration(Configuration configuration);
@@ -12,4 +15,5 @@ public interface ModelBuilder {
     ModelBuilder setSourceAnalyzer(Function<Model, SourceAnalyzer> sourceAnalyzer);
 
     Model build();
+
 }

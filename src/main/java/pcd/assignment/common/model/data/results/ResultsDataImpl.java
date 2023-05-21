@@ -4,6 +4,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * A ResultsData implementation.
+ */
 public class ResultsDataImpl implements ResultsData {
 
     private final BlockingQueue<Result> results;

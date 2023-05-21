@@ -8,7 +8,9 @@ import pcd.assignment.common.analyzer.SourceAnalyzer;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
-
+/**
+ * Model implementation.
+ */
 public class ModelImpl implements Model {
 
     private final Configuration configuration;

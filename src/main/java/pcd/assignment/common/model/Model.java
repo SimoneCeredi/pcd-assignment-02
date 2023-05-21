@@ -4,6 +4,9 @@ import pcd.assignment.common.model.configuration.Configuration;
 import pcd.assignment.common.model.data.results.ResultsData;
 import pcd.assignment.common.analyzer.SourceAnalyzer;
 
+/**
+ * Model interface.
+ */
 public interface Model extends SourceAnalyzer {
 
     void setSourceAnalyzer(SourceAnalyzer sourceAnalyzer);
