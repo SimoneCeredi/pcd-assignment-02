@@ -1,4 +1,4 @@
-package pcd.assignment.event.loop;
+package pcd.assignment.virtual.threads;
 
 import pcd.assignment.common.controller.ControllerImpl;
 import pcd.assignment.common.model.configuration.ConfigurationImpl;
@@ -8,17 +8,17 @@ import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.view.ConsoleViewImpl;
 import pcd.assignment.common.view.GuiViewImpl;
 import pcd.assignment.common.view.View;
-import pcd.assignment.event.loop.analyzer.EventLoopSourceAnalyzer;
+import pcd.assignment.virtual.threads.analyzer.VirtualThreadsSourceAnalyzer;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.File;
 import java.util.function.Function;
 
-public class Main {
+public class VirtualThreadsMain {
 
     public static void main(String[] args) throws OperationNotSupportedException {
-        System.out.println("3) Event loop approach");
-        Function<Model, SourceAnalyzer> sourceAnalyzerFunction = EventLoopSourceAnalyzer::new;
+        System.out.println("2) Virtual Threads based approach");
+        Function<Model, SourceAnalyzer> sourceAnalyzerFunction = VirtualThreadsSourceAnalyzer::new;
         View gui = new GuiViewImpl();
         if (false) {//args.length == 4) {
             File directory = new File("./benchmarks/fs");
