@@ -1,0 +1,58 @@
+@startuml
+
+
+class SourceAnalyzerImpl {
+    - Model model
+    - ResultsData resultsData
+    + ResultsData analyzeSources(File directory)
+    - void chain(File directory)
+    - void explorerChain(Observable<File> explorerManager,
+                               Subject<FileInfo> functionsCalculator)
+    - void functionsChain(Subject<FileInfo> functionsCalculator)
+}
+
+interface SourceAnalyzer {
+}
+
+
+class FileSystemExplorer {
+    - File rootDirectory
+    - ResultsData resultsData
+    - ObservableEmitter<File> emitter
+    + void subscribe(ObservableEmitter<File> emitter)
+    - void bfs(List<File> nodes)
+}
+
+
+class LineReader {
+    - File directory
+    - ResultsData resultsData
+    + void subscribe(ObservableEmitter<FileInfo> emitter)
+}
+
+class FunctionsConsumer {
+    - Intervals intervals
+    - LongestFiles longestFiles
+    - BlockingQueue<Result> results
+    + void accept(FileInfo fileInfo)
+}
+
+
+interface Consumer<X>
+
+interface ObservableOnSubscribe<T> {
+    + void subscribe(ObservableEmitter<T> emitter)
+}
+
+SourceAnalyzerImpl .|> SourceAnalyzer
+SourceAnalyzerImpl "1" *- "1" FileSystemExplorer
+SourceAnalyzerImpl "1" *-- "1" LineReader
+SourceAnalyzerImpl "1" *--- "1" FunctionsConsumer
+
+
+FileSystemExplorer ..|> ObservableOnSubscribe: <<bind>> T::File 
+FunctionsConsumer ..|> Consumer: <<bind>> X::FileInfo
+LineReader ..|> ObservableOnSubscribe: <<bind>> T::FileInfo
+
+
+@enduml

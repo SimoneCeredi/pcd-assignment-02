@@ -1,0 +1,60 @@
+
+@startuml
+
+
+Controller -> AnalyzeSources: analyzeSources()
+activate AnalyzeSources
+
+AnalyzeSources ->> ExploreDirectoryTask1: startVirtualThread(resultsData, rootFuture)
+activate ExploreDirectoryTask1
+
+AnalyzeSources -->> Controller: resultsData
+deactivate AnalyzeSources
+
+ExploreDirectoryTask1 -> ExploreDirectoryTask1: exploreDirectory()
+    loop for each item
+        alt item.type = directory
+            ExploreDirectoryTask1 ->> ExploreDirectoryTask1.1: startVirtualThread(resultsData, dirFuture1)
+            activate ExploreDirectoryTask1.1
+        else item.type = file
+            ExploreDirectoryTask1 ->> ReadLinesTask: startVirtualThread(fileFuture1)
+            activate ReadLinesTask
+        end    
+    end
+
+    
+ExploreDirectoryTask1.1 -> ExploreDirectoryTask1.1: exploreDirectory()
+        loop for each item
+            alt item.type = directory
+                ExploreDirectoryTask1.1 ->> : startVirtualThread(resultsData, dirFuture1.1)
+            else item.type = file
+                ExploreDirectoryTask1.1 ->> : startVirtualThread(fileFuture1.1)
+            end
+        end
+
+loop !dirFutures.allComplete
+    
+    ExploreDirectoryTask1.1 -->> ExploreDirectoryTask1: completeFuture(dirFuture1)
+    deactivate ExploreDirectoryTask1.1
+
+end
+
+ReadLinesTask -> ReadLinesTask: readFileLines()
+
+
+loop !fileFutures.allComplete
+    
+    ReadLinesTask -->> ExploreDirectoryTask1: completeFuture(fileFuture1)
+    deactivate ReadLinesTask
+
+    ExploreDirectoryTask1 -> ExploreDirectoryTask1: intervals.store(fileFuture1.fileInfo), \n longestFiles.store(fileFuture1.fileInfo)
+end
+
+ExploreDirectoryTask1 -> ExploreDirectoryTask1: resultsData.storeIntervals(intervals), \n resultsData.storeLongestFiles(longestFiles)
+ExploreDirectoryTask1 -> ExploreDirectoryTask1: completeFuture(rootFuture)
+
+deactivate ExploreDirectoryTask1
+
+
+@enduml
+

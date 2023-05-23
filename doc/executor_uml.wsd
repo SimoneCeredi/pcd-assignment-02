@@ -1,0 +1,31 @@
+@startuml
+
+class ExploreDirectoryTask {
+    {field} - File directory
+    - SourceAnalyzerData data
+    # Result compute()
+    - void joinReadLinesTasks(List<RecursiveTask<FileInfo>> filesForks)
+    - void joinDirectoriesTask(List<RecursiveTask<Result>> directoryForks)
+    - void exploreAndFork(List<RecursiveTask<Result>> directoryForks, 
+    List<RecursiveTask<FileInfo>> filesForks)
+    - ExploreDirectoryTask getExploreDirectoryTask(File file)
+} 
+
+class ReadLinesTask {
+    {field} - File file
+    # FileInfo compute()
+}
+
+class RecursiveTask<T> {
+    # T {abstract} compute()
+}
+abstract class ForkJoinTask<T> {}
+
+ExploreDirectoryTask "1" *-- "0..n" ReadLinesTask
+ExploreDirectoryTask "1" *-- "0..n" ExploreDirectoryTask
+ReadLinesTask --|> RecursiveTask : <<bind>> T::FileInfo
+
+ExploreDirectoryTask --|> RecursiveTask : <<bind>> T::Result
+RecursiveTask --|> ForkJoinTask
+
+@enduml

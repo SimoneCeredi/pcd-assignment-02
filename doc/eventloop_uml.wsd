@@ -1,0 +1,29 @@
+@startuml
+
+class DirectoryExplorerVerticle {
+    {field} - String directory
+    - Promise<Void> promise
+    - SourceAnalyzerData data
+    + void start()
+    - void exploreDirectory(List<String> fileList)
+    - void manageProps(String file, Promise<Void> filePromise,
+     AsyncResult<FileProps> res)
+    - void exploreFile(String file, Promise<Void> filePromise)
+}
+
+class ReadLinesVerticle {
+    {field} - String directory
+    - Promise<Void> promise
+    - SourceAnalyzerData data
+    + void start()
+    - void saveFileInfo(FileInfo fileInfo)
+}
+
+
+DirectoryExplorerVerticle "1" *-- "0..n" DirectoryExplorerVerticle
+
+DirectoryExplorerVerticle "1" *-- "0..n" ReadLinesVerticle
+
+DirectoryExplorerVerticle --|> AbstractVerticle
+ReadLinesVerticle -|> AbstractVerticle
+@enduml

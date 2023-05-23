@@ -1,0 +1,28 @@
+@startuml
+
+class ExploreDirectoryTask {
+    {field} - File directory
+    - CompletableFuture<Result> currentDirFuture
+    - SourceAnalyzerData data
+    + void run()
+    - void exploreDirectory(List<Future<Result>> directoryFutures,
+    List<Future<FileInfo>> filesFutures)
+    - ExploreDirectoryTask getExploreDirectoryTask(File file, \n CompletableFuture<Result> subdirFuture
+    - void collectFilesData(List<Future<FileInfo>> filesFutures)
+    - void collectDirectoryData(List<Future<Result>> directoryFutures)
+} 
+
+class ReadLinesTask {
+    {field} - File file
+    - CompletableFuture<FileInfo> fileResFuture
+    + void run()
+}
+
+interface Runnable {}
+
+ExploreDirectoryTask "1" *-- "0..n" ReadLinesTask
+ExploreDirectoryTask "1" *-- "0..n" ExploreDirectoryTask
+ExploreDirectoryTask ..|> Runnable
+ReadLinesTask .|> Runnable
+
+@enduml
