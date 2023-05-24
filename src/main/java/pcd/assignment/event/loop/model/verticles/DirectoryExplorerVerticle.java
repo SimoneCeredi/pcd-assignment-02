@@ -1,12 +1,8 @@
 package pcd.assignment.event.loop.model.verticles;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.CompositeFuture;
-import io.vertx.core.Promise;
+import io.vertx.core.*;
 import io.vertx.core.file.FileProps;
 import pcd.assignment.common.analyzer.SourceAnalyzerData;
-import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +38,6 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
                 this.promise.fail(res.cause().getMessage());
             }
         });
-
     }
 
     /**
@@ -89,8 +84,8 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
     private void manageProps(String file, Promise<Void> filePromise, AsyncResult<FileProps> res) {
         FileProps fileProps = res.result();
         if (fileProps.isDirectory()) {
-            vertx.deployVerticle(new DirectoryExplorerVerticle(file, filePromise, this.data),
-                    VerticleDeployUtils.getDeploymentOptions());
+            // Deploy a Directory Explorer Verticle on an event-loop thread
+            vertx.deployVerticle(new DirectoryExplorerVerticle(file, filePromise, this.data));
         } else {
             exploreFile(file, filePromise);
         }
@@ -98,14 +93,15 @@ public class DirectoryExplorerVerticle extends AbstractVerticle {
 
     /**
      * Method called by manageProps.
-     * It deploys a ReadLinesVerticle whenever the file name passed as parameter is a Java source.
+     * Deploys a ReadLinesVerticle on a worker thread if the file passed as parameter is a Java source.
      * @param file
      * @param filePromise
      */
     private void exploreFile(String file, Promise<Void> filePromise) {
         if (file.endsWith(".java")) {
+            // Deploy a Read Lines Verticle on a worker thread
             vertx.deployVerticle(new ReadLinesVerticle(file, filePromise, this.data),
-                    VerticleDeployUtils.getDeploymentOptions());
+                    new DeploymentOptions().setWorker(true));
         } else {
             filePromise.complete();
         }

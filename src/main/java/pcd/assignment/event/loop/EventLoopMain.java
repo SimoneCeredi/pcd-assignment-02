@@ -17,10 +17,10 @@ import java.util.function.Function;
 public class EventLoopMain {
 
     public static void main(String[] args) throws OperationNotSupportedException {
-        System.out.println("3) Event loop approach");
+        System.out.println("Event loop approach");
         Function<Model, SourceAnalyzer> sourceAnalyzerFunction = EventLoopSourceAnalyzer::new;
         View gui = new GuiViewImpl();
-        if (false) {//args.length == 4) {
+        if (true) {//args.length == 4) {
             File directory = new File("./benchmarks/fs");
             int ni = 5;
             int maxl = 1000;

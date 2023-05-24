@@ -2,6 +2,7 @@ package pcd.assignment.event.loop.analyzer;
 
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import pcd.assignment.common.model.Model;
 import pcd.assignment.common.model.data.functions.ConcurrentIntervals;
 import pcd.assignment.common.model.data.functions.ConcurrentLongestFiles;
@@ -12,7 +13,6 @@ import pcd.assignment.common.model.data.results.ResultsDataImpl;
 import pcd.assignment.common.analyzer.SourceAnalyzer;
 import pcd.assignment.common.analyzer.SourceAnalyzerDataImpl;
 import pcd.assignment.event.loop.model.verticles.DirectoryExplorerVerticle;
-import pcd.assignment.event.loop.utils.VerticleDeployUtils;
 
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +40,8 @@ public class EventLoopSourceAnalyzer implements SourceAnalyzer {
      */
     @Override
     public ResultsData analyzeSources(File directory) {
-        this.vertx = Vertx.vertx();
+        this.vertx = Vertx.vertx(new VertxOptions().setEventLoopPoolSize(1));
+
         Intervals intervals = new ConcurrentIntervals(
                 this.model.getConfiguration().getNumberOfIntervals(),
                 this.model.getConfiguration().getMaximumLines());
@@ -50,8 +51,7 @@ public class EventLoopSourceAnalyzer implements SourceAnalyzer {
 
         Promise<Void> promise = Promise.promise();
         vertx.deployVerticle(new DirectoryExplorerVerticle(directory.getAbsolutePath(), promise,
-                        new SourceAnalyzerDataImpl(resultsData, intervals, longestFiles)),
-                VerticleDeployUtils.getDeploymentOptions());
+                        new SourceAnalyzerDataImpl(resultsData, intervals, longestFiles)));
         promise.future().onComplete(as -> {
             if (as.succeeded()) {
                 completionFuture.complete(null);
