@@ -44,37 +44,38 @@ tasks.withType<JavaExec>().configureEach {
 
 tasks.register("genSmallFS") {
     doLast {
-        genFileSystem(10, 5, 10, 10_000)
+        generateFileSystem(5, 5, 10, 100_000)
     }
 }
 
 tasks.register("genRegularFS") {
     doLast {
-        genFileSystem(10, 5, 10, 15_000)
+        generateFileSystem(5, 7, 50, 250_000)
     }
 }
 
 tasks.register("genBigFS") {
     doLast {
-        genFileSystem(5, 5, 15, 500000)
+        generateFileSystem(6, 7, 100, 500_000)
     }
 }
 
-task<Exec>("deleteFS") {
+tasks.register("deleteFS") {
     doLast {
-        Files.deleteIfExists(Path.of("./benchmarks/fs"))
+        file(Path.of("./benchmarks/fs")).deleteRecursively()
     }
 }
 
-fun genFileSystem(maxDirs: Int, maxDepth: Int, maxFiles: Int, maxSize: Int) {
+fun generateFileSystem(maxDirs: Int, maxDepth: Int, maxFiles: Int, maxSize: Int) {
     project.exec {
-        val fs = file("./benchmarks/fs")
+        setWorkingDir("./benchmarks/")
+        val fs = file(Path.of("./benchmarks/fs"))
         if (fs.exists()) {
-            fs.delete()
+            fs.deleteRecursively()
         }
         Files.createDirectories(fs.toPath())
-        setWorkingDir("./benchmarks/")
         commandLine("./gen_random_filesystem.sh", "./fs",
             maxDirs, maxDepth, maxFiles, maxSize)
     }
+
 }
