@@ -1,0 +1,50 @@
+@startuml
+    
+
+    interface Controller {
+        + startConsole(Model model, File directory)
+        + start(Model model, File directory)
+        + stop()
+    }
+
+    interface Model {
+        + ResultsData getResultsData()
+        + Configuration getConfiguration()
+    }
+
+    interface SourceAnalyzer {
+        + Result getReport(File directory)
+        + ResultsData analyzeSources(File directory)
+    }
+
+    interface ResultsData {
+        + Result[] getResults()
+        + stop()
+        + isStopped()
+    }
+
+    interface Result {
+        + Intervals getIntervals()
+        + LongestFiles getLongestFiles()
+    }
+
+    interface View {
+        + initialize(File directory)
+        + show(Result result)
+    }
+
+    interface Configuration {
+        + getNumberOfIntervals()
+        + getMaximumLines()
+        + getAtMostNFiles()
+    }
+
+    Controller "1" *-- "1" Model
+    Model "1" *-- "1" Configuration
+    Model --|> SourceAnalyzer
+    SourceAnalyzer "1" *-- "1" ResultsData
+    ResultsData "1" *-- "n" Result
+    View "1" *-- "1" Controller
+    SourceAnalyzerImpl ..|> SourceAnalyzer 
+
+@enduml
