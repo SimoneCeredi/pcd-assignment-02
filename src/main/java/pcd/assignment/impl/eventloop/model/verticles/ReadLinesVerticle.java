@@ -5,7 +5,7 @@ import io.vertx.core.Promise;
 import pcd.assignment.base.model.data.results.FileInfo;
 import pcd.assignment.base.model.data.results.ResultImpl;
 import pcd.assignment.base.analyzer.SourceAnalyzerData;
-import pcd.assignment.base.utilities.FilesUtils;
+import pcd.assignment.base.utils.FilesUtils;
 
 import java.io.File;
 

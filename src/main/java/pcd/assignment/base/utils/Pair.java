@@ -1,4 +1,4 @@
-package pcd.assignment.base.utilities;
+package pcd.assignment.base.utils;
 
 public class Pair<X, Y> {
     private final X x;

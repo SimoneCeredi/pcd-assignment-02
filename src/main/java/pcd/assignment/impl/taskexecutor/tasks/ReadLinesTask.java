@@ -1,6 +1,6 @@
 package pcd.assignment.impl.taskexecutor.tasks;
 
-import pcd.assignment.base.utilities.FilesUtils;
+import pcd.assignment.base.utils.FilesUtils;
 import pcd.assignment.base.model.data.results.FileInfo;
 
 import java.io.File;

@@ -4,7 +4,7 @@ import pcd.assignment.base.model.data.functions.BaseIntervals;
 import pcd.assignment.base.model.data.functions.Intervals;
 import pcd.assignment.base.model.data.functions.Counter;
 import pcd.assignment.base.model.data.functions.UnmodifiableCounter;
-import pcd.assignment.base.utilities.Pair;
+import pcd.assignment.base.utils.Pair;
 
 import java.util.Collections;
 import java.util.Map;

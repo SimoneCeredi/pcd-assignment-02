@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import pcd.assignment.base.utilities.FilesUtils;
+import pcd.assignment.base.utils.FilesUtils;
 import pcd.assignment.base.model.data.results.FileInfo;
 
 /**

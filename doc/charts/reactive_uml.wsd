@@ -1,7 +1,7 @@
 @startuml
 
 
-class SourceAnalyzerImpl {
+class ReactiveSourceAnalyzer {
     - Model model
     - ResultsData resultsData
     + ResultsData analyzeSources(File directory)
@@ -44,10 +44,10 @@ interface ObservableOnSubscribe<T> {
     + void subscribe(ObservableEmitter<T> emitter)
 }
 
-SourceAnalyzerImpl .|> SourceAnalyzer
-SourceAnalyzerImpl "1" *- "1" FileSystemExplorer
-SourceAnalyzerImpl "1" *-- "1" LineReader
-SourceAnalyzerImpl "1" *--- "1" FunctionsConsumer
+ReactiveSourceAnalyzer .|> SourceAnalyzer
+ReactiveSourceAnalyzer "1" *- "1" FileSystemExplorer
+ReactiveSourceAnalyzer "1" *-- "1" LineReader
+ReactiveSourceAnalyzer "1" *--- "1" FunctionsConsumer
 
 
 FileSystemExplorer ..|> ObservableOnSubscribe: <<bind>> T::File 

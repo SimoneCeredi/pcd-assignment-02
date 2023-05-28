@@ -122,11 +122,11 @@ public class GuiViewImpl extends JFrame implements View {
 
         // Create the input boxes and labels
         JLabel niLabel = new JLabel("NI:");
-        niTextField = new JTextField();
+        niTextField = new JTextField("5");
         JLabel maxlLabel = new JLabel("MAXL:");
-        maxlTextField = new JTextField();
+        maxlTextField = new JTextField("1000");
         JLabel nLabel = new JLabel("N:");
-        nTextField = new JTextField();
+        nTextField = new JTextField("10");
 
         // Add the input boxes and labels to the input panel
         inputPanel.add(niLabel);

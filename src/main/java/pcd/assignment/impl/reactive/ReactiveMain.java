@@ -5,6 +5,7 @@ import pcd.assignment.base.model.configuration.ConfigurationImpl;
 import pcd.assignment.base.model.Model;
 import pcd.assignment.base.model.ModelImpl;
 import pcd.assignment.base.analyzer.SourceAnalyzer;
+import pcd.assignment.base.utils.FilesUtils;
 import pcd.assignment.base.view.ConsoleViewImpl;
 import pcd.assignment.base.view.GuiViewImpl;
 import pcd.assignment.base.view.View;
@@ -31,7 +32,7 @@ public class ReactiveMain {
             new ControllerImpl(new ConsoleViewImpl(), gui)
                     .startConsole(model, directory);
         } else {
-            File directory = new File("./benchmarks/fs");
+            File directory = new File(FilesUtils.DEFAULT_FS_PATH);
             gui.initialize(sourceAnalyzerFunction, directory);
         }
     }

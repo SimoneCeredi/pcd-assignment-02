@@ -1,5 +1,11 @@
 @startuml
 
+class TaskExecutorsSourceAnalyzer {
+    - Model model
+    - ForkJoinPool forkJoinPool
+    + ResultsData analyzeSources(File directory)
+}
+
 class ExploreDirectoryTask {
     {field} - File directory
     - SourceAnalyzerData data
@@ -21,6 +27,7 @@ class RecursiveTask<T> {
 }
 abstract class ForkJoinTask<T> {}
 
+TaskExecutorsSourceAnalyzer --> ExploreDirectoryTask: <<uses>>
 ExploreDirectoryTask "1" *-- "0..n" ReadLinesTask
 ExploreDirectoryTask "1" *-- "0..n" ExploreDirectoryTask
 ReadLinesTask --|> RecursiveTask : <<bind>> T::FileInfo

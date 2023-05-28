@@ -6,6 +6,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 import pcd.assignment.base.model.Model;
+import pcd.assignment.base.model.data.functions.ConcurrentIntervals;
+import pcd.assignment.base.model.data.functions.ConcurrentLongestFiles;
 import pcd.assignment.base.model.data.results.FileInfo;
 import pcd.assignment.base.model.data.results.ResultsData;
 import pcd.assignment.base.model.data.results.ResultsDataImpl;
@@ -17,6 +19,9 @@ import pcd.assignment.impl.reactive.model.data.SimpleIntervals;
 import pcd.assignment.impl.reactive.model.data.SimpleLongestFiles;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -60,33 +65,25 @@ public class ReactiveSourceAnalyzer implements SourceAnalyzer {
      * Builds the explorer chain.
      *      - For every directory emitted from the manager (FileSystemExplorer), create a new LineReader Observable
      *          (inside subscribe()) which emits a FileInfo (<file, numberOfLines>) for each file.
-     *      - Each LineReader subscriber emits a new FileInfo inside the FunctionsCalculator stream.
-     *          The latter subscriber interactively computes the Intervals and LongestFiles functions inside
-     *          a single thread.
+     *      - Each LineReader subscriber emits a new FileInfo inside the FunctionsCalculator stream, which
+     *          interactively computes the Intervals and LongestFiles functions inside a single thread.
      * @param explorerManager which uses FileSystemExplorer
      * @param functionsCalculator to emit the FileInfo(s)
      */
     private void explorerChain(Observable<File> explorerManager,
                                Subject<FileInfo> functionsCalculator) {
-        AtomicInteger counter = new AtomicInteger();
+        List<Observable<FileInfo>> lineReaders = new ArrayList<>();
         explorerManager
-                // Since it reads files (I/O operations), run the observer using the io() scheduler
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
+                .doOnComplete(() ->
+                        Observable.merge(lineReaders)
+                                .doOnComplete(functionsCalculator::onComplete)
+                                .subscribe(functionsCalculator::onNext)
+                )
                 .subscribe(d -> {
-                    Observable<FileInfo> lineReader =
-                            Observable.create(new LineReader(d, resultsData));
-                    counter.getAndIncrement();
-                    lineReader
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.single())
-                            .doOnComplete(() -> {
-                                counter.getAndDecrement();
-                                if (counter.get() == 0) {
-                                    functionsCalculator.onComplete();
-                                }
-                            })
-                            .subscribe(functionsCalculator::onNext);
+                    Observable<FileInfo> lineReader = Observable.create(new LineReader(d, resultsData))
+                            .subscribeOn(Schedulers.io());
+                    lineReaders.add(lineReader);
                 });
     }
 
